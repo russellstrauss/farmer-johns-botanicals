@@ -1,0 +1,30 @@
+/*
+	Theme Name: Farmer John
+	Author: Farmer John
+	Author URI: https://www.farmerjohnsbotanicals.com
+	Description: This is an epic theme developed by Farmer John.
+*/
+
+// shared
+@import 'mixins';
+@import 'responsive';
+
+// global
+@import 'vars';
+@import 'elements';
+@import 'global';
+@import 'fonts';
+
+// @import 'components/about';
+// @import 'components/header';
+// @import 'components/hamburger';
+// @import 'components/footer';
+// @import 'components/shop-products';
+// @import 'components/shop-front';
+// @import 'components/woocommerce-lightbox';
+// @import 'components/products-listing-page';
+// @import 'components/product-detail-page';
+// @import 'components/related-products';
+// @import 'components/cart';
+
+@import 'helpers';

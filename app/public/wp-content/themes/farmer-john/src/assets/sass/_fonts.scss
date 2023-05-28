@@ -1,0 +1,9 @@
+// @font-face {
+// 	font-family: 'Opensans-Bold';
+// 	font-style: normal;
+// 	src: local('Opensans-Bold'), url(@/assets/fonts/OpenSans-Bold.woff2) format('woff2');
+// }
+
+@mixin lato {
+    font-family: 'Lato', sans-serif;
+}

@@ -1,0 +1,67 @@
+.about-page {
+	
+	h1 {
+		text-align: center;
+		
+		@include mobile-only {
+			margin-top: 40px;
+		}
+	}
+	
+	
+	article {
+		$padding: 30px;
+		padding: $padding;
+		max-width: 1000px;
+		display: block;
+		margin: auto;
+		
+		.entry-content {
+			margin: 0;
+			
+			@include tablet {
+				display: flex;
+				
+			}
+			
+			.featured-image {
+				
+				@include tablet {
+					width: 50%;
+				}
+				
+				img {
+					max-height: 700px;
+					width: auto;
+					margin: 0 auto;
+					display: block;
+				}
+			}
+			
+			.the-content {
+				
+				@include tablet {
+					width: 50%;
+					display: flex;
+					position: relative;
+					padding-left: $padding;
+				}
+				
+				.text-content {
+					
+					@include tablet {
+						position: absolute;
+						width: calc(100% - $padding);
+						top: 50%;
+						transform: translateY(-50%);
+					}
+					
+					*:last-child {
+						margin-bottom: 0;
+					}
+				}
+			}
+		}
+	}
+	
+}
