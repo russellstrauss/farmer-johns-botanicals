@@ -2039,28 +2039,28 @@ header .main-navigation {
   header .site-branding {
     margin-top: 60px; } }
 
-header .hammerhead-checkout {
+header .fjb-checkout {
   text-align: center; }
   @media (min-width: 768px) {
-    header .hammerhead-checkout {
+    header .fjb-checkout {
       position: absolute;
       right: 20px;
       top: 14px;
       width: 120px;
       z-index: 999; } }
   @media (min-width: 992px) {
-    header .hammerhead-checkout {
+    header .fjb-checkout {
       width: 200px;
       top: 25px; } }
-  header .hammerhead-checkout:hover a .bling-shark-container .bling-shark {
+  header .fjb-checkout:hover a .bling-shark-container .bling-shark {
     display: none; }
-  header .hammerhead-checkout:hover a .bling-shark-container .bling-shark-hover {
+  header .fjb-checkout:hover a .bling-shark-container .bling-shark-hover {
     display: block; }
-  header .hammerhead-checkout a {
+  header .fjb-checkout a {
     display: block;
     text-decoration: none; }
     @media (max-width: 767px) {
-      header .hammerhead-checkout a {
+      header .fjb-checkout a {
         padding: 20px;
         border-radius: 6px;
         border-top-left-radius: 0;
@@ -2069,45 +2069,45 @@ header .hammerhead-checkout {
         border: 1px solid #ccc;
         background-color: #eee;
         box-shadow: 0 6px #aaa; }
-        header .hammerhead-checkout a:active {
+        header .fjb-checkout a:active {
           position: relative;
           box-shadow: none;
           top: 6px; } }
-    header .hammerhead-checkout a .bling-shark-container {
+    header .fjb-checkout a .bling-shark-container {
       height: 160px;
       position: relative; }
-      header .hammerhead-checkout a .bling-shark-container .bling-shark, header .hammerhead-checkout a .bling-shark-container .bling-shark-hover {
+      header .fjb-checkout a .bling-shark-container .bling-shark, header .fjb-checkout a .bling-shark-container .bling-shark-hover {
         margin: 0 auto;
         background-repeat: no-repeat;
         height: 100%; }
         @media (max-width: 767px) {
-          header .hammerhead-checkout a .bling-shark-container .bling-shark, header .hammerhead-checkout a .bling-shark-container .bling-shark-hover {
+          header .fjb-checkout a .bling-shark-container .bling-shark, header .fjb-checkout a .bling-shark-container .bling-shark-hover {
             width: 250px;
             display: block;
             margin: auto; } }
         @media (min-width: 768px) {
-          header .hammerhead-checkout a .bling-shark-container .bling-shark, header .hammerhead-checkout a .bling-shark-container .bling-shark-hover {
+          header .fjb-checkout a .bling-shark-container .bling-shark, header .fjb-checkout a .bling-shark-container .bling-shark-hover {
             position: absolute;
             left: 0;
             bottom: 0;
             width: 100%; } }
-      header .hammerhead-checkout a .bling-shark-container .bling-shark {
+      header .fjb-checkout a .bling-shark-container .bling-shark {
         display: block;
         background-image: url(assets/img/bling-shark-color.svg); }
-      header .hammerhead-checkout a .bling-shark-container .bling-shark-hover {
+      header .fjb-checkout a .bling-shark-container .bling-shark-hover {
         display: none;
         background-image: url(assets/img/bling-shark-color-hover.svg); }
-    header .hammerhead-checkout a span {
+    header .fjb-checkout a span {
       font-family: 'Montserrat', sans-serif;
       font-weight: 500;
       color: black;
       font-size: 22px;
       text-transform: uppercase; }
       @media (max-width: 767px) {
-        header .hammerhead-checkout a span {
+        header .fjb-checkout a span {
           display: block; } }
       @media (min-width: 768px) and (max-width: 991px) {
-        header .hammerhead-checkout a span {
+        header .fjb-checkout a span {
           font-size: 14px; } }
 
 .hamburger {
@@ -2412,7 +2412,7 @@ div.pp_woocommerce .pp_content_container {
         left: 50%;
         display: block;
         content: "";
-        background: url(assets/img/hammerhead-loader.svg) center center;
+        background: url(assets/img/fjb-loader.svg) center center;
         background-size: cover;
         margin: 0; }
   div.pp_woocommerce .pp_content_container .pp_details {

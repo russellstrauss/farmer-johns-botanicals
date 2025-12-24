@@ -1,12 +1,12 @@
 services:
   db:
     image: mysql:5.7
-    container_name: hammerhead-silver-db
+    container_name: farmer-johns-botanicals-db
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: russell_hammerhe_wrdp1
-      MYSQL_USER: russell_hhs_user
+      MYSQL_DATABASE: fjb_db
+      MYSQL_USER: russell_fjb_user
       MYSQL_PASSWORD: EZsDNwLGpIPKi4E
     volumes:
       - db_data:/var/lib/mysql
@@ -24,7 +24,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: hammerhead-silver-wp
+    container_name: farmer-johns-botanicals-wp
     restart: unless-stopped
     depends_on:
       db:
@@ -36,8 +36,8 @@ services:
       - ./wp-content/uploads:/var/www/html/wp-content/uploads
     environment:
       WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_NAME: russell_hammerhe_wrdp1
-      WORDPRESS_DB_USER: russell_hhs_user
+      WORDPRESS_DB_NAME: fjb_db
+      WORDPRESS_DB_USER: russell_fjb_user
       WORDPRESS_DB_PASSWORD: EZsDNwLGpIPKi4E
     networks:
       - wordpress-network

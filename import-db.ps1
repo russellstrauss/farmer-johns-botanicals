@@ -6,9 +6,9 @@ param(
     [switch]$Force
 )
 
-$ContainerName = "hammerhead-silver-db"
-$DatabaseName = "russell_hammerhe_wrdp1"
-$DatabaseUser = "russell_hhs_user"
+$ContainerName = "farmer-johns-botanicals-db"
+$DatabaseName = "fjb_db"
+$DatabaseUser = "russell_fjb_user"
 $DatabasePassword = "EZsDNwLGpIPKi4E"
 
 Write-Host "WordPress Database Import Script" -ForegroundColor Cyan
@@ -87,7 +87,7 @@ try {
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Cyan
     Write-Host "1. Update site URLs in the database if needed (the backup may have old URLs)" -ForegroundColor White
-    Write-Host "2. Access your site at http://local.hammerheadsilver.com:8080" -ForegroundColor White
+    Write-Host "2. Access your site at http://local.farmerjohnsbotanicals.com:8080" -ForegroundColor White
     Write-Host ""
     
 } catch {

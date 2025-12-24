@@ -130,7 +130,7 @@ header {
 		}
 	}
 	
-	.hammerhead-checkout {
+	.fjb-checkout {
 		text-align: center;
 		
 		@include tablet {
@@ -138,7 +138,7 @@ header {
 			right: 20px;
 			top: 14px;
 			width: 120px;
-			z-index: $z-index-hammerhead-checkout;
+			z-index: $z-index-fjb-checkout;
 		}
 		
 		@include desktop {

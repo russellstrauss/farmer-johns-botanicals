@@ -88,7 +88,7 @@
 		<?php
 		if (WC()->cart->get_cart_contents_count() > 0 && !is_cart() && !is_checkout()) {
 			
-			echo '<div class="hammerhead-checkout">';
+			echo '<div class="fjb-checkout">';
 				echo '<a href="' . get_permalink( wc_get_page_id( 'cart' ) ) . '">';
 					echo '<span>checkout ' . sprintf ( _n( '(%d)', '(%d)', WC()->cart->get_cart_contents_count() ), WC()->cart->get_cart_contents_count() ) . '</span>';
 					echo '<div class="bling-shark-container">';
