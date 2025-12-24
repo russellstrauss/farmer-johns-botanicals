@@ -1,0 +1,2 @@
+[25-Nov-2017 01:47:28 America/Chicago] PHP Fatal error:  Call to undefined function __() in /home1/hammerhead/public_html/wp-admin/user/menu.php on line 10
+[25-Nov-2017 01:53:43 America/Chicago] PHP Fatal error:  Call to undefined function __() in /home1/hammerhead/public_html/wp-admin/user/menu.php on line 10

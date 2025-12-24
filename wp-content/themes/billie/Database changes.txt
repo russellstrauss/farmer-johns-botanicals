@@ -1,0 +1,14 @@
+Database changes
+
+-Reset site logo
+-reset url
+**-Change back require SSL on checkout page, woocommerse settings
+
+Todo
+
+-Separate categorys and tags
+-Polish hammerhead checkout button
+-Polish animate menu items fade in
+-Polish category selection menu, add swiping UI on mobile
+-Polish hammerhead loader, use circle to make more ciruclar
+-Shrink lightbox X on mobile, but increase cliackable area

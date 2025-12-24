@@ -1,0 +1,1 @@
+[06-Jun-2018 22:13:37 America/Chicago] PHP Fatal error:  Call to undefined function post_class() in /home1/hammerhead/public_html/wp-includes/theme-compat/embed-content.php on line 13

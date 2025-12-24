@@ -1,0 +1,28 @@
+// Global class-based selectors, put all bare element styling in elements.scss
+
+#primary {
+	max-width: 990px;
+}
+
+#site-logo {
+	
+	@include tablet {
+		width: 50%;
+		max-width: 450px;
+	}
+}
+
+.page-title {
+	display: none;
+}
+
+.entry-title {
+	margin-top: 0;
+}
+
+.woocommerce {
+	
+	a.button {
+		@include black-button;
+	}
+}

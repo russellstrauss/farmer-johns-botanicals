@@ -1,0 +1,51 @@
+services:
+  db:
+    image: mysql:5.7
+    container_name: hammerhead-silver-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: russell_hammerhe_wrdp1
+      MYSQL_USER: russell_hhs_user
+      MYSQL_PASSWORD: EZsDNwLGpIPKi4E
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    ports:
+      - "3306:3306"
+    networks:
+      - wordpress-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  wordpress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hammerhead-silver-wp
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./wp-content/uploads:/var/www/html/wp-content/uploads
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: russell_hammerhe_wrdp1
+      WORDPRESS_DB_USER: russell_hhs_user
+      WORDPRESS_DB_PASSWORD: EZsDNwLGpIPKi4E
+    networks:
+      - wordpress-network
+
+volumes:
+  db_data:
+
+networks:
+  wordpress-network:
+    driver: bridge
+

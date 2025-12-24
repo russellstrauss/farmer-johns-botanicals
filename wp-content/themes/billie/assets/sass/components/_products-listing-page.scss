@@ -1,0 +1,73 @@
+.jewelry-shop {
+	
+	.above-shop-section {
+		
+		.product-categories {
+			
+			@include mobile-only {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+			
+			.swiper-slide {
+				display: inline;
+				margin: 10px;
+
+				@include mobile-only {
+					display: block;
+					text-align: center;
+					display: block;
+					margin: 0;
+				}
+				
+				a {
+					text-decoration: none;
+					
+					@include mobile-only {
+						padding: 10px 12px;
+						display: block;
+						top: 50%;
+						position: relative;
+						transform: translateY(-50%);
+					}
+				}
+			}
+		}
+	}
+
+	.woocommerce-result-count {
+		display: none;
+	}
+	
+	ul.products {
+		
+		li.product {
+			
+			@include mobile-only {
+				display: block;
+				float: none;
+				width: 100%;
+			}
+			
+			a {
+				
+				img {
+					margin: 0;
+					border: 0;
+				}
+			}
+			
+			.price {
+				
+				.amount {
+					color: black;
+				}
+			}
+			
+			.add_to_cart_button {
+				display: none;
+			}
+		}
+	}
+}

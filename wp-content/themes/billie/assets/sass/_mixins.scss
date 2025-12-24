@@ -1,0 +1,89 @@
+// Global re-useable mixin blocks
+
+$mobile-width: 767px;
+$tablet-width: 768px;
+$desktop-width: 992px;
+$desktop-large-width: 1200px;
+
+@mixin mobile-only {
+	@media (max-width: #{$mobile-width}) {
+		@content;
+	}
+}
+
+@mixin tablet {
+	@media (min-width: #{$tablet-width}) {
+		@content;
+	}
+}
+
+@mixin tablet-only {
+	@media (min-width: #{$tablet-width}) and (max-width: #{$desktop-width - 1px}) {
+		@content;
+	}
+}
+
+@mixin desktop {
+	@media (min-width: #{$desktop-width}) {
+		@content;
+	}
+}
+
+@mixin desktop-large {
+	@media (min-width: #{$desktop-large-width}) {
+		@content;
+	}
+}
+
+@mixin Montserrat {
+	font-family: 'Montserrat', sans-serif;
+	font-weight: 500;
+}
+
+@mixin black-button {
+	background-color: black;
+	color: #fff;
+	font-size: 16px;
+	display: block;
+	padding: 20px 50px;
+	border: 1px solid black;
+	transition: all 250ms ease;
+	text-align: center;
+	
+	@include mobile-only {
+		font-size: 16px;
+	}
+	
+	&:hover {
+		background-color: white;
+		color: black;
+	}
+}
+
+@mixin form-input-style {
+	border-radius: 3px;
+	border: 1px solid #666;
+	padding: 6px;
+}
+
+@mixin alert {
+	text-align: left;
+	background-color: #f7f6f7;
+	border-top-color: black;
+	border: 1px solid black;
+	border-top-width: 3px;
+	border-radius: 0;
+	
+	&:before {
+		color: black;
+	}
+	
+	.button {
+		
+		@include mobile-only {
+			display: block;
+			margin-top: 20px;
+			width: 100%;
+		}
+	}
+}
