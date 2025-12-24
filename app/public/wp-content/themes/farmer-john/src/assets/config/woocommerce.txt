@@ -1,5 +1,0 @@
-consumer key
-ck_2efd47a6ff347ba59141d2df838c1ae9be8b808e
-
-consumer secret
-cs_1b76f545b08c81055c970396b71d11ff561348a8
