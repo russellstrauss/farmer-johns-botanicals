@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Load products data
-const productsPath = path.join(__dirname, '../static-site/data/products.json');
+const productsPath = path.join(__dirname, '../dist/data/products.json');
 const products = JSON.parse(fs.readFileSync(productsPath, 'utf8'));
 
 // Template for product page
@@ -168,7 +168,7 @@ function formatPrice(price) {
 }
 
 // Create product directory if it doesn't exist
-const productDir = path.join(__dirname, '../static-site/product');
+const productDir = path.join(__dirname, '../dist/product');
 if (!fs.existsSync(productDir)) {
     fs.mkdirSync(productDir, { recursive: true });
 }

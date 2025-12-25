@@ -6,7 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const productsPath = path.join(__dirname, '../static-site/data/products.json');
+const productsPath = path.join(__dirname, '../dist/data/products.json');
 const products = JSON.parse(fs.readFileSync(productsPath, 'utf8'));
 
 // Function to convert WordPress URL to relative path
@@ -55,5 +55,5 @@ products.forEach(product => {
 fs.writeFileSync(productsPath, JSON.stringify(products, null, 2), 'utf8');
 
 console.log(`Updated ${updated} image URLs in products.json`);
-console.log('Note: Make sure product images are copied to static-site/assets/images/products/');
+console.log('Note: Make sure product images are copied to dist/assets/images/products/');
 

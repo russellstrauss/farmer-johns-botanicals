@@ -147,7 +147,7 @@ foreach ($products as $product) {
 }
 
 // Create output directory if it doesn't exist
-$output_dir = __DIR__ . '/../static-site/data';
+$output_dir = __DIR__ . '/../dist/data';
 if (!file_exists($output_dir)) {
     wp_mkdir_p($output_dir);
 }

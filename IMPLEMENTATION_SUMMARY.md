@@ -11,11 +11,11 @@
 
 ### ✅ Phase 2: Static Site Structure
 - **Directory Structure Created**
-  - `static-site/` - Main static site directory
-  - `static-site/assets/` - CSS, JS, images
-  - `static-site/data/` - Product data JSON
-  - `static-site/product/` - Individual product pages
-  - `static-site/_functions/` - Cloudflare Workers
+  - `dist/` - Main static site directory
+  - `dist/assets/` - CSS, JS, images
+  - `dist/data/` - Product data JSON
+  - `dist/product/` - Individual product pages
+  - `dist/_functions/` - Cloudflare Workers
 
 - **Core HTML Pages**
   - `index.html` - Homepage with shop front
@@ -25,7 +25,7 @@
   - `about.html` - About page template
 
 ### ✅ Phase 3: Shopping Cart Implementation
-- **Cart JavaScript** (`static-site/assets/js/cart.js`)
+- **Cart JavaScript** (`dist/assets/js/cart.js`)
   - localStorage-based cart storage
   - Add/remove/update items
   - Calculate totals
@@ -39,30 +39,30 @@
   - Total calculation display
 
 ### ✅ Phase 4: Stripe Integration
-- **Stripe Checkout** (`static-site/assets/js/stripe.js`)
+- **Stripe Checkout** (`dist/assets/js/stripe.js`)
   - Client-side Stripe integration
   - Creates checkout sessions via Worker
   - Handles redirect to Stripe Checkout
 
-- **Checkout Worker** (`static-site/_functions/create-checkout.js`)
+- **Checkout Worker** (`dist/_functions/create-checkout.js`)
   - Creates Stripe Checkout sessions
   - Handles cart data
   - Returns checkout URL
 
 ### ✅ Phase 5: Cloudflare Workers Setup
-- **Webhook Handler** (`static-site/_functions/webhook.js`)
+- **Webhook Handler** (`dist/_functions/webhook.js`)
   - Processes Stripe webhook events
   - Verifies webhook signatures
   - Saves orders to D1 database
   - Sends confirmation emails
 
-- **Worker Configuration** (`static-site/wrangler.toml`)
+- **Worker Configuration** (`dist/wrangler.toml`)
   - D1 database binding
   - Environment variables
   - Route configuration
 
 ### ✅ Phase 6: Cloudflare D1 Database
-- **Database Schema** (`static-site/database-schema.sql`)
+- **Database Schema** (`dist/database-schema.sql`)
   - `orders` table - Order information
   - `order_items` table - Order line items
   - `inventory` table - Stock tracking (optional)
@@ -77,23 +77,23 @@
 
 ### ✅ Phase 8: Deployment & Configuration
 - **Documentation**
-  - `static-site/README.md` - Setup instructions
+  - `dist/README.md` - Setup instructions
   - `MIGRATION_GUIDE.md` - Detailed migration guide
   - `IMPLEMENTATION_SUMMARY.md` - This file
 
 - **Setup Scripts**
   - `scripts/copy-assets.js` - Copy theme assets
   - `scripts/generate-pages.js` - Generate product pages
-  - `scripts/setup-static-site.sh` - Automated setup (Linux/Mac)
-  - `scripts/setup-static-site.ps1` - Automated setup (Windows)
+  - `scripts/setup-dist.sh` - Automated setup (Linux/Mac)
+  - `scripts/setup-dist.ps1` - Automated setup (Windows)
 
 - **Configuration Files**
-  - `static-site/package.json` - Node.js dependencies
-  - `static-site/.gitignore` - Git ignore rules
-  - `static-site/wrangler.toml` - Cloudflare Workers config
+  - `dist/package.json` - Node.js dependencies
+  - `dist/.gitignore` - Git ignore rules
+  - `dist/wrangler.toml` - Cloudflare Workers config
 
 ### ✅ Phase 9: Additional Features
-- **Product Management** (`static-site/assets/js/products.js`)
+- **Product Management** (`dist/assets/js/products.js`)
   - Load products from JSON
   - Filter by category/tag
   - Search functionality
@@ -113,9 +113,9 @@ farmer-johns-botanicals/
 │   ├── export-products.php          # Export WooCommerce products
 │   ├── copy-assets.js               # Copy theme assets
 │   ├── generate-pages.js            # Generate product pages
-│   ├── setup-static-site.sh         # Setup script (Linux/Mac)
-│   └── setup-static-site.ps1        # Setup script (Windows)
-├── static-site/
+│   ├── setup-dist.sh         # Setup script (Linux/Mac)
+│   └── setup-dist.ps1        # Setup script (Windows)
+├── dist/
 │   ├── index.html                    # Homepage
 │   ├── shop.html                    # Product listing
 │   ├── cart.html                    # Shopping cart

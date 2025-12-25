@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 const themeDir = path.join(__dirname, '../wp-content/themes/billie');
-const staticDir = path.join(__dirname, '../static-site');
+const staticDir = path.join(__dirname, '../dist');
 
 // Directories to copy
 const copyMap = [

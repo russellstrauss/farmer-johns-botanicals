@@ -4,7 +4,7 @@
 
 ### ✅ Product Export
 - **47 products** exported from WooCommerce
-- Products saved to `static-site/data/products.json`
+- Products saved to `dist/data/products.json`
 - Export summary created
 
 **Product Breakdown:**
@@ -17,14 +17,14 @@
 - 2 Money Clips
 
 ### ✅ Asset Migration
-- Theme images copied to `static-site/assets/images/`
+- Theme images copied to `dist/assets/images/`
 - Theme JavaScript copied (for reference)
 - Main stylesheet copied
 - Product images from uploads copied
 - **116 image URLs** updated to relative paths
 
 ### ✅ Static Pages Generated
-- **47 product pages** generated in `static-site/product/`
+- **47 product pages** generated in `dist/product/`
 - Homepage (`index.html`)
 - Shop page (`shop.html`)
 - Cart page (`cart.html`)
@@ -42,7 +42,7 @@
 
 ### 1. Install Dependencies (if needed)
 ```bash
-cd static-site
+cd dist
 npm install
 ```
 
@@ -61,7 +61,7 @@ wrangler d1 create fjb-orders
 # Note the database ID from output, then update wrangler.toml
 
 # Create database tables
-cd static-site
+cd dist
 wrangler d1 execute fjb-orders --file=./database-schema.sql
 ```
 
@@ -86,7 +86,7 @@ wrangler d1 execute fjb-orders --file=./database-schema.sql
 ### 4. Deploy Cloudflare Workers
 
 ```bash
-cd static-site
+cd dist
 
 # Update wrangler.toml with:
 # - Your database ID
@@ -126,7 +126,7 @@ wrangler deploy
    - Connect your GitHub repository
    - Build settings:
      - **Build command:** (leave empty)
-     - **Build output directory:** `static-site`
+     - **Build output directory:** `dist`
      - **Root directory:** `/` (project root)
 
 3. **Deploy:**
@@ -150,19 +150,19 @@ wrangler deploy
 
 ## File Locations
 
-- **Products:** `static-site/data/products.json`
-- **Product Pages:** `static-site/product/*.html`
-- **Assets:** `static-site/assets/`
-- **Workers:** `static-site/_functions/`
-- **Config:** `static-site/wrangler.toml`
+- **Products:** `dist/data/products.json`
+- **Product Pages:** `dist/product/*.html`
+- **Assets:** `dist/assets/`
+- **Workers:** `dist/_functions/`
+- **Config:** `dist/wrangler.toml`
 
 ## Important Notes
 
-⚠️ **Image URLs:** Image URLs have been converted to relative paths. Make sure all product images are in `static-site/assets/images/products/` directory structure matching the WordPress uploads folder.
+⚠️ **Image URLs:** Image URLs have been converted to relative paths. Make sure all product images are in `dist/assets/images/products/` directory structure matching the WordPress uploads folder.
 
 ⚠️ **CSS:** The main stylesheet has been copied. If you're using SASS, you may need to compile it.
 
-⚠️ **JavaScript:** Theme JavaScript has been copied for reference. The new cart/products/stripe JavaScript is in `static-site/assets/js/`.
+⚠️ **JavaScript:** Theme JavaScript has been copied for reference. The new cart/products/stripe JavaScript is in `dist/assets/js/`.
 
 ⚠️ **Environment Variables:** Don't forget to set all required secrets in Cloudflare before deploying.
 

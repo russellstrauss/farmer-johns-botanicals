@@ -20,7 +20,7 @@ Run the export script to extract products from your WordPress/WooCommerce instal
 php scripts/export-products.php
 ```
 
-This will create `static-site/data/products.json` with all your product data.
+This will create `dist/data/products.json` with all your product data.
 
 ### 2. Generate Product Pages
 
@@ -30,7 +30,7 @@ After exporting products, generate static HTML pages for each product:
 node scripts/generate-pages.js
 ```
 
-This creates individual product pages in `static-site/product/` directory.
+This creates individual product pages in `dist/product/` directory.
 
 ### 3. Set Up Cloudflare D1 Database
 
@@ -83,7 +83,7 @@ Or set them in Cloudflare Dashboard under Workers & Pages > Your Worker > Settin
 Deploy the workers:
 
 ```bash
-cd static-site
+cd dist
 wrangler deploy
 ```
 
@@ -95,7 +95,7 @@ wrangler deploy
 4. Connect your GitHub repository
 5. Set build settings:
    - Build command: (none, or `node scripts/generate-pages.js` if you want to generate pages on build)
-   - Build output directory: `static-site`
+   - Build output directory: `dist`
 6. Deploy
 
 ### 8. Configure Custom Domain
@@ -109,7 +109,7 @@ wrangler deploy
 Update the following files with your actual values:
 
 - `wrangler.toml`: Update `zone_name` and `database_id`
-- `static-site/assets/js/stripe.js`: Add Stripe publishable key (or use meta tag)
+- `dist/assets/js/stripe.js`: Add Stripe publishable key (or use meta tag)
 - Add Stripe publishable key to HTML pages:
   ```html
   <meta name="stripe-publishable-key" content="pk_test_...">
@@ -118,7 +118,7 @@ Update the following files with your actual values:
 ## File Structure
 
 ```
-static-site/
+dist/
 ├── index.html              # Homepage
 ├── shop.html              # Product listing
 ├── cart.html              # Shopping cart
@@ -161,7 +161,7 @@ static-site/
 You can test the static site locally using a simple HTTP server:
 
 ```bash
-cd static-site
+cd dist
 python -m http.server 8000
 # or
 npx serve .
@@ -171,7 +171,7 @@ Note: Workers and Stripe integration require Cloudflare deployment.
 
 ### Updating Products
 
-1. Update `static-site/data/products.json`
+1. Update `dist/data/products.json`
 2. Run `node scripts/generate-pages.js` to regenerate product pages
 3. Commit and push to trigger Cloudflare Pages deployment
 

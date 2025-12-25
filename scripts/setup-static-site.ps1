@@ -1,7 +1,7 @@
 # PowerShell setup script for static site migration
 # Run this after exporting products
 
-Write-Host "Setting up static e-commerce site..." -ForegroundColor Green
+Write-Host "Setting up static e-commerce site (dist directory)..." -ForegroundColor Green
 
 # Check if Node.js is installed
 try {
@@ -57,8 +57,8 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 Write-Host "`nSetup complete! Next steps:" -ForegroundColor Green
-Write-Host "1. Review static-site/data/products.json"
-Write-Host "2. Update static-site/wrangler.toml with your Cloudflare settings"
+Write-Host "1. Review dist/data/products.json"
+Write-Host "2. Update dist/wrangler.toml with your Cloudflare settings"
 Write-Host "3. Set up Cloudflare D1 database (see README.md)"
 Write-Host "4. Configure Stripe and set environment variables"
 Write-Host "5. Deploy to Cloudflare Pages"

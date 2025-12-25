@@ -33,7 +33,7 @@ This guide walks you through migrating your WordPress/WooCommerce site to a full
 
 ### Step 1: Export Products
 
-The export script extracts all WooCommerce products and saves them to `static-site/data/products.json`.
+The export script extracts all WooCommerce products and saves them to `dist/data/products.json`.
 
 **Requirements:**
 - WordPress with WooCommerce installed
@@ -46,8 +46,8 @@ php scripts/export-products.php
 ```
 
 **Output:**
-- `static-site/data/products.json` - All product data
-- `static-site/data/export-summary.json` - Export statistics
+- `dist/data/products.json` - All product data
+- `dist/data/export-summary.json` - Export statistics
 
 ### Step 2: Copy Theme Assets
 
@@ -79,7 +79,7 @@ node scripts/generate-pages.js
 ```
 
 **Output:**
-- Individual product pages in `static-site/product/[slug].html`
+- Individual product pages in `dist/product/[slug].html`
 
 ### Step 4: Set Up Cloudflare D1 Database
 
@@ -105,7 +105,7 @@ node scripts/generate-pages.js
 
 6. **Create Tables:**
    ```bash
-   cd static-site
+   cd dist
    wrangler d1 execute fjb-orders --file=./database-schema.sql
    ```
 
@@ -143,7 +143,7 @@ node scripts/generate-pages.js
 
 2. **Deploy:**
    ```bash
-   cd static-site
+   cd dist
    wrangler deploy
    ```
 
@@ -173,7 +173,7 @@ node scripts/generate-pages.js
    - Connect your GitHub repository
    - Configure:
      - **Build command:** (leave empty or `node scripts/generate-pages.js`)
-     - **Build output directory:** `static-site`
+     - **Build output directory:** `dist`
      - **Root directory:** `/` (or set to project root)
 
 3. **Deploy:**
@@ -224,7 +224,7 @@ node scripts/generate-pages.js
 
 ### Images Not Displaying
 - Verify image paths are correct
-- Check if images were copied to `static-site/assets/images/`
+- Check if images were copied to `dist/assets/images/`
 - Update image URLs in `products.json` if needed
 - Consider using CDN or absolute URLs
 
@@ -232,7 +232,7 @@ node scripts/generate-pages.js
 
 ### Updating Products
 
-1. Update `static-site/data/products.json`
+1. Update `dist/data/products.json`
 2. Run `node scripts/generate-pages.js`
 3. Commit and push to trigger deployment
 

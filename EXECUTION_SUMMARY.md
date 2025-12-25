@@ -8,7 +8,7 @@ All components of the static e-commerce migration plan have been successfully im
 
 ### Phase 1: Data Extraction ✅
 - ✅ Exported 47 products from WooCommerce
-- ✅ Created `static-site/data/products.json` (70.64 KB)
+- ✅ Created `dist/data/products.json` (70.64 KB)
 - ✅ Generated export summary with product breakdown
 - ✅ Fixed 116 image URLs to use relative paths
 
@@ -80,7 +80,7 @@ All components of the static e-commerce migration plan have been successfully im
 ## File Structure Created
 
 ```
-static-site/
+dist/
 ├── index.html
 ├── shop.html
 ├── cart.html

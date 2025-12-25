@@ -2,7 +2,7 @@
 # Setup script for static site migration
 # Run this after exporting products
 
-echo "Setting up static e-commerce site..."
+echo "Setting up static e-commerce site (dist directory)..."
 
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then
@@ -51,8 +51,8 @@ fi
 
 echo ""
 echo "Setup complete! Next steps:"
-echo "1. Review static-site/data/products.json"
-echo "2. Update static-site/wrangler.toml with your Cloudflare settings"
+echo "1. Review dist/data/products.json"
+echo "2. Update dist/wrangler.toml with your Cloudflare settings"
 echo "3. Set up Cloudflare D1 database (see README.md)"
 echo "4. Configure Stripe and set environment variables"
 echo "5. Deploy to Cloudflare Pages"
