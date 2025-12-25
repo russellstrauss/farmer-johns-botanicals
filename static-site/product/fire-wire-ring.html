@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Simple silver wire forms a band around this beautiful Mexican fire opal.
+
+Size 10.5
+
+Handmade by Dustin">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600" rel="stylesheet">
+    <title>Fire & Wire Ring - Farmer John's Botanicals</title>
+</head>
+<body>
+    <div id="page" class="hfeed site">
+        <a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+        <header id="masthead" class="site-header" role="banner">
+            <nav id="site-navigation" class="main-navigation" role="navigation">
+                <ul class="menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/shop.html">Shop</a></li>
+                    <li><a href="/about.html">About</a></li>
+                </ul>
+                <button class="menu-toggle hamburger hamburger--squeeze" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </nav>
+            <div class="site-branding">
+                <a href="/">
+                    <img id="site-logo" src="/assets/images/logo.png" alt="Farmer John's Botanicals Logo" />
+                </a>
+            </div>
+            <div class="fjb-checkout">
+                <a href="/cart.html" class="cart-link">
+                    <span>checkout <span class="cart-count"></span></span>
+                    <div class="bling-shark-container">
+                        <div class="bling-shark"></div>
+                        <div class="bling-shark-hover"></div>
+                    </div>
+                </a>
+            </div>
+        </header>
+        <div class="site-content">
+            <div id="primary" class="content-area">
+                <main id="main" class="site-main" role="main">
+                    <div class="product-detail">
+                        <div class="product-images">
+                            
+                                <div class="product-gallery">
+                                    
+                                        <img src="http://local.farmerjohnsbotanicals.com:8080/wp-content/uploads/2018/11/BEE26636-4CD8-4C0F-94E9-FCA9E655F853-scaled.jpeg" alt="Fire & Wire Ring 1" class="main-image" />
+                                    
+                                        <img src="http://local.farmerjohnsbotanicals.com:8080/wp-content/uploads/2018/07/DSC_5181-scaled.jpg" alt="Fire & Wire Ring 2" class="gallery-image" />
+                                    
+                                </div>
+                            
+                        </div>
+                        <div class="product-info">
+                            <h1>Fire & Wire Ring</h1>
+                            <div class="product-price">
+                                <span class="price">$70.00</span>
+                            </div>
+                            <div class="product-short-description">Simple silver wire forms a band around this beautiful Mexican fire opal.
+
+Size 10.5
+
+Handmade by Dustin</div>
+                            
+                            <div class="product-sku">SKU: PROD-661</div>
+                            
+                                <div class="product-stock in-stock">In Stock</div>
+                            
+                            
+                            <div class="product-actions">
+                                <input type="number" id="quantity" min="1" value="1" />
+                                <button class="add-to-cart-button" data-product-id="661">Add to Cart</button>
+                            </div>
+                            
+                                <div class="product-categories">
+                                    Categories: <a href="/shop.html?category=rings">Rings</a>
+                                </div>
+                            
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <footer id="colophon" class="site-footer" role="contentinfo">
+            <h2 class="screen-reader-text">Footer Content</h2>
+            <div class="widget-area" role="complementary">
+                <!-- Footer widgets can be added here -->
+            </div>
+        </footer>
+    </div>
+    <script src="/assets/js/cart.js"></script>
+    <script src="/assets/js/products.js"></script>
+    <script src="/assets/js/stripe.js"></script>
+    <script>
+        // Product data embedded in page
+        const productData = {"id":661,"name":"Fire & Wire Ring","slug":"fire-wire-ring","sku":"PROD-661","description":"","short_description":"Simple silver wire forms a band around this beautiful Mexican fire opal.\r\n\r\nSize 10.5\r\n\r\nHandmade by Dustin","price":70,"regular_price":70,"sale_price":null,"currency":"USD","images":["http://local.farmerjohnsbotanicals.com:8080/wp-content/uploads/2018/11/BEE26636-4CD8-4C0F-94E9-FCA9E655F853-scaled.jpeg","http://local.farmerjohnsbotanicals.com:8080/wp-content/uploads/2018/07/DSC_5181-scaled.jpg"],"categories":[{"id":16,"name":"Rings","slug":"rings"}],"tags":[{"id":17,"name":"Dustin","slug":"dustin"}],"attributes":[],"stock_status":"instock","stock_quantity":1,"manage_stock":true,"in_stock":true,"weight":null,"dimensions":{"length":null,"width":null,"height":null},"featured":false,"type":"simple","date_created":"2018-11-15 21:22:51","date_modified":"2025-12-24 20:35:03"};
+        
+        // Add to cart functionality
+        document.querySelector('.add-to-cart-button').addEventListener('click', function() {
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+            const variationSelect = document.getElementById('variation-select');
+            let variation = null;
+            
+            if (variationSelect) {
+                const selectedIndex = parseInt(variationSelect.value);
+                variation = productData.variations[selectedIndex];
+            }
+            
+            cart.addItem(productData, quantity, variation);
+            alert('Product added to cart!');
+        });
+        
+        // Update price if variation selected
+        const variationSelect = document.getElementById('variation-select');
+        if (variationSelect) {
+            variationSelect.addEventListener('change', function() {
+                const selectedIndex = parseInt(this.value);
+                const variation = productData.variations[selectedIndex];
+                const priceElement = document.querySelector('.product-price');
+                if (priceElement && variation) {
+                    priceElement.innerHTML = '<span class="price">' + formatPrice(variation.price) + '</span>';
+                }
+            });
+        }
+        
+        function formatPrice(price) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(price);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Shop - Farmer John's Botanicals">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600" rel="stylesheet">
+    <title>Shop - Farmer John's Botanicals</title>
+</head>
+<body>
+    <div id="page" class="hfeed site">
+        <a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+        <header id="masthead" class="site-header" role="banner">
+            <nav id="site-navigation" class="main-navigation" role="navigation">
+                <ul class="menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/shop.html">Shop</a></li>
+                    <li><a href="/about.html">About</a></li>
+                </ul>
+                <button class="menu-toggle hamburger hamburger--squeeze" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </nav>
+            <div class="site-branding">
+                <a href="/">
+                    <img id="site-logo" src="/assets/images/logo.png" alt="Farmer John's Botanicals Logo" />
+                </a>
+            </div>
+            <div class="fjb-checkout">
+                <a href="/cart.html" class="cart-link">
+                    <span>checkout <span class="cart-count"></span></span>
+                    <div class="bling-shark-container">
+                        <div class="bling-shark"></div>
+                        <div class="bling-shark-hover"></div>
+                    </div>
+                </a>
+            </div>
+        </header>
+        <div class="site-content">
+            <div id="primary" class="content-area">
+                <main id="main" class="site-main" role="main">
+                    <div class="above-shop-section">
+                        <ul class="product-categories" id="product-categories">
+                            <!-- Categories will be loaded dynamically -->
+                        </ul>
+                    </div>
+                    <div class="products-container">
+                        <ul class="products" id="products-list">
+                            <!-- Products will be loaded dynamically -->
+                        </ul>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <footer id="colophon" class="site-footer" role="contentinfo">
+            <h2 class="screen-reader-text">Footer Content</h2>
+            <div class="widget-area" role="complementary">
+                <!-- Footer widgets can be added here -->
+            </div>
+        </footer>
+    </div>
+    <script src="/assets/js/cart.js"></script>
+    <script src="/assets/js/products.js"></script>
+    <script src="/assets/js/stripe.js"></script>
+    <script>
+        // Load and display products
+        (async function() {
+            await productManager.loadProducts();
+            
+            // Get filter from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const tagFilter = urlParams.get('tag');
+            const categoryFilter = urlParams.get('category');
+            
+            let productsToShow = productManager.products;
+            
+            // Apply filters
+            if (tagFilter) {
+                productsToShow = productManager.getProductsByTag(tagFilter);
+            } else if (categoryFilter) {
+                productsToShow = productManager.getProductsByCategory(categoryFilter);
+            }
+            
+            // Display products
+            const productsList = document.getElementById('products-list');
+            if (productsList) {
+                productsList.innerHTML = productsToShow.map(product => {
+                    const image = product.images && product.images.length > 0 ? product.images[0] : '/assets/images/placeholder.jpg';
+                    const price = product.sale_price || product.price;
+                    const saleBadge = product.sale_price ? '<span class="sale-badge">Sale</span>' : '';
+                    
+                    return `
+                        <li class="product">
+                            <a href="/product/${product.slug}.html">
+                                <img src="${image}" alt="${product.name}" />
+                                ${saleBadge}
+                                <h3>${product.name}</h3>
+                                <span class="price">
+                                    ${product.sale_price ? `<span class="sale-price">${productManager.formatPrice(product.sale_price)}</span> <span class="regular-price">${productManager.formatPrice(product.price)}</span>` : productManager.formatPrice(product.price)}
+                                </span>
+                            </a>
+                            <button class="add-to-cart-btn" data-product-id="${product.id}">Add to Cart</button>
+                        </li>
+                    `;
+                }).join('');
+                
+                // Bind add to cart buttons
+                document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const productId = parseInt(this.getAttribute('data-product-id'));
+                        const product = productManager.getProductById(productId);
+                        if (product) {
+                            cart.addItem(product, 1);
+                            alert('Product added to cart!');
+                        }
+                    });
+                });
+            }
+            
+            // Display categories
+            const categoriesList = document.getElementById('product-categories');
+            if (categoriesList) {
+                const categories = productManager.getAllCategories();
+                categoriesList.innerHTML = categories.map(cat => 
+                    `<li><a href="/shop.html?category=${cat.slug}">${cat.name}</a></li>`
+                ).join('');
+            }
+        })();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,27 @@
+name = "farmer-johns-botanicals"
+compatibility_date = "2024-01-01"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "fjb-orders"
+database_id = "your-database-id-here"  # Replace with actual D1 database ID after creation
+
+# Environment variables (set via Cloudflare Dashboard or wrangler secret put)
+# STRIPE_SECRET_KEY - Stripe secret key
+# STRIPE_WEBHOOK_SECRET - Stripe webhook signing secret
+# MAILGUN_API_KEY - Mailgun API key (optional, for emails)
+# MAILGUN_DOMAIN - Mailgun domain (optional, for emails)
+
+# Routes for Workers
+[[routes]]
+pattern = "/api/create-checkout"
+zone_name = "your-domain.com"  # Replace with your domain
+
+[[routes]]
+pattern = "/api/webhook"
+zone_name = "your-domain.com"  # Replace with your domain
+
+# Pages configuration
+pages_build_output_dir = "."
+

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Shopping Cart - Farmer John's Botanicals">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600" rel="stylesheet">
+    <title>Shopping Cart - Farmer John's Botanicals</title>
+</head>
+<body>
+    <div id="page" class="hfeed site">
+        <a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+        <header id="masthead" class="site-header" role="banner">
+            <nav id="site-navigation" class="main-navigation" role="navigation">
+                <ul class="menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/shop.html">Shop</a></li>
+                    <li><a href="/about.html">About</a></li>
+                </ul>
+                <button class="menu-toggle hamburger hamburger--squeeze" type="button">
+                    <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                    </span>
+                </button>
+            </nav>
+            <div class="site-branding">
+                <a href="/">
+                    <img id="site-logo" src="/assets/images/logo.png" alt="Farmer John's Botanicals Logo" />
+                </a>
+            </div>
+            <div class="fjb-checkout">
+                <a href="/cart.html" class="cart-link">
+                    <span>checkout <span class="cart-count"></span></span>
+                    <div class="bling-shark-container">
+                        <div class="bling-shark"></div>
+                        <div class="bling-shark-hover"></div>
+                    </div>
+                </a>
+            </div>
+        </header>
+        <div class="site-content">
+            <div id="primary" class="content-area">
+                <main id="main" class="site-main" role="main">
+                    <h1>Shopping Cart</h1>
+                    <div id="cart-container">
+                        <div id="cart-empty" style="display: none;">
+                            <p>Your cart is empty.</p>
+                            <a href="/shop.html" class="button">Continue Shopping</a>
+                        </div>
+                        <div id="cart-items" style="display: none;">
+                            <table class="cart-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Subtotal</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cart-items-body">
+                                    <!-- Cart items will be loaded dynamically -->
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3"><strong>Total</strong></td>
+                                        <td><strong id="cart-total">$0.00</strong></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <div class="cart-actions">
+                                <a href="/shop.html" class="button">Continue Shopping</a>
+                                <button class="button checkout-button" id="checkout-btn">Proceed to Checkout</button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <footer id="colophon" class="site-footer" role="contentinfo">
+            <h2 class="screen-reader-text">Footer Content</h2>
+            <div class="widget-area" role="complementary">
+                <!-- Footer widgets can be added here -->
+            </div>
+        </footer>
+    </div>
+    <script src="/assets/js/cart.js"></script>
+    <script src="/assets/js/products.js"></script>
+    <script src="/assets/js/stripe.js"></script>
+    <script>
+        // Display cart items
+        function renderCart() {
+            const cartItems = cart.getItems();
+            const cartItemsBody = document.getElementById('cart-items-body');
+            const cartEmpty = document.getElementById('cart-empty');
+            const cartItemsDiv = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            
+            if (cart.isEmpty()) {
+                cartEmpty.style.display = 'block';
+                cartItemsDiv.style.display = 'none';
+            } else {
+                cartEmpty.style.display = 'none';
+                cartItemsDiv.style.display = 'block';
+                
+                cartItemsBody.innerHTML = cartItems.map((item, index) => {
+                    const subtotal = item.price * item.quantity;
+                    return `
+                        <tr>
+                            <td>
+                                <img src="${item.image || '/assets/images/placeholder.jpg'}" alt="${item.name}" class="cart-item-image" />
+                                <strong>${item.name}</strong>
+                            </td>
+                            <td>${cart.formatPrice(item.price)}</td>
+                            <td>
+                                <input type="number" min="1" value="${item.quantity}" 
+                                       data-index="${index}" class="quantity-input" />
+                            </td>
+                            <td>${cart.formatPrice(subtotal)}</td>
+                            <td>
+                                <button class="remove-item-btn" data-index="${index}">Remove</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                cartTotal.textContent = cart.formatPrice(cart.getTotal());
+                
+                // Bind quantity inputs
+                document.querySelectorAll('.quantity-input').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        const quantity = parseInt(this.value);
+                        cart.updateQuantity(index, quantity);
+                        renderCart();
+                    });
+                });
+                
+                // Bind remove buttons
+                document.querySelectorAll('.remove-item-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        cart.removeItem(index);
+                        renderCart();
+                    });
+                });
+            }
+        }
+        
+        // Initial render
+        renderCart();
+        
+        // Listen for cart updates
+        window.addEventListener('cartUpdated', renderCart);
+        
+        // Handle checkout button
+        document.getElementById('checkout-btn').addEventListener('click', async function() {
+            const cartItems = cart.getItems();
+            if (cartItems.length === 0) {
+                alert('Your cart is empty');
+                return;
+            }
+            
+            try {
+                await stripeCheckout.handleCheckout(cartItems);
+            } catch (error) {
+                console.error('Checkout error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,22 @@
+{
+  "name": "farmer-johns-botanicals-static",
+  "version": "1.0.0",
+  "description": "Static e-commerce site for Farmer John's Botanicals",
+  "scripts": {
+    "generate-pages": "node ../scripts/generate-pages.js",
+    "deploy:workers": "wrangler deploy",
+    "deploy:db": "wrangler d1 execute fjb-orders --file=./database-schema.sql"
+  },
+  "keywords": [
+    "ecommerce",
+    "static",
+    "cloudflare",
+    "stripe"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
+
