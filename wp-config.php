@@ -73,6 +73,12 @@ $table_prefix  = 'wp_';
  */
 define('WP_DEBUG', false);
 
+/**
+ * Force direct file system access (no FTP required)
+ * This allows WordPress to install plugins directly without FTP credentials
+ */
+define('FS_METHOD', 'direct');
+
 /* That's all, stop editing! Happy blogging. */
 
 /** Absolute path to the WordPress directory. */
