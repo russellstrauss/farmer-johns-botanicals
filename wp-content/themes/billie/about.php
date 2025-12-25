@@ -39,7 +39,7 @@
 							
 				<?php
 				wp_link_pages( array(
-					'before' => '<div class="page-links">' . __( 'Pages:', 'billie' ),
+					'before' => '<div class="page-links">' . __( 'Pages:', 'botanicals' ),
 					'after'  => '</div>',
 				) );
 				?>

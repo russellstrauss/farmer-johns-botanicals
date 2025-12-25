@@ -16,7 +16,7 @@ if ( have_posts() && is_post_type_archive( 'jetpack-portfolio' ) || is_tax( 'jet
 		<main id="main" class="site-main" role="main">
 		
 			<header class="page-header">
-				<h1 class="page-title"><?php _e('Portfolio','billie'); ?></h1>
+				<h1 class="page-title"><?php _e('Portfolio','botanicals'); ?></h1>
 			</header><!-- .page-header -->
 
 			<section class="featured-wrap">
@@ -38,7 +38,7 @@ if ( have_posts() && is_post_type_archive( 'jetpack-portfolio' ) || is_tax( 'jet
 
 								<span class="featured-text">';
 
-								echo the_terms($post->ID, 'jetpack-portfolio-type', '' . __('Project Type: ','billie') ,', ', '');
+								echo the_terms($post->ID, 'jetpack-portfolio-type', '' . __('Project Type: ','botanicals') ,', ', '');
 
 								echo '	<span class="tag-list">';
 

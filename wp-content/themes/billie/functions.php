@@ -1,8 +1,16 @@
 <?php
 
-// Disable plugin notifications
+// Disable plugin update notifications
 remove_action('load-update-core.php','wp_update_plugins');
 add_filter('pre_site_transient_update_plugins','__return_null');
+
+// Disable theme update notifications
+remove_action('load-update-core.php','wp_update_themes');
+add_filter('pre_site_transient_update_themes','__return_null');
+
+// Disable automatic theme updates
+add_filter('auto_update_theme', '__return_false');
+add_filter('themes_auto_update_enabled', '__return_false');
 
 // Add Above shop widget to woocommerce template, third parameter is "priority"
 add_action( 'woocommerce_before_shop_loop', 'add_product_categories');
@@ -33,9 +41,9 @@ function custom_add_to_cart_message() {
 }
 
 /**
- * billie functions and definitions ================================== All Billie theme related methods below, default with the theme.
+ * Botanicals functions and definitions ================================== All Botanicals theme related methods below, default with the theme.
  *
- * @package billie
+ * @package botanicals
  */
 
 /**
@@ -57,10 +65,10 @@ function billie_setup() {
 	/*
 	 * Make theme available for translation.
 	 * Translations can be filed in the /languages/ directory.
-	 * If you're building a theme based on billie, use a find and replace
-	 * to change 'billie' to the name of your theme in all the template files
+	 * If you're building a theme based on Botanicals, use a find and replace
+	 * to change 'botanicals' to the name of your theme in all the template files
 	 */
-	load_theme_textdomain( 'billie', get_template_directory() . '/languages' );
+	load_theme_textdomain( 'botanicals', get_template_directory() . '/languages' );
 
 	// Add default posts and comments RSS feed links to head.
 	add_theme_support( 'automatic-feed-links' );
@@ -82,8 +90,8 @@ function billie_setup() {
 	add_theme_support( 'title-tag' );
 	
 	register_nav_menus( array(
-		'header' => __( 'Primary Menu', 'billie' ),
-		'social' => __( 'Social Menu', 'billie' ),
+		'header' => __( 'Primary Menu', 'botanicals' ),
+		'social' => __( 'Social Menu', 'botanicals' ),
 	));
 
 	/*
@@ -130,7 +138,7 @@ if ( get_theme_mod( 'billie_hide_title') =="" ){
 function billie_widgets_init() {
 
 	register_sidebar( array(
-		'name'          => __( 'Footer widget area', 'billie' ),
+		'name'          => __( 'Footer widget area', 'botanicals' ),
 		'id'            => 'sidebar-2',
 		'description'   => '',
 		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
@@ -140,9 +148,9 @@ function billie_widgets_init() {
 	));
 	
 	register_sidebar( array(
-		'name'          => __( 'Above Shop', 'billie' ),
+		'name'          => __( 'Above Shop', 'botanicals' ),
 		'id'            => 'above-shop-section',
-		'description'   => __( 'This section will show above the products in the shop.', 'billie'),
+		'description'   => __( 'This section will show above the products in the shop.', 'botanicals'),
 		'before_widget' => '',
 		'after_widget'  => '',
 		'before_title'  => '',
@@ -150,9 +158,9 @@ function billie_widgets_init() {
 	));
 	
 	register_sidebar( array(
-		'name'          => __( 'Return Policies', 'billie' ),
+		'name'          => __( 'Return Policies', 'botanicals' ),
 		'id'            => 'return-policies-section',
-		'description'   => __( 'This section will show below the cart at check out.', 'billie'),
+		'description'   => __( 'This section will show below the cart at check out.', 'botanicals'),
 		'before_widget' => '',
 		'after_widget'  => '',
 		'before_title'  => '',
@@ -170,12 +178,12 @@ if ( ! function_exists( 'billie_fonts_url' )) :
 		$subsets   = 'latin,latin-ext';
 
 		/* translators: If there are characters in your language that are not supported by Montserrat, translate this to 'off'. Do not translate into your own language. */
-		if ( 'off' !== _x( 'on', 'Montserrat font: on or off', 'billie' )) {
+		if ( 'off' !== _x( 'on', 'Montserrat font: on or off', 'botanicals' )) {
 			$fonts[] = 'Montserrat';
 		}
 
 		/* translators: To add an additional character subset specific to your language, translate this to 'greek', 'cyrillic', 'devanagari' or 'vietnamese'. Do not translate into your own language. */
-		$subset = _x( 'no-subset', 'Add new subset (greek, cyrillic, devanagari, vietnamese)', 'billie' );
+		$subset = _x( 'no-subset', 'Add new subset (greek, cyrillic, devanagari, vietnamese)', 'botanicals' );
 
 		if ( 'cyrillic' == $subset ) {
 			$subsets .= ',cyrillic,cyrillic-ext';
@@ -263,7 +271,7 @@ require get_template_directory() . '/documentation.php';
 add_filter( 'the_title', 'billie_post_title' );
 function billie_post_title( $title ) {
 	if ( $title == '' ) {
-		return __( '(Untitled)', 'billie' );
+		return __( '(Untitled)', 'botanicals' );
 	}else{
 		return $title;
 	}

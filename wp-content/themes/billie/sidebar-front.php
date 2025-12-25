@@ -11,6 +11,6 @@ if ( ! is_active_sidebar( 'sidebar-3' ) ) {
 
 ?>		
 <div id="secondary" class="widget-area" role="complementary">
-	<h2 class="screen-reader-text"><?php _e( 'Sidebar', 'billie' ); ?></h2>
+	<h2 class="screen-reader-text"><?php _e( 'Sidebar', 'botanicals' ); ?></h2>
 	<?php dynamic_sidebar( 'sidebar-3' ); ?>
 </div><!-- #secondary -->

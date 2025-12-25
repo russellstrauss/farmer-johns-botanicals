@@ -49,7 +49,7 @@ if ( ! function_exists( '_wp_render_title_tag' ) ) :
 
 		// Add a page number if necessary:
 		if ( ( $paged >= 2 || $page >= 2 ) && ! is_404() ) {
-			$title .= " $sep " . sprintf( __( 'Page %s', 'billie' ), max( $paged, $page ) );
+			$title .= " $sep " . sprintf( __( 'Page %s', 'botanicals' ), max( $paged, $page ) );
 		}
 
 		return $title;

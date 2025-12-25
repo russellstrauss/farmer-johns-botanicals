@@ -46,20 +46,20 @@ function billie_entry_footer() {
 		// Hide category and tag text for pages.
 		if ( 'post' == get_post_type() ) {
 			/* translators: used between list items, there is a space after the comma */
-			$categories_list = get_the_category_list( __( ', ', 'billie' ) );
+			$categories_list = get_the_category_list( __( ', ', 'botanicals' ) );
 			if ( $categories_list && billie_categorized_blog() ) {
-				printf( '<span class="cat-links">' . __( 'Categories: %1$s', 'billie' ) . '</span>', $categories_list );
+				printf( '<span class="cat-links">' . __( 'Categories: %1$s', 'botanicals' ) . '</span>', $categories_list );
 			}	
 		}
 
 		if ( ! is_single() && ! post_password_required() && ( comments_open() || get_comments_number() ) ) {
 			echo '<span class="comments-link">';
-			comments_popup_link( __( 'Leave a comment', 'billie' ), __( '1 Comment', 'billie' ), __( '% Comments', 'billie' ) );
+			comments_popup_link( __( 'Leave a comment', 'botanicals' ), __( '1 Comment', 'botanicals' ), __( '% Comments', 'botanicals' ) );
 			echo '</span>';
 		}
 		
 		/* translators: % is the post title */
-		edit_post_link( sprintf( __( 'Edit %s', 'billie' ), get_the_title() ), '<span class="edit-link">', '</span>' );
+		edit_post_link( sprintf( __( 'Edit %s', 'botanicals' ), get_the_title() ), '<span class="edit-link">', '</span>' );
 
 		/* Display jetpack's share if it's active*/
 		if ( function_exists( 'sharing_display' ) ) {
@@ -92,12 +92,12 @@ function billie_portfolio_footer() {
 		global $post;
 	
 		//the_terms( $id, $taxonomy, $before, $sep, $after ); 
-		echo the_terms($post->ID, 'jetpack-portfolio-type', '<span class="jetpack-portfolio-type">' . __('Project Type: ','billie') ,', ', '</span>');
+		echo the_terms($post->ID, 'jetpack-portfolio-type', '<span class="jetpack-portfolio-type">' . __('Project Type: ','botanicals') ,', ', '</span>');
 
-		echo the_terms($post->ID, 'jetpack-portfolio-tag', '<span class="tags-links">' . __( 'Project Tags: ', 'billie' ),', ', '</span>');
+		echo the_terms($post->ID, 'jetpack-portfolio-tag', '<span class="tags-links">' . __( 'Project Tags: ', 'botanicals' ),', ', '</span>');
 		
 		/* translators: % is the post title */
-		edit_post_link( sprintf( __( 'Edit %s', 'billie' ), get_the_title() ), '<span class="edit-link">', '</span>' );
+		edit_post_link( sprintf( __( 'Edit %s', 'botanicals' ), get_the_title() ), '<span class="edit-link">', '</span>' );
 
 		/* Display jetpack's share if it's active*/
 		if ( function_exists( 'sharing_display' ) ) {
@@ -137,7 +137,7 @@ add_filter( 'get_the_excerpt', 'billie_custom_excerpt_more',100 );
 
 
 function billie_continue_reading( $id ) {
-    return '<a class="continue" href="'.get_permalink( $id ).'">'. sprintf( __( 'Continue Reading %s', 'billie' ), get_the_title( $id ) ) . '</a>';
+    return '<a class="continue" href="'.get_permalink( $id ).'">'. sprintf( __( 'Continue Reading %s', 'botanicals' ), get_the_title( $id ) ) . '</a>';
 }
 
 /**

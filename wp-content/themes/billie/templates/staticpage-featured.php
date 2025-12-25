@@ -30,7 +30,7 @@ get_header();
 				echo '</div>
 					<span class="featured-text">';
 
-						echo get_theme_mod('billie_featured_headline', __('Featured','billie'));
+						echo get_theme_mod('billie_featured_headline', __('Featured','botanicals'));
 
 				echo '<span class="tag-list">';
 

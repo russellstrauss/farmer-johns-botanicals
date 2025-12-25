@@ -22,10 +22,10 @@
 			}
 			
 			/* translators: %s: Name of current post */
-			the_content( sprintf( __( 'Continue reading %s', 'billie' ), get_the_title() ) );
+			the_content( sprintf( __( 'Continue reading %s', 'botanicals' ), get_the_title() ) );
 
 			wp_link_pages( array(
-				'before' => '<div class="page-links">' . __( 'Pages:', 'billie' ),
+				'before' => '<div class="page-links">' . __( 'Pages:', 'botanicals' ),
 				'after'  => '</div>',
 			) );
 		?>

@@ -21,13 +21,13 @@
 <body <?php body_class(); ?>>
 
 <div id="page" class="hfeed site">
-	<a class="skip-link screen-reader-text" href="#content"><?php _e( 'Skip to content', 'billie' ); ?></a>
+	<a class="skip-link screen-reader-text" href="#content"><?php _e( 'Skip to content', 'botanicals' ); ?></a>
 	<header id="masthead" class="site-header" role="banner">
 
 	<?php if ( has_nav_menu( 'header' )  ) {
 	?>
 		<nav id="site-navigation" class="main-navigation" role="navigation">
-			<!-- <button class="menu-toggle" aria-controls="menu" aria-expanded="false"><span class="screen-reader-text"><?php //_e( 'Main Menu', 'billie' ); ?></span></button> -->
+			<!-- <button class="menu-toggle" aria-controls="menu" aria-expanded="false"><span class="screen-reader-text"><?php //_e( 'Main Menu', 'botanicals' ); ?></span></button> -->
 			<?php wp_nav_menu( array( 'theme_location' => 'header', 'fallback_cb' => false, 'depth'=>2 ) );  ?>
 		
 			<button class="menu-toggle hamburger hamburger--squeeze" type="button">
@@ -70,7 +70,7 @@
 					}else{
 						if ( is_user_logged_in() ) {
 							echo '<div id="action">';
-							echo '<a href="' . esc_url( home_url( '/wp-admin/customize.php' ) ) . '">' . __("Click here to setup your Call to Action", 'billie') . '</a>';
+							echo '<a href="' . esc_url( home_url( '/wp-admin/customize.php' ) ) . '">' . __("Click here to setup your Call to Action", 'botanicals') . '</a>';
 							echo '</div>';
 						}
 					}

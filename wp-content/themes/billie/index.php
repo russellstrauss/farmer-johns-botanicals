@@ -28,7 +28,7 @@ get_header();
 				the_title( sprintf( '<h2><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); 
 				echo '</div>
 					<span class="featured-text">';
-						echo get_theme_mod('billie_featured_headline', __('Featured','billie'));
+						echo get_theme_mod('billie_featured_headline', __('Featured','botanicals'));
 				echo '<span class="tag-list">';
 							$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
 							$time_string = sprintf( $time_string,

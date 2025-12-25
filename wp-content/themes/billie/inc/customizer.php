@@ -12,31 +12,31 @@ function billie_customize_register( $wp_customize ) {
 		'priority'       => 70,
 		'capability'     => 'edit_theme_options',
 		'theme_supports' => '',
-		'title' => __( 'Call to Action', 'billie' ),
-		'description'    => __( 'The Call to Action is displayed below the site title in the header.', 'billie' ),
+		'title' => __( 'Call to Action', 'botanicals' ),
+		'description'    => __( 'The Call to Action is displayed below the site title in the header.', 'botanicals' ),
 	) );
 	
 	$wp_customize->add_panel( 'billie_sections_panel', array(
 		'priority'       => 70,
 		'capability'     => 'edit_theme_options',
 		'theme_supports' => '',
-		'title' => __( 'Front page sections', 'billie' ),
-		'description'    => __( 'Display pages as different sections of the front page.', 'billie' ),
+		'title' => __( 'Front page sections', 'botanicals' ),
+		'description'    => __( 'Display pages as different sections of the front page.', 'botanicals' ),
 	) );
 
 	$wp_customize->add_section('billie_section_advanced',      array(
-            'title' => __( 'Advanced settings', 'billie' ),
+            'title' => __( 'Advanced settings', 'botanicals' ),
             'priority' => 100
         )
     );
 		
 	$wp_customize->add_section('billie_section_reset',      array(
-            'title' => __( 'Reset', 'billie' ),
+            'title' => __( 'Reset', 'botanicals' ),
             'priority' => 220
         )
     );
 
-	$wp_customize->get_section('header_image')->title = __( 'Header background', 'billie');
+	$wp_customize->get_section('header_image')->title = __( 'Header background', 'botanicals');
 
 	$wp_customize->add_setting( 'billie_header_bgcolor', array(
 		'default'        => '#9cc9c7',
@@ -44,7 +44,7 @@ function billie_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'billie_header_bgcolor', array(
-	'label'        => __( 'Header background color:', 'billie' ),
+	'label'        => __( 'Header background color:', 'botanicals' ),
 	'section' => 'header_image',
 	'settings'  => 'billie_header_bgcolor',
 	'priority' => 1,
@@ -59,17 +59,17 @@ function billie_customize_register( $wp_customize ) {
 	$wp_customize->add_control( 'billie_header_bgpos',		array(
 	'type' => 'select',
 
-	'label'        => __( 'Header background image position:', 'billie' ),
+	'label'        => __( 'Header background image position:', 'botanicals' ),
 	'choices' => array(
-			'left top'		=>  __('left top','billie'),
-			'left center'	=>	__('left center','billie'),
-			'left bottom'	=>	__('left bottom','billie'),
-			'right top'		=>	__('right top','billie'),
-			'right center'	=>	__('right center','billie'),
-			'right bottom'	=>	__('right bottom','billie'),
-			'center top'	=>	__('center top','billie'),
-			'center center'	=>	__('center center','billie'),
-			'center bottom'	=>	__('center bottom','billie'),
+			'left top'		=>  __('left top','botanicals'),
+			'left center'	=>	__('left center','botanicals'),
+			'left bottom'	=>	__('left bottom','botanicals'),
+			'right top'		=>	__('right top','botanicals'),
+			'right center'	=>	__('right center','botanicals'),
+			'right bottom'	=>	__('right bottom','botanicals'),
+			'center top'	=>	__('center top','botanicals'),
+			'center center'	=>	__('center center','botanicals'),
+			'center bottom'	=>	__('center bottom','botanicals'),
         ),
 	'section' => 'header_image',
 	) );
@@ -80,11 +80,11 @@ function billie_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control( 'billie_header_bgsize',		array(
 	'type' => 'select',
-	'label'        => __( 'Header background image size:', 'billie' ),
+	'label'        => __( 'Header background image size:', 'botanicals' ),
 	'choices' => array(
-			'cover'		=>  __('cover','billie'),
-			'contain'	=>	__('contain','billie'),
-			'auto'		=>	__('auto','billie'),
+			'cover'		=>  __('cover','botanicals'),
+			'contain'	=>	__('contain','botanicals'),
+			'auto'		=>	__('auto','botanicals'),
         ),
 	'section' => 'header_image',
 	) );
@@ -96,12 +96,12 @@ function billie_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control( 'billie_header_bgrepeat',		array(
 	'type' => 'select',
-	'label'        => __( 'Header background image repeat:', 'billie' ),
+	'label'        => __( 'Header background image repeat:', 'botanicals' ),
 	'choices' => array(
-			'repeat'		=>  __('repeat','billie'),
-			'repeat-x'	=>	__('repeated only horizontally','billie'),
-			'repeat-y'		=>	__('repeated only vertically','billie'),
-			'no-repeat'		=>  __(' no repeat','billie'),
+			'repeat'		=>  __('repeat','botanicals'),
+			'repeat-x'	=>	__('repeated only horizontally','botanicals'),
+			'repeat-y'		=>	__('repeated only vertically','botanicals'),
+			'no-repeat'		=>  __(' no repeat','botanicals'),
         ),
 	'section' => 'header_image',
 	) );
@@ -113,7 +113,7 @@ function billie_customize_register( $wp_customize ) {
 	);
 	$wp_customize->add_control('billie_hide_meta',		array(
 			'type' => 'checkbox',
-			'label' =>  __( 'Check this box to hide the meta information.', 'billie' ),
+			'label' =>  __( 'Check this box to hide the meta information.', 'botanicals' ),
 			'section' => 'billie_section_advanced',
 		)
 	);
@@ -125,7 +125,7 @@ function billie_customize_register( $wp_customize ) {
 	);
 	$wp_customize->add_control('billie_hide_author',		array(
 			'type' => 'checkbox',
-			'label' =>  __( 'Check this box to hide the author, post date and tag information.', 'billie' ),
+			'label' =>  __( 'Check this box to hide the author, post date and tag information.', 'botanicals' ),
 			'section' => 'billie_section_advanced',
 		)
 	);
@@ -133,7 +133,7 @@ function billie_customize_register( $wp_customize ) {
 	/* Call to action text **/
 
 	$wp_customize->add_section('billie_section_one',      array(
-            'title' => __( 'Call to Action', 'billie' ),
+            'title' => __( 'Call to Action', 'botanicals' ),
             'priority' => 100,
             'panel'  => 'billie_action_panel',
         )
@@ -146,7 +146,7 @@ function billie_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control('billie_action_text',		array(
 			'type' => 'text',
-			'label' =>  __( 'Add this text to the Call to Action button on the front page:', 'billie' ),
+			'label' =>  __( 'Add this text to the Call to Action button on the front page:', 'botanicals' ),
 			'section' => 'billie_section_one',
 		)
 	);	
@@ -158,7 +158,7 @@ function billie_customize_register( $wp_customize ) {
 	);
 	$wp_customize->add_control('billie_action_link',		array(
 			'type' => 'text',
-			'label' =>  __( 'Add a link to the Call to action button:', 'billie' ),
+			'label' =>  __( 'Add a link to the Call to action button:', 'botanicals' ),
 			'section' => 'billie_section_one',
 		)
 	);
@@ -169,7 +169,7 @@ function billie_customize_register( $wp_customize ) {
 	);
 	$wp_customize->add_control('billie_hide_action',		array(
 			'type' => 'checkbox',
-			'label' =>  __( 'Check this box to hide the Call to Action button.', 'billie' ),
+			'label' =>  __( 'Check this box to hide the Call to Action button.', 'botanicals' ),
 			'section' => 'billie_section_one',
 			'priority' => 1,
 		)
@@ -181,7 +181,7 @@ function billie_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'billie_action_color', array(
-		'label'        => __( 'Call to Action text color:', 'billie' ),
+		'label'        => __( 'Call to Action text color:', 'botanicals' ),
 		'section' => 'billie_section_one',
 		'settings'  => 'billie_action_color',
 	) ) );
@@ -193,7 +193,7 @@ function billie_customize_register( $wp_customize ) {
 	) );
 	 
 	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'billie_action_bgcolor', array(
-	    'label'   => __('Call to Action background color:','billie'),
+	    'label'   => __('Call to Action background color:','botanicals'),
 	    'section' => 'billie_section_one',
 	    'settings'   => 'billie_action_bgcolor',
 	) ) );
@@ -207,7 +207,7 @@ function billie_customize_register( $wp_customize ) {
 
 	$wp_customize->add_control('billie_hide_search',		array(
 			'type' => 'checkbox',
-			'label' =>  __( 'Check this box to hide the search form in the header.', 'billie' ),
+			'label' =>  __( 'Check this box to hide the search form in the header.', 'botanicals' ),
 			'section' => 'billie_section_advanced',
 		)
 	);
@@ -218,7 +218,7 @@ function billie_customize_register( $wp_customize ) {
 	);
 	$wp_customize->add_control('billie_hide_title',		array(
 			'type' => 'checkbox',
-			'label' =>  __( 'Check this box to hide the clickable site title in the header menu.', 'billie' ),
+			'label' =>  __( 'Check this box to hide the clickable site title in the header menu.', 'botanicals' ),
 			'section' => 'billie_section_advanced',
 		)
 	);
@@ -227,9 +227,9 @@ function billie_customize_register( $wp_customize ) {
 
 	/* Top Section */
 	$wp_customize->add_section( 'billie_top_section', array(
-			'title' => __( 'Top Section', 'billie' ),
+			'title' => __( 'Top Section', 'botanicals' ),
 			'panel'  => 'billie_sections_panel',
-			'description' => __('Choose upto 3 pages that will be displayed above your blog content.', 'billie'),
+			'description' => __('Choose upto 3 pages that will be displayed above your blog content.', 'botanicals'),
 	) );
 
 	for ($i = 1; $i < 4; $i++) {
@@ -241,16 +241,16 @@ function billie_customize_register( $wp_customize ) {
 			$wp_customize->add_control( 'billie_top_section' . $i,		array(
 				'default' => 0,
 			    'type' => 'dropdown-pages',
-		        'label' => __( 'Choose a page:','billie'),
+		        'label' => __( 'Choose a page:','botanicals'),
 				'section' => 'billie_top_section',
 			) );
 	}
 
 	/* Bottom Section */
 	$wp_customize->add_section( 'billie_bottom_section', array(
-			'title' => __( 'Bottom Section', 'billie' ),
+			'title' => __( 'Bottom Section', 'botanicals' ),
 			'panel'  => 'billie_sections_panel',
-			'description' => __('Choose upto 3 pages that will be displayed below your blog content, but above the footer.', 'billie'),
+			'description' => __('Choose upto 3 pages that will be displayed below your blog content, but above the footer.', 'botanicals'),
 	) );
 
 	for ($i = 1; $i < 4; $i++) {
@@ -262,7 +262,7 @@ function billie_customize_register( $wp_customize ) {
 			$wp_customize->add_control( 'billie_bottom_section' . $i,		array(
 				'default' => 0,
 			    'type' => 'dropdown-pages',
-		        'label' => __( 'Choose a page:','billie'),
+		        'label' => __( 'Choose a page:','botanicals'),
 				'section' => 'billie_bottom_section',
 			) );
 	}
@@ -270,12 +270,12 @@ function billie_customize_register( $wp_customize ) {
 	/* if jetpack is installed, add the featured heading to the customizer. */
 	$wp_customize->add_setting( 'billie_featured_headline',		array(
 				'sanitize_callback' => 'billie_sanitize_text',
-				'default'        => __( 'Featured', 'billie' ),
+				'default'        => __( 'Featured', 'botanicals' ),
 			)
 		);
 		$wp_customize->add_control('billie_featured_headline',		array(
 				'type' => 'text',
-				'label' =>  __( 'Label your featured content:', 'billie' ),
+				'label' =>  __( 'Label your featured content:', 'botanicals' ),
 				'section' => 'featured_content',
 			)
 		);
@@ -289,7 +289,7 @@ function billie_customize_register( $wp_customize ) {
 	);
 	$wp_customize->add_control('billie_reset',		array(
 			'type' => 'text',
-			'label' =>  __( 'Are you sure that you want to reset your settings? Type YES in the box, save and refresh the page.', 'billie' ),
+			'label' =>  __( 'Are you sure that you want to reset your settings? Type YES in the box, save and refresh the page.', 'botanicals' ),
 			'section' => 'billie_section_reset',
 		)
 	);
@@ -340,15 +340,15 @@ function billie_sanitize_reset( $input ) {
 //Sanitize bg position
 function billie_sanitize_bgpos( $input ) {
     $valid = array(
-       	'left top'		=>  __('left top','billie'),
-		'left center'	=>	__('left center','billie'),
-		'left bottom'	=>	__('left bottom','billie'),
-		'right top'		=>	__('right top','billie'),
-		'right center'	=>	__('right center','billie'),
-		'right bottom'	=>	__('right bottom','billie'),
-		'center top'	=>	__('center top','billie'),
-		'center center'	=>	__('center center','billie'),
-		'center bottom'	=>	__('center bottom','billie'),
+       	'left top'		=>  __('left top','botanicals'),
+		'left center'	=>	__('left center','botanicals'),
+		'left bottom'	=>	__('left bottom','botanicals'),
+		'right top'		=>	__('right top','botanicals'),
+		'right center'	=>	__('right center','botanicals'),
+		'right bottom'	=>	__('right bottom','botanicals'),
+		'center top'	=>	__('center top','botanicals'),
+		'center center'	=>	__('center center','botanicals'),
+		'center bottom'	=>	__('center bottom','botanicals'),
     );
  
     if ( array_key_exists( $input, $valid ) ) {
@@ -361,9 +361,9 @@ function billie_sanitize_bgpos( $input ) {
 //Sanitize bg size
 function billie_sanitize_bgsize( $input ) {
     $valid = array(
-		'cover'		=>  __('cover','billie'),
-		'contain'	=>	__('contain','billie'),
-		'auto'		=>	__('auto','billie'),
+		'cover'		=>  __('cover','botanicals'),
+		'contain'	=>	__('contain','botanicals'),
+		'auto'		=>	__('auto','botanicals'),
     );
  
     if ( array_key_exists( $input, $valid ) ) {
@@ -376,10 +376,10 @@ function billie_sanitize_bgsize( $input ) {
 //Sanitize bg repeat
 function billie_sanitize_bgrepeat( $input ) {
     $valid = array(
-		'repeat'		=>  __('repeat','billie'),
-		'repeat-x'		=>	__('repeated only horizontally','billie'),
-		'repeat-y'		=>	__('repeated only vertically','billie'),
-		'no-repeat'		=>  __(' no repeat','billie'),
+		'repeat'		=>  __('repeat','botanicals'),
+		'repeat-x'		=>	__('repeated only horizontally','botanicals'),
+		'repeat-y'		=>	__('repeated only vertically','botanicals'),
+		'no-repeat'		=>  __(' no repeat','botanicals'),
     );
  
     if ( array_key_exists( $input, $valid ) ) {

@@ -14,7 +14,7 @@ get_header();
 		<?php if ( have_posts() ) : ?>
 
 			<header class="page-header">
-				<h1 class="page-title"><?php _e('Portfolio','billie'); ?></h1>
+				<h1 class="page-title"><?php _e('Portfolio','botanicals'); ?></h1>
 			</header><!-- .page-header -->
 
 			<section class="featured-wrap">
@@ -37,7 +37,7 @@ get_header();
 
 							<span class="featured-text">';
 
-							echo the_terms($post->ID, 'jetpack-portfolio-type', '' . __('Project Type: ','billie') ,', ', '');
+							echo the_terms($post->ID, 'jetpack-portfolio-type', '' . __('Project Type: ','botanicals') ,', ', '');
 
 							echo '	<span class="tag-list">';
 

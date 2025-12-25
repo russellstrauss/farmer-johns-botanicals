@@ -28,7 +28,7 @@ function billie_custom_header_setup() {
 		'flower' => array(
 			'url'           => '%s/assets/img/Black-Outline-Logo.png',
 			'thumbnail_url' => '%s/assets/img/Black-Outline-Logo.png',
-			'description'   => __( 'Flower', 'billie' )
+			'description'   => __( 'Flower', 'botanicals' )
 		)
 	) );
 }

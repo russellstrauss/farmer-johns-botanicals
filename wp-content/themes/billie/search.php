@@ -10,7 +10,7 @@ get_header(); ?>
 		<main id="main" class="site-main" role="main">
 		<?php if ( have_posts() && strlen( trim(get_search_query()) ) != 0 ) :?>
 			<header class="page-header">
-				<h1 class="page-title"><?php printf( __( 'Search Results for: %s', 'billie' ), '<span>' . get_search_query() . '</span>' ); ?></h1>
+				<h1 class="page-title"><?php printf( __( 'Search Results for: %s', 'botanicals' ), '<span>' . get_search_query() . '</span>' ); ?></h1>
 			</header><!-- .page-header -->
 			<?php /* Start the Loop */ ?>
 			<?php while ( have_posts() ) : the_post(); ?>
@@ -27,7 +27,7 @@ get_header(); ?>
 			<?php
 			/* If the search is not visible in the header, and there is only one page of search results, display a search form on the search page. */
 			if ( $GLOBALS['wp_query']->max_num_pages < 2  && get_theme_mod('billie_hide_search') <>"" ){
-				echo '<span class="screen-reader-text">' . __('Would you like to search again?', 'billie'). '</span><br/>';
+				echo '<span class="screen-reader-text">' . __('Would you like to search again?', 'botanicals'). '</span><br/>';
 				get_search_form();
 			}
 			?>
