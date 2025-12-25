@@ -4,7 +4,7 @@
  *
  * Learn more: http://codex.wordpress.org/Template_Hierarchy
  *
- * @package billie
+ * @package botanicals
  */
 
 
@@ -17,7 +17,7 @@ get_header(); ?>
 
 
 	<?php if ( '' != $jetpack_options['featured-image'] ) : ?>
-			<?php echo wp_get_attachment_image( (int)$jetpack_options['featured-image'], 'billie-jetpack-logo' ); ?>
+			<?php echo wp_get_attachment_image( (int)$jetpack_options['featured-image'], 'botanicals-jetpack-logo' ); ?>
 	<?php endif; ?>
 
 

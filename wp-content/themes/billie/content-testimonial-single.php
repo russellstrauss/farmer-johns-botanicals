@@ -1,6 +1,6 @@
 <?php
 /**
- * @package billie
+ * @package botanicals
  */
 ?>
 
@@ -16,7 +16,7 @@
 		the_title( '<h2 class="entry-title">-', '</h2>' ); 	
 
 		if ( has_post_thumbnail()){
-			the_post_thumbnail('billie-jetpack-testimonial');
+			the_post_thumbnail('botanicals-jetpack-testimonial');
 		}
 	?>
 </article><!-- #post-## -->

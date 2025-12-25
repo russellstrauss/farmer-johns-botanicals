@@ -1,14 +1,14 @@
 /*
-Theme Name: Billie
-Theme URI: http://wptema.se/Billie
+Theme Name: Botanicals
+Theme URI: http://wptema.se/Botanicals
 Author: Carolina Nymark
 Author URI: http://wptema.se
-Description: Billie is a responsive, accessibility-ready multi-purpose theme. The theme has two optional menus (including a social menu) two different sidebars and a footer widget area that will hold any number of widgets. Features also include a Call To Action button and custom copyright text. We recommend that you install the Jetpack plugin to make full use of supported features like logos, featured content, contact forms, testimonials, social sharing and more.  To create a portfolio, install Jetpack and create your projects, all the templates are already shipped with the theme. If you have any questions, accessibility issues or feature requests for this theme, please visit http://wptema.se/Billie.
+Description: Botanicals is a responsive, accessibility-ready multi-purpose theme. The theme has two optional menus (including a social menu) two different sidebars and a footer widget area that will hold any number of widgets. Features also include a Call To Action button and custom copyright text. We recommend that you install the Jetpack plugin to make full use of supported features like logos, featured content, contact forms, testimonials, social sharing and more.  To create a portfolio, install Jetpack and create your projects, all the templates are already shipped with the theme. If you have any questions, accessibility issues or feature requests for this theme, please visit http://wptema.se/Botanicals.
 Version: 1.0.4
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Copyright: Carolina Nymark 2015-2016
-Text Domain: billie
+Text Domain: botanicals
 Tags: light, white, threaded-comments, custom-menu, sticky-post, editor-style, translation-ready, two-columns, featured-images, responsive-layout, accessibility-ready, custom-header
 
 Resetting and rebuilding styles have been helped along thanks to the fine work of
@@ -1127,7 +1127,7 @@ table#wp-calendar,
 /*--------------------------------------------------------------
 10.2 Posts and pages
 --------------------------------------------------------------*/
-.billie-border{	
+.botanicals-border{	
 	border:4px solid #fff;
 	border-radius:4px;
 	box-shadow: 0px 1px 6px rgba(0,0,0,0.2);
@@ -1592,7 +1592,7 @@ table#wp-calendar,
 }
 
 
-.post-type-archive-jetpack-testimonial .attachment-billie-jetpack-logo{
+.post-type-archive-jetpack-testimonial .attachment-botanicals-jetpack-logo{
 	clear:both;
 	margin:0 auto;
 	display:block;
@@ -1611,7 +1611,7 @@ table#wp-calendar,
 
 
 .testimonial-featured-image img,
-.attachment-billie-jetpack-testimonial{
+.attachment-botanicals-jetpack-testimonial{
 	width: 100px;
 	height: 100px;
 	border-radius: 50px;

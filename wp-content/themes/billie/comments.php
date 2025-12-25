@@ -5,7 +5,7 @@
  * The area of the page that contains both current comments
  * and the comment form.
  *
- * @package billie
+ * @package botanicals
  */
 
 /*
@@ -67,7 +67,7 @@ if ( post_password_required() ) {
  <?php 
  	$required_text = '' ;
     
-    $billie_comment_args = array( 'fields' => apply_filters( 'comment_form_default_fields', array(
+    $botanicals_comment_args = array( 'fields' => apply_filters( 'comment_form_default_fields', array(
 
 	'author' => '<p class="comment-form-author">' . '<label for="author">' . __( 'Name', 'botanicals' ) . 
                 ( $req ? ' <span class="required">(' . __( 'required', 'botanicals' )  . ')</span>' : '' ) . 
@@ -97,7 +97,7 @@ if ( post_password_required() ) {
 	'comment_notes_before'=> '<p class="comment-notes">' . __( 'Your email address will not be published.', 'botanicals' ) . ( $req ? $required_text : '' ) . '</p>',
 	); 
 
-	 comment_form($billie_comment_args); 
+	 comment_form($botanicals_comment_args); 
 	 ?>
 
 </div><!-- #comments -->

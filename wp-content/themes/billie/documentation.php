@@ -1,31 +1,31 @@
 <?php 
-function billie_docs_menu() {
-	add_theme_page( __('Billie Setup Help', 'botanicals'), __('Billie Setup Help', 'botanicals'), 'edit_theme_options', 'billie-theme', 'billie_docs');
+function botanicals_docs_menu() {
+	add_theme_page( __('Botanicals Setup Help', 'botanicals'), __('Botanicals Setup Help', 'botanicals'), 'edit_theme_options', 'botanicals-theme', 'botanicals_docs');
 }
-add_action('admin_menu', 'billie_docs_menu');
+add_action('admin_menu', 'botanicals_docs_menu');
 
-function billie_docs() {
+function botanicals_docs() {
 
 ?>
 
-<h1 class="doc-title"><?php _e('Billie Setup Help', 'botanicals'); ?></h1>
+<h1 class="doc-title"><?php _e('Botanicals Setup Help', 'botanicals'); ?></h1>
 <div class="doc-thanks">
-<b><?php _e('Thank you for downloading and trying out Billie!', 'botanicals'); ?></b><br><br>
-<?php printf( __('If you like the theme, please review it on <a href="%s">WordPress.org</a>', 'botanicals'), esc_url('https://wordpress.org/support/view/theme-reviews/billie') );?><br>
+<b><?php _e('Thank you for downloading and trying out Botanicals!', 'botanicals'); ?></b><br><br>
+<?php printf( __('If you like the theme, please review it on <a href="%s">WordPress.org</a>', 'botanicals'), esc_url('https://wordpress.org/support/view/theme-reviews/botanicals') );?><br>
 
-<b><?php printf( __('If you have any questions, accessibility issues or feature requests for this theme, please visit <a href="%s">http://wptema.se/Billie</a>.', 'botanicals'), esc_url('http://wptema.se/Billie') ); ?></b><br>
+<b><?php printf( __('If you have any questions, accessibility issues or feature requests for this theme, please visit <a href="%s">http://wptema.se/Botanicals</a>.', 'botanicals'), esc_url('http://wptema.se/Botanicals') ); ?></b><br>
 <?php _e('Thank you to everyone who has contributed with ideas and bug reports so far! Your feedback is essential for the future developement of the theme.', 'botanicals'); ?>
 </div>
 
 	<ul class="doc-menu">
-		<li><a href="#billie-menus"><?php _e('Menus','botanicals' ); ?></a></li>
-		<li><a href="#billie-widget"><?php _e('Widget areas','botanicals' ); ?></a></li>
-		<li><a href="#billie-front"><?php _e('Front page','botanicals' ); ?></a></li>
-		<li><a href="#billie-advanced"><?php _e('Advanced settings','botanicals' ); ?></a></li>
-		<li><a href="#billie-plugins"><?php _e('Plugins','botanicals' ); ?></a></li>
+		<li><a href="#botanicals-menus"><?php _e('Menus','botanicals' ); ?></a></li>
+		<li><a href="#botanicals-widget"><?php _e('Widget areas','botanicals' ); ?></a></li>
+		<li><a href="#botanicals-front"><?php _e('Front page','botanicals' ); ?></a></li>
+		<li><a href="#botanicals-advanced"><?php _e('Advanced settings','botanicals' ); ?></a></li>
+		<li><a href="#botanicals-plugins"><?php _e('Plugins','botanicals' ); ?></a></li>
 	</ul>
 
-	<div class="doc-box" id="billie-menus">
+	<div class="doc-box" id="botanicals-menus">
 		<h3><?php _e('Menus','botanicals' ); ?></h3>
 		<?php _e('This theme has two optional menu locations, the <b>Primary menu</b> and the <b>Social menu</b>.','botanicals' ); ?><br><br>
 			
@@ -40,13 +40,13 @@ function billie_docs() {
 		<?php _e('By default, the primary meny also shows the site title. You can hide this feature under the Advanced settings tab in the Customizer.','botanicals' ); ?>
 	</div>
 
-	<div class="doc-box" id="billie-widgets">
+	<div class="doc-box" id="botanicals-widgets">
 		<h3><?php _e('Widget areas','botanicals' ); ?></h3>
 		<?php _e('The theme has two sidebars, one for the front page and one for posts, that can hold <b>any number of widgets</b>. The footer widget area is shown on all pages.','botanicals' ); ?><br>
 		<?php _e('There is also an additional widget area in the footer below the social menu, where you can place a text widget and add your copyright text.','botanicals' );?> 
 	</div>
 
-	<div class="doc-box" id="billie-front">
+	<div class="doc-box" id="botanicals-front">
 			<h3><?php _e('Frontpage','botanicals' ); ?></h3>
 			<?php _e('The standard front page has the following features:','botanicals' ); ?><br>
 			<?php _e('<b>Site title and tagline:</b> You will find an option to hide or change the color of your header text in the customizer.','botanicals' ); ?><br>
@@ -66,7 +66,7 @@ function billie_docs() {
 
 	</div>
 
-	<div class="doc-box" id="billie-advanced">
+	<div class="doc-box" id="botanicals-advanced">
 		<h3><?php _e('Advanced settings','botanicals' ); ?></h3>
 		<?php _e('Under the Advanced settings tab in the customizer you will find the following options:','botanicals' )?>
 		<ul>
@@ -77,9 +77,9 @@ function billie_docs() {
 		</ul>
 	</div>
 
-	<div class="doc-box" id="billie-plugins">
+	<div class="doc-box" id="botanicals-plugins">
 		<h3><?php _e('Plugins','botanicals' ); ?></h3>
-		<?php _e('Billie has been tested with and style has been added for the following plugins:', 'botanicals' ); ?>
+		<?php _e('Botanicals has been tested with and style has been added for the following plugins:', 'botanicals' ); ?>
 		<ul>
 			<li><b><?php _e('Woocommerce','botanicals' )?></b></li>
 			<li><b><?php _e('bbPress','botanicals' )?></b></li>
@@ -91,12 +91,12 @@ function billie_docs() {
 						You can also choose a label for the posts in your featured section. Featured images are optional and the recommended image size is 360x300 pixels.','botanicals' )?><br>
 					</li>
 					<li><b><?php _e('Custom Content Type: Portfolio','botanicals' )?></b><br>
-						<?php _e('Billie also supports Jetpack','botanicals' )?> 
+						<?php _e('Botanicals also supports Jetpack','botanicals' )?> 
 						<b><?php _e('Portfolios','botanicals' )?></b>. <a href="<?php echo 'http://en.support.wordpress.com/portfolios/'; ?>"><i><?php _e('Read more about how to setup your Portfolio on Jetpacks support site.','botanicals' )?></i></a><br><br>
 					</li>
 
 					<li><b><?php _e('Custom Content Type: Testimonials','botanicals' )?></b><br>
-						<?php _e('Billie also supports Jetpack','botanicals' )?> <b><?php _e('Testimonials','botanicals' )?></b>. <br>
+						<?php _e('Botanicals also supports Jetpack','botanicals' )?> <b><?php _e('Testimonials','botanicals' )?></b>. <br>
 						<?php _e('<b>Tip:</b> I recommend creating a page and adding this shortcode, and then including the page as a front page section.','botanicals' )?> <br> &nbsp; [testimonials columns=3 showposts=3]<br>
 						<a href="<?php echo 'https://en.support.wordpress.com/testimonials-shortcode/'; ?>"><i><?php _e('Read more about how to setup your Testimonials on Jetpacks support site.','botanicals' )?></i></a><br><br>		
 					</li>

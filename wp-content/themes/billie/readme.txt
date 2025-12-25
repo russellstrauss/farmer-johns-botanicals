@@ -1,4 +1,4 @@
-=== Billie ===
+=== Botanicals ===
 Contributors: Poena
 Tags: light, white, threaded-comments, custom-menu, sticky-post, translation-ready, editor-style, two-columns, featured-images, responsive-layout, accessibility-ready, custom-header
 License: GNU General Public License v2 or later
@@ -8,14 +8,14 @@ Copyright 2015-2016 Carolina Nymark
 
 = Description ==
 
-Description: Billie is a responsive, accessibility-ready multi-purpose theme. The theme has two optional menus (including a social menu) two different sidebars and a footer widget area that will hold any number of widgets. 
+Description: Botanicals is a responsive, accessibility-ready multi-purpose theme. The theme has two optional menus (including a social menu) two different sidebars and a footer widget area that will hold any number of widgets. 
 Features also include a Call To Action button and custom copyright text. We recommend that you install the Jetpack plugin to make full use of supported features like logos, featured content, contact forms, testimonials, social sharing and more. 
 To create a portfolio, install Jetpack and create your projects, all the templates are already shipped with the theme. 
-If you have any questions, accessibility issues or feature requests for this theme, please visit http://wptema.se/Billie.
+If you have any questions, accessibility issues or feature requests for this theme, please visit http://wptema.se/Botanicals.
 
 
 == Installation ==
-1. Unzip `billie.zip` to the `/wp-content/themes/` directory
+1. Unzip `botanicals.zip` to the `/wp-content/themes/` directory
 2. Activate the theme through the 'Appearance' menu in WordPress
 
 
@@ -58,7 +58,7 @@ js/ -contains javscript
 templates/ -contains page templates
 
 == Resources Used In This Theme ==
-Billie is a derivative work of:
+Botanicals is a derivative work of:
 Underscores http://underscores.me/, (C) 2012-2015 Automattic, Inc. License: GNU General Public License v2 or later
 Universal http://themes.joedolson.com/universal/ (C) Joseph C Dolson. License: GNU General Public License v2 or later
 Sela https://wordpress.com/themes/sela/, based on Underscores http://underscores.me/, (C) 2012-2015 Automattic, Inc. License: GNU General Public License v2 or later

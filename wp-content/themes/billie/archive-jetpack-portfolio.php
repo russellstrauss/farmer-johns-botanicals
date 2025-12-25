@@ -3,7 +3,7 @@
  * The template for displaying the portfolio archive.
  * Learn more: http://codex.wordpress.org/Template_Hierarchy
  *
- * @package billie
+ * @package botanicals
  */
 
 get_header(); 
@@ -24,11 +24,11 @@ get_header();
 				<div class="featured-post">
 					<?php		
 					if ( has_post_thumbnail() )	{
-						$background = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'billie-featured-posts-thumb' );
+						$background = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'botanicals-featured-posts-thumb' );
 
 						echo '<div class="featured-inner" style="background: url(' . $background[0] .');">';
 					}else{
-						echo '<div class="featured-inner" style="background: ' . esc_attr( get_theme_mod('billie_header_bgcolor', '#9cc9c7') ) . ';">';
+						echo '<div class="featured-inner" style="background: ' . esc_attr( get_theme_mod('botanicals_header_bgcolor', '#9cc9c7') ) . ';">';
 					}
 						
 						echo '<div class="post-header">';

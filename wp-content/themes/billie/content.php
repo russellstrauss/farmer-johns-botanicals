@@ -1,6 +1,6 @@
 <?php
 /**
- * @package billie
+ * @package botanicals
  */
 ?>
 
@@ -10,7 +10,7 @@
 
 		<?php if ( 'post' == get_post_type() ) : ?>
 		<div class="entry-meta">
-			<?php billie_posted_on(); ?>
+			<?php botanicals_posted_on(); ?>
 		</div><!-- .entry-meta -->
 		<?php endif; ?>
 	</header><!-- .entry-header -->
@@ -31,6 +31,6 @@
 		?>
 	</div><!-- .entry-content -->
 
-	<?php billie_entry_footer(); ?>
+	<?php botanicals_entry_footer(); ?>
 
 </article><!-- #post-## -->

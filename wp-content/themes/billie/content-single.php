@@ -1,15 +1,15 @@
 <?php
 /**
- * @package billie
+ * @package botanicals
  */
 ?>
 
-<article id="post-<?php the_ID(); ?>" <?php post_class('billie-border');  ?>>
+<article id="post-<?php the_ID(); ?>" <?php post_class('botanicals-border');  ?>>
 	<header class="entry-header">
 		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 
 		<div class="entry-meta">
-			<?php billie_posted_on(); ?>
+			<?php botanicals_posted_on(); ?>
 		</div><!-- .entry-meta -->
 	</header><!-- .entry-header -->
 
@@ -28,5 +28,5 @@
 		?>
 		
 	</div><!-- .entry-content -->
-	<?php billie_entry_footer(); ?>
+	<?php botanicals_entry_footer(); ?>
 </article><!-- #post-## -->

@@ -2,7 +2,7 @@
 /**
  * The template for displaying search results pages.
  *
- * @package billie
+ * @package botanicals
  */
 
 get_header(); ?>
@@ -26,7 +26,7 @@ get_header(); ?>
 			<?php the_posts_navigation(); ?>
 			<?php
 			/* If the search is not visible in the header, and there is only one page of search results, display a search form on the search page. */
-			if ( $GLOBALS['wp_query']->max_num_pages < 2  && get_theme_mod('billie_hide_search') <>"" ){
+			if ( $GLOBALS['wp_query']->max_num_pages < 2  && get_theme_mod('botanicals_hide_search') <>"" ){
 				echo '<span class="screen-reader-text">' . __('Would you like to search again?', 'botanicals'). '</span><br/>';
 				get_search_form();
 			}

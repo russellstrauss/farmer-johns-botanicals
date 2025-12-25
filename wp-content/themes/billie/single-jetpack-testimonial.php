@@ -2,7 +2,7 @@
 /**
  * The Template for displaying jetpack testimonials
  *
- * @package billie
+ * @package botanicals
  */
 
 get_header(); ?>

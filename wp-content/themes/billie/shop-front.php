@@ -2,7 +2,7 @@
 /**
  * Template Name: Shop Front
  *
- * @package billie
+ * @package botanicals
  */
 ?>
 

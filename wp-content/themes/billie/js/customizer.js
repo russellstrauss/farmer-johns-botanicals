@@ -34,7 +34,7 @@
 		} );
 	} );
 
-	wp.customize( 'billie_hide_title', function( value ) {
+	wp.customize( 'botanicals_hide_title', function( value ) {
 		value.bind( function( newval ) {
 			if( true === newval ){
 				$( '.toptitle' ).css( 'display', 'none' );
@@ -46,7 +46,7 @@
 
 	} );
 
-	wp.customize( 'billie_featured_headline', function( value ) {
+	wp.customize( 'botanicals_featured_headline', function( value ) {
 		value.bind( function( to ) {
 			$( '.featured-headline' ).text( to );
 		} );

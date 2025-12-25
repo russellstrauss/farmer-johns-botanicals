@@ -2,7 +2,7 @@
 /**
  * Template Name: About
  *
- * @package billie
+ * @package botanicals
  */
 ?>
 

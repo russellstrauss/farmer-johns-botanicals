@@ -4,7 +4,7 @@
  *
  * Displays all of the <head> section and everything up till <div id="content">
  *
- * @package billie
+ * @package botanicals
  */
 ?>
 <!DOCTYPE html>
@@ -40,7 +40,7 @@
 	}
 	?>
 	<div class="site-branding">	
-		<?php //billie_the_site_logo(); ?>
+		<?php //botanicals_the_site_logo(); ?>
 		
 		<a href="<?php echo get_site_url(); ?>">
 			<img id="site-logo" src="<?php header_image(); ?>" alt="logo" />
@@ -52,14 +52,14 @@
 			<?php }	?>
 		<?php } ?>
 
-		<?php if( !get_theme_mod( 'billie_hide_action' ) ) {
-					if( get_theme_mod( 'billie_action_text' ) ) {	
+		<?php if( !get_theme_mod( 'botanicals_hide_action' ) ) {
+					if( get_theme_mod( 'botanicals_action_text' ) ) {	
 						echo '<div id="action">';
-						if( get_theme_mod( 'billie_action_link' ) ) {
-							echo '<a href="' . esc_url( get_theme_mod( 'billie_action_link' ) ) .'">';
+						if( get_theme_mod( 'botanicals_action_link' ) ) {
+							echo '<a href="' . esc_url( get_theme_mod( 'botanicals_action_link' ) ) .'">';
 						}
-						echo esc_html( get_theme_mod( 'billie_action_text' ) );
-						if( get_theme_mod( 'billie_action_link' )) {
+						echo esc_html( get_theme_mod( 'botanicals_action_text' ) );
+						if( get_theme_mod( 'botanicals_action_link' )) {
 							echo '</a>';
 						}
 						echo '</div>';
@@ -74,7 +74,7 @@
 			<?php
 			}
 			// Search form hidden - removed per request
-			// if ( !get_theme_mod('billie_hide_search') ){
+			// if ( !get_theme_mod('botanicals_hide_search') ){
 			// 	get_search_form();
 			// }
 			?>
