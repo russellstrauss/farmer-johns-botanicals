@@ -1,1 +1,7 @@
 wp-content/themes/billie/node_modules
+
+# SSL certificates (keep directory structure, ignore certificate files)
+ssl/*.crt
+ssl/*.key
+ssl/*.pem
+!ssl/.gitkeep

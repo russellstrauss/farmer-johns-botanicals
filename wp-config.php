@@ -19,8 +19,20 @@
  */
 
 // Site URL configuration for local development
-define('WP_HOME', 'http://local.farmerjohnsbotanicals.com:8080');
-define('WP_SITEURL', 'http://local.farmerjohnsbotanicals.com:8080');
+// Supports both HTTP (port 8080) and HTTPS (port 8443)
+// WordPress will detect the protocol automatically based on the request
+if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+    // HTTPS request
+    define('WP_HOME', 'https://local.farmerjohnsbotanicals.com:8443');
+    define('WP_SITEURL', 'https://local.farmerjohnsbotanicals.com:8443');
+} else {
+    // HTTP request
+    define('WP_HOME', 'http://local.farmerjohnsbotanicals.com:8080');
+    define('WP_SITEURL', 'http://local.farmerjohnsbotanicals.com:8080');
+}
+
+// Force SSL for admin area (optional - uncomment if you want to force HTTPS for admin)
+// define('FORCE_SSL_ADMIN', true);
 
 define('DB_NAME', 'fjb_db');
 define('DB_USER', 'russell_fjb_user');

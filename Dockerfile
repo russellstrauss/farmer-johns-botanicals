@@ -1,7 +1,7 @@
 FROM php:8.4-apache
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Enable Apache mod_rewrite and mod_ssl
+RUN a2enmod rewrite ssl
 
 # Install system dependencies and build tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -45,5 +45,13 @@ RUN echo '<Directory /var/www/html/>\n\
 </Directory>' > /etc/apache2/conf-available/wordpress.conf \
     && a2enconf wordpress
 
-EXPOSE 80
+# Create SSL directories
+RUN mkdir -p /etc/ssl/certs /etc/ssl/private
+
+# Copy SSL configuration (as additional site, not replacing default)
+COPY apache-ssl.conf /etc/apache2/sites-available/ssl.conf
+RUN a2ensite ssl
+
+# Expose both HTTP and HTTPS ports
+EXPOSE 80 443
 
