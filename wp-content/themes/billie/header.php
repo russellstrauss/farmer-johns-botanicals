@@ -50,10 +50,6 @@
 			<?php if (get_bloginfo('description') <> '') {	?>
 				<div class="site-description"><?php bloginfo( 'description' ); ?></div>
 			<?php }	?>
-
-			<h1 class="site-title"><?php bloginfo( 'name' ); ?></h1>
-		<?php }else{ /*If there is no visible site title, make sure there is still a h1 for screen reader*/	?>
-				<h1 class="screen-reader-text"><?php bloginfo( 'name' ); ?></h1>
 		<?php } ?>
 
 		<?php if( !get_theme_mod( 'billie_hide_action' ) ) {

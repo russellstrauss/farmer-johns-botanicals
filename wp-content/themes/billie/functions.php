@@ -113,27 +113,8 @@ add_action( 'after_setup_theme', 'billie_setup' );
 /**
 * billie_hide_title
 *
-* Unless the option is hidden in the customizer, display the site title (with link) in the primary menu.
+* Site title removed from markup - no longer displayed in navigation menu or header.
 */
-
-if ( get_theme_mod( 'billie_hide_title') =="" ){
-
-	function billie_menu_title( $items, $args ) {
-	    if( $args->theme_location == 'header' ){
-
-	    	$new_item       = '<li class="toptitle"><a href="' . esc_url( home_url( '/' )) .'" rel="home">' . get_bloginfo('name') .'</a></li>';
-	        $items          = preg_replace( '/<\/li>\s<li/', '</li>,<li',  $items );
-
-	        $array_items    = explode( ',', $items );
-	        array_splice( $array_items, 0, 0, $new_item ); // splice in at position 1
-	        $items          = implode( '', $array_items );
-
-	    }
-
-	    return $items;
-	}
-	add_filter('wp_nav_menu_items','billie_menu_title', 10, 2);
-}
 
 
 /**
@@ -544,3 +525,75 @@ function billie_disable_srcset_for_missing_thumbnails( $sources, $size_array, $i
 	return array();
 }
 add_filter( 'wp_calculate_image_srcset', 'billie_disable_srcset_for_missing_thumbnails', 999, 5 );
+
+/**
+ * Completely remove WooCommerce Legacy REST API and prevent auto-reinstallation
+ */
+add_action( 'init', 'remove_woocommerce_legacy_rest_api_completely', 999 );
+function remove_woocommerce_legacy_rest_api_completely() {
+	global $wpdb;
+	
+	$plugin_path = 'woocommerce-legacy-rest-api/woocommerce-legacy-rest-api.php';
+	$plugin_dir = WP_PLUGIN_DIR . '/woocommerce-legacy-rest-api';
+	
+	// Delete legacy webhooks (webhooks with api_version < 1)
+	$legacy_webhook_ids = $wpdb->get_col( "SELECT webhook_id FROM {$wpdb->prefix}wc_webhooks WHERE `api_version` < 1" );
+	if ( ! empty( $legacy_webhook_ids ) ) {
+		foreach ( $legacy_webhook_ids as $webhook_id ) {
+			$webhook = wc_get_webhook( $webhook_id );
+			if ( $webhook ) {
+				$webhook->delete( true );
+			}
+		}
+		// Clear webhook cache
+		wp_cache_delete( WC_Cache_Helper::get_cache_prefix( 'webhooks' ) . 'legacy_count', 'webhooks' );
+	}
+	
+	// Ensure the API option is set to 'no'
+	update_option( 'woocommerce_api_enabled', 'no' );
+	
+	// Remove from active plugins list
+	$active_plugins = get_option( 'active_plugins', array() );
+	$key = array_search( $plugin_path, $active_plugins, true );
+	if ( $key !== false ) {
+		unset( $active_plugins[ $key ] );
+		update_option( 'active_plugins', array_values( $active_plugins ) );
+	}
+	
+	// Delete the plugin directory if it exists (in case it was reinstalled)
+	if ( is_dir( $plugin_dir ) ) {
+		// Recursive directory deletion
+		$files = new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator( $plugin_dir, RecursiveDirectoryIterator::SKIP_DOTS ),
+			RecursiveIteratorIterator::CHILD_FIRST
+		);
+		
+		foreach ( $files as $fileinfo ) {
+			$todo = ( $fileinfo->isDir() ? 'rmdir' : 'unlink' );
+			@$todo( $fileinfo->getRealPath() );
+		}
+		@rmdir( $plugin_dir );
+	}
+	
+	// Remove admin notices
+	if ( class_exists( 'WC_Admin_Notices' ) ) {
+		$notice_names = array(
+			'woocommerce_legacy_rest_api_plugin_activated',
+			'woocommerce_legacy_rest_api_plugin_activation_failed',
+			'woocommerce_legacy_rest_api_plugin_install_failed',
+		);
+		
+		foreach ( $notice_names as $notice_name ) {
+			WC_Admin_Notices::remove_notice( $notice_name, true );
+			// Also delete the custom notice option from database
+			delete_option( 'woocommerce_admin_notice_' . $notice_name );
+		}
+	}
+	
+	flush_rewrite_rules();
+}
+
+/**
+ * Prevent WooCommerce from auto-installing the Legacy REST API plugin
+ */
+add_filter( 'woocommerce_skip_legacy_rest_api_plugin_auto_install', '__return_true', 999 );
