@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @class    WC_HTTPS
  * @version  2.2.0
- * @package  WooCommerce/Classes
+ * @package  WooCommerce\Classes
  * @category Class
  * @author   WooThemes
  */
@@ -31,7 +31,7 @@ class WC_HTTPS {
 				'style_loader_src',
 				'template_directory_uri',
 				'stylesheet_directory_uri',
-				'site_url'
+				'site_url',
 			);
 
 			foreach ( $filters as $filter ) {
@@ -45,6 +45,7 @@ class WC_HTTPS {
 				add_action( 'template_redirect', array( __CLASS__, 'unforce_https_template_redirect' ) );
 			}
 		}
+		add_action( 'http_api_curl', array( __CLASS__, 'http_api_curl' ), 10, 3 );
 	}
 
 	/**
@@ -58,7 +59,7 @@ class WC_HTTPS {
 			if ( is_array( $content ) ) {
 				$content = array_map( 'WC_HTTPS::force_https_url', $content );
 			} else {
-				$content = str_replace( 'http:', 'https:', $content );
+				$content = str_replace( 'http:', 'https:', (string) $content );
 			}
 		}
 		return $content;
@@ -66,6 +67,9 @@ class WC_HTTPS {
 
 	/**
 	 * Force a post link to be SSL if needed.
+	 *
+	 * @param string $link
+	 * @param int $page_id
 	 *
 	 * @return string
 	 */
@@ -102,7 +106,7 @@ class WC_HTTPS {
 			return;
 		}
 
-		if ( ! wc_site_is_https() && is_ssl() && $_SERVER['REQUEST_URI'] && ! is_checkout() && ! is_ajax() && ! is_account_page() && apply_filters( 'woocommerce_unforce_ssl_checkout', true ) ) {
+		if ( ! wc_site_is_https() && is_ssl() && $_SERVER['REQUEST_URI'] && ! is_checkout() && ! wp_doing_ajax() && ! is_account_page() && apply_filters( 'woocommerce_unforce_ssl_checkout', true ) ) {
 
 			if ( 0 === strpos( $_SERVER['REQUEST_URI'], 'http' ) ) {
 				wp_safe_redirect( preg_replace( '|^https://|', 'http://', $_SERVER['REQUEST_URI'] ) );
@@ -111,6 +115,22 @@ class WC_HTTPS {
 				wp_safe_redirect( 'http://' . ( ! empty( $_SERVER['HTTP_X_FORWARDED_HOST'] ) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['HTTP_HOST'] ) . $_SERVER['REQUEST_URI'] );
 				exit;
 			}
+		}
+	}
+
+	/**
+	 * Force posts to PayPal to use TLS v1.2. See:
+	 *        https://core.trac.wordpress.org/ticket/36320
+	 *        https://core.trac.wordpress.org/ticket/34924#comment:13
+	 *        https://www.paypal-knowledge.com/infocenter/index?page=content&widgetview=true&id=FAQ1914&viewlocale=en_US
+	 *
+	 * @param string $handle
+	 * @param mixed $r
+	 * @param string $url
+	 */
+	public static function http_api_curl( $handle, $r, $url ) {
+		if ( strstr( $url, 'https://' ) && ( strstr( $url, '.paypal.com/nvp' ) || strstr( $url, '.paypal.com/cgi-bin/webscr' ) ) ) {
+			curl_setopt( $handle, CURLOPT_SSLVERSION, 6 );
 		}
 	}
 }

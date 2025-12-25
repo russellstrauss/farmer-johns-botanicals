@@ -508,9 +508,9 @@ if ( ! function_exists( 'wc_rgb_from_hex' ) ) {
 		$color = preg_replace( '~^(.)(.)(.)$~', '$1$1$2$2$3$3', $color );
 
 		$rgb      = array();
-		$rgb['R'] = hexdec( $color{0}.$color{1} );
-		$rgb['G'] = hexdec( $color{2}.$color{3} );
-		$rgb['B'] = hexdec( $color{4}.$color{5} );
+		$rgb['R'] = hexdec( $color[0].$color[1] );
+		$rgb['G'] = hexdec( $color[2].$color[3] );
+		$rgb['B'] = hexdec( $color[4].$color[5] );
 
 		return $rgb;
 	}
@@ -661,6 +661,18 @@ function wc_strtolower( $string ) {
 }
 
 /**
+ * Make a string uppercase.
+ * Try to use mb_strtoupper() when available.
+ *
+ * @since  2.3
+ * @param  string $string
+ * @return string
+ */
+function wc_strtoupper( $string ) {
+	return function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $string ) : strtoupper( $string );
+}
+
+/**
  * Trim a string and append a suffix.
  * @param  string  $string
  * @param  integer $chars
@@ -676,6 +688,31 @@ function wc_trim_string( $string, $chars = 200, $suffix = '...' ) {
 		}
 	}
 	return $string;
+}
+
+/**
+ * Converts a string (e.g. 'yes' or 'no') to a bool.
+ *
+ * @since 3.0.0
+ * @param string|bool $string String to convert. If a bool is passed it will be returned as-is.
+ * @return bool
+ */
+function wc_string_to_bool( $string ) {
+	return is_bool( $string ) ? $string : ( 'yes' === strtolower( $string ) || 1 === $string || '1' === $string || 'true' === strtolower( $string ) || 'on' === strtolower( $string ) );
+}
+
+/**
+ * Converts a bool to a 'yes' or 'no'.
+ *
+ * @since 3.0.0
+ * @param bool|string $bool Bool to convert. If a string is passed it will first be converted to a bool.
+ * @return string
+ */
+function wc_bool_to_string( $bool ) {
+	if ( ! is_bool( $bool ) ) {
+		$bool = wc_string_to_bool( $bool );
+	}
+	return true === $bool ? 'yes' : 'no';
 }
 
 /**
@@ -764,4 +801,128 @@ add_filter( 'woocommerce_admin_settings_sanitize_option_woocommerce_hold_stock_m
  */
 function wc_sanitize_term_text_based( $term ) {
 	return trim( wp_unslash( strip_tags( $term ) ) );
+}
+
+/**
+ * Flatten meta callback for array_map.
+ * 
+ * When get_user_meta() or get_post_meta() is called without a key,
+ * each meta value is an array. This function extracts the first value.
+ *
+ * @since  3.0.0
+ * @param  array $meta_value Meta value array.
+ * @return mixed First value from the array, or the value itself if not an array.
+ */
+function wc_flatten_meta_callback( $meta_value ) {
+	if ( is_array( $meta_value ) && ! empty( $meta_value ) ) {
+		return maybe_unserialize( $meta_value[0] );
+	}
+	return $meta_value;
+}
+
+/**
+ * Convert mysql datetime to PHP timestamp, forcing UTC. Wrapper for strtotime.
+ *
+ * @since  3.0.0
+ * @param  string $time_string Time string.
+ * @param  int    $from_timestamp Timestamp to convert from.
+ * @return int
+ */
+function wc_string_to_timestamp( $time_string, $from_timestamp = null ) {
+	// We want to avoid using strtotime() with a timezone adjusted string, as it can cause issues.
+	// If we have a timestamp, let's work from that instead.
+	if ( null !== $from_timestamp ) {
+		$time_string = date( 'Y-m-d H:i:s', $from_timestamp );
+	}
+
+	if ( empty( $time_string ) || '0000-00-00 00:00:00' === $time_string ) {
+		return 0;
+	}
+
+	$timestamp = strtotime( $time_string );
+
+	if ( false === $timestamp ) {
+		return 0;
+	}
+
+	return $timestamp;
+}
+
+/**
+ * Implode and escape HTML attributes for output.
+ *
+ * @since  3.0.0
+ * @param  array $raw_attributes Attribute name value pairs.
+ * @return string
+ */
+function wc_implode_html_attributes( $raw_attributes ) {
+	$attributes = array();
+	foreach ( $raw_attributes as $name => $value ) {
+		$attributes[] = esc_attr( $name ) . '="' . esc_attr( $value ) . '"';
+	}
+	return implode( ' ', $attributes );
+}
+
+/**
+ * Escape JSON for safe use in HTML attributes and script tags.
+ *
+ * @since  3.0.0
+ * @param  string $json JSON string to escape.
+ * @param  bool   $html Escape for HTML attribute context (default: false).
+ * @return string
+ */
+function wc_esc_json( $json, $html = false ) {
+	return _wp_specialchars( $json, $html ? ENT_QUOTES : ENT_NOQUOTES, 'UTF-8', true );
+}
+
+/**
+ * Process oEmbeds in content.
+ *
+ * @since  3.0.0
+ * @param  string $content Content to process.
+ * @return string
+ */
+function wc_do_oembeds( $content ) {
+	global $wp_embed;
+
+	if ( ! is_object( $wp_embed ) ) {
+		return $content;
+	}
+
+	// Process auto-embeds.
+	return $wp_embed->autoembed( $content );
+}
+
+/**
+ * Format stock for display.
+ *
+ * @since  3.0.0
+ * @param  WC_Product $product Product object.
+ * @return string
+ */
+function wc_format_stock_for_display( $product ) {
+	$stock_quantity = $product->get_stock_quantity();
+	$stock_status   = $product->get_stock_status();
+
+	if ( 'instock' === $stock_status ) {
+		if ( $stock_quantity > 0 ) {
+			$stock_amount = wc_stock_amount( $stock_quantity );
+
+			$low_stock_threshold = absint( get_option( 'woocommerce_notify_low_stock_amount', 0 ) );
+
+			if ( $low_stock_threshold > 0 && $stock_amount <= $low_stock_threshold ) {
+				/* translators: %d: stock quantity */
+				return sprintf( __( 'Only %d left in stock', 'woocommerce' ), $stock_amount );
+			} else {
+				/* translators: %d: stock quantity */
+				return sprintf( __( '%d in stock', 'woocommerce' ), $stock_amount );
+			}
+		} else {
+			return __( 'In stock', 'woocommerce' );
+		}
+	} elseif ( 'onbackorder' === $stock_status ) {
+		return __( 'Available on backorder', 'woocommerce' );
+	} else {
+		return __( 'Out of stock', 'woocommerce' );
+	}
 }

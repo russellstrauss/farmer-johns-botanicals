@@ -40,6 +40,9 @@ function custom_add_to_cart_message() {
 	return $message;
 }
 
+// Remove Add to Cart button from product grid/loop
+remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 );
+
 /**
  * Botanicals functions and definitions ================================== All Botanicals theme related methods below, default with the theme.
  *
@@ -73,7 +76,10 @@ function billie_setup() {
 	// Add default posts and comments RSS feed links to head.
 	add_theme_support( 'automatic-feed-links' );
 
-	add_theme_support( 'woocommerce' );		
+	add_theme_support( 'woocommerce' );
+	add_theme_support( 'wc-product-gallery-zoom' );
+	add_theme_support( 'wc-product-gallery-lightbox' );
+	add_theme_support( 'wc-product-gallery-slider' );
 	
 	add_theme_support( 'jetpack-responsive-videos' ); 
 
@@ -115,7 +121,7 @@ if ( get_theme_mod( 'billie_hide_title') =="" ){
 	function billie_menu_title( $items, $args ) {
 	    if( $args->theme_location == 'header' ){
 
-	    	//$new_item       = array( '<li class="toptitle"><a href="' . esc_url( home_url( '/' )) .'" rel="home">' . get_bloginfo('name') .'</a></li>' );
+	    	$new_item       = '<li class="toptitle"><a href="' . esc_url( home_url( '/' )) .'" rel="home">' . get_bloginfo('name') .'</a></li>';
 	        $items          = preg_replace( '/<\/li>\s<li/', '</li>,<li',  $items );
 
 	        $array_items    = explode( ',', $items );
@@ -292,7 +298,7 @@ add_filter( 'body_class', 'billie_no_sidebars' );
 
 
 function billie_customize_css() {
-	echo '<style type="text/css">';
+	echo '<style type="text/css" id="billie-custom-css">';
 	 if ( is_admin_bar_showing()) {
 	 	?>
 	 	.main-navigation{top:32px;}
@@ -345,9 +351,184 @@ function billie_customize_css() {
 		}';
 	}
 
+	// WooCommerce Product Gallery - Custom arrow icons
+	echo '/* WooCommerce Gallery Arrows */
+	.woocommerce-product-gallery .flex-direction-nav .flex-prev,
+	.woocommerce-product-gallery .flex-direction-nav .flex-next {
+		background-size: 50px;
+		background-repeat: no-repeat;
+		opacity: .5;
+		background-color: transparent;
+	}
+	.woocommerce-product-gallery .flex-direction-nav .flex-prev:hover,
+	.woocommerce-product-gallery .flex-direction-nav .flex-next:hover {
+		opacity: 1;
+	}
+	.woocommerce-product-gallery .flex-direction-nav .flex-prev {
+		background-image: url(' . get_template_directory_uri() . '/assets/img/caret-left.svg);
+		background-position: left 20px center;
+	}
+	.woocommerce-product-gallery .flex-direction-nav .flex-next {
+		background-image: url(' . get_template_directory_uri() . '/assets/img/caret-right.svg);
+		background-position: right 20px center;
+	}
+	.woocommerce-product-gallery .flex-direction-nav .flex-prev:before,
+	.woocommerce-product-gallery .flex-direction-nav .flex-next:before {
+		content: none;
+	}
+	/* PhotoSwipe Lightbox Arrows */
+	button.pswp__button--arrow--left {
+		background-image: url(' . get_template_directory_uri() . '/assets/img/caret-left.svg) !important;
+		background-size: 50px !important;
+		background-position: left 20px center !important;
+		background-repeat: no-repeat !important;
+	}
+	button.pswp__button--arrow--right {
+		background-image: url(' . get_template_directory_uri() . '/assets/img/caret-right.svg) !important;
+		background-size: 50px !important;
+		background-position: right 20px center !important;
+		background-repeat: no-repeat !important;
+	}
+	button.pswp__button--arrow--left:before,
+	button.pswp__button--arrow--right:before {
+		content: none !important;
+		background: none !important;
+	}
+	@media (max-width: 767px) {
+		.woocommerce-product-gallery .flex-direction-nav .flex-prev,
+		.woocommerce-product-gallery .flex-direction-nav .flex-next {
+			background-size: 25px;
+		}
+		.woocommerce-product-gallery .flex-direction-nav .flex-prev {
+			background-position: left 10px center;
+		}
+		.woocommerce-product-gallery .flex-direction-nav .flex-next {
+			background-position: right 10px center;
+		}
+		button.pswp__button--arrow--left,
+		button.pswp__button--arrow--right {
+			background-size: 25px !important;
+		}
+		button.pswp__button--arrow--left {
+			background-position: left 10px center !important;
+		}
+		button.pswp__button--arrow--right {
+			background-position: right 10px center !important;
+		}
+	}
+	
+	/* Product Page Add to Cart Button Styling */
+	.jewelry-shop div.product button.button.alt.single_add_to_cart_button,
+	.jewelry-shop div.product form.cart button.button.alt.single_add_to_cart_button,
+	.woocommerce div.product form.cart button.button.alt.single_add_to_cart_button {
+		background-color: black !important;
+		color: #fff !important;
+		font-size: 16px !important;
+		display: block !important;
+		padding: 20px 50px !important;
+		border: 1px solid black !important;
+		transition: all 250ms ease !important;
+		text-align: center !important;
+		cursor: pointer !important;
+		width: auto !important;
+	}
+	.jewelry-shop div.product button.button.alt.single_add_to_cart_button:hover,
+	.jewelry-shop div.product form.cart button.button.alt.single_add_to_cart_button:hover,
+	.woocommerce div.product form.cart button.button.alt.single_add_to_cart_button:hover {
+		background-color: white !important;
+		color: black !important;
+	}
+	@media (max-width: 767px) {
+		.jewelry-shop div.product button.button.alt.single_add_to_cart_button,
+		.jewelry-shop div.product form.cart button.button.alt.single_add_to_cart_button,
+		.woocommerce div.product form.cart button.button.alt.single_add_to_cart_button {
+			width: 100% !important;
+		}
+	}
+	
+	/* Hide Add to Cart button from product grid/loop */
+	.woocommerce ul.products li.product .add_to_cart_button,
+	.jewelry-shop ul.products li.product .add_to_cart_button,
+	.woocommerce ul.products li.product a.add_to_cart_button,
+	.jewelry-shop ul.products li.product a.add_to_cart_button,
+	.woocommerce ul.products li.product button.add_to_cart_button,
+	.jewelry-shop ul.products li.product button.add_to_cart_button {
+		display: none !important;
+	}
+	
+	/* Product Categories Styling */
+	.product-categories,
+	.above-shop-section .product-categories,
+	.above-shop-section .widget .product-categories,
+	.above-shop-section ul.product-categories,
+	.jewelry-shop .above-shop-section .product-categories,
+	.jewelry-shop .above-shop-section .widget .product-categories,
+	.woocommerce .above-shop-section .product-categories,
+	.woocommerce .above-shop-section .widget .product-categories {
+		padding-left: 0 !important;
+		text-align: center !important;
+		margin: 0 0 20px 0 !important;
+		list-style: none !important;
+	}
+	.product-categories li,
+	.above-shop-section .product-categories li,
+	.jewelry-shop .above-shop-section .product-categories li,
+	.woocommerce .above-shop-section .product-categories li {
+		display: inline-block !important;
+		margin: 0 20px !important;
+		list-style: none !important;
+	}
+	.product-categories .swiper-slide,
+	.above-shop-section .product-categories .swiper-slide,
+	.jewelry-shop .above-shop-section .product-categories .swiper-slide,
+	.woocommerce .above-shop-section .product-categories .swiper-slide {
+		display: inline !important;
+		margin: 10px !important;
+	}
+	.product-categories .swiper-slide a,
+	.above-shop-section .product-categories .swiper-slide a,
+	.jewelry-shop .above-shop-section .product-categories .swiper-slide a,
+	.woocommerce .above-shop-section .product-categories .swiper-slide a {
+		text-decoration: none !important;
+	}
+	.product-categories a,
+	.above-shop-section .product-categories a,
+	.jewelry-shop .above-shop-section .product-categories a,
+	.woocommerce .above-shop-section .product-categories a {
+		text-decoration: none !important;
+	}
+	@media (max-width: 767px) {
+		.product-categories,
+		.above-shop-section .product-categories,
+		.jewelry-shop .above-shop-section .product-categories,
+		.woocommerce .above-shop-section .product-categories {
+			display: flex !important;
+			flex-wrap: wrap !important;
+			justify-content: center !important;
+		}
+		.product-categories .swiper-slide,
+		.above-shop-section .product-categories .swiper-slide,
+		.jewelry-shop .above-shop-section .product-categories .swiper-slide,
+		.woocommerce .above-shop-section .product-categories .swiper-slide {
+			display: block !important;
+			text-align: center !important;
+			margin: 0 !important;
+		}
+		.product-categories .swiper-slide a,
+		.above-shop-section .product-categories .swiper-slide a,
+		.jewelry-shop .above-shop-section .product-categories .swiper-slide a,
+		.woocommerce .above-shop-section .product-categories .swiper-slide a {
+			padding: 10px 12px !important;
+			display: block !important;
+			top: 50% !important;
+			position: relative !important;
+			transform: translateY(-50%) !important;
+		}
+	}';
+
 	echo '</style>' . "\n";
 }
-add_action( 'wp_head', 'billie_customize_css');
+add_action( 'wp_head', 'billie_customize_css', 999);
 
 /**
  * Disable srcset for missing thumbnails to prevent memory issues

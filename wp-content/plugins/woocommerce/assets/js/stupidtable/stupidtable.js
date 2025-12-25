@@ -24,15 +24,17 @@
         var dir = $.fn.stupidtable.dir;
 
         // Account for colspans
-        $this.parents("tr").find("th").slice(0, $this.index()).each(function() {
+        $this.parents("tr").find("th").slice(0, $this.index() + 1).each(function() {
           var cols = $(this).attr("colspan") || 1;
           th_index += parseInt(cols,10);
         });
 
+        th_index = th_index - 1;
+
         // Determine (and/or reverse) sorting direction, default `asc`
-        var sort_dir = $this.data("sort-default") || dir.ASC;
-        if ($this.data("sort-dir"))
-           sort_dir = $this.data("sort-dir") === dir.ASC ? dir.DESC : dir.ASC;
+        var sort_dir = $this.data("sortDefault") || dir.ASC;
+        if ($this.data("sortDir"))
+           sort_dir = $this.data("sortDir") === dir.ASC ? dir.DESC : dir.ASC;
 
         // Choose appropriate sorting function.
         var type = $this.data("sort") || null;
@@ -44,7 +46,7 @@
 
         // Trigger `beforetablesort` event that calling scripts can hook into;
         // pass parameters for sorted column index and sorting direction
-        $table.trigger("beforetablesort", {column: th_index, direction: sort_dir});
+        $table.trigger("beforetablesort", {column: $this.index(), direction: sort_dir});
         // More reliable method of forcing a redraw
         $table.css("display");
 
@@ -63,13 +65,14 @@
               // with the TR itself into a tuple
               trs.each(function(index,tr) {
                 var $e = $(tr).children().eq(th_index);
-                var sort_val = $e.data("sort-value");
+                var sort_val = $e.data("sortValue");
                 var order_by = typeof(sort_val) !== "undefined" ? sort_val : $e.text();
                 column.push([order_by, tr]);
               });
 
               // Sort by the data-order-by value
               column.sort(function(a, b) { return sortMethod(a[0], b[0]); });
+
               if (sort_dir != dir.ASC)
                 column.reverse();
 
@@ -80,11 +83,11 @@
           });
 
           // Reset siblings
-          $table.find("th").data("sort-dir", null).removeClass("sorting-desc sorting-asc");
-          $this.data("sort-dir", sort_dir).addClass("sorting-"+sort_dir);
+          $table.find("th").data("sortDir", null).removeClass("sorting-desc sorting-asc");
+          $this.data("sortDir", sort_dir).addClass("sorting-"+sort_dir);
 
           // Trigger `aftertablesort` event. Similar to `beforetablesort`
-          $table.trigger("aftertablesort", {column: th_index, direction: sort_dir});
+          $table.trigger("aftertablesort", {column: $this.index(), direction: sort_dir});
           // More reliable method of forcing a redraw
           $table.css("display");
         }, 10);

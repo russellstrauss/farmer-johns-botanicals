@@ -2,17 +2,20 @@
 /**
  * Duplicate product functionality
  *
- * @author      WooThemes
- * @category    Admin
- * @package     WooCommerce/Admin
- * @version     2.1.0
+ * @package     WooCommerce\Admin
+ * @version     3.0.0
  */
 
+use Automattic\WooCommerce\Enums\ProductStatus;
+use Automattic\WooCommerce\Enums\ProductType;
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit;
 }
 
-if ( ! class_exists( 'WC_Admin_Duplicate_Product' ) ) :
+if ( class_exists( 'WC_Admin_Duplicate_Product', false ) ) {
+	return new WC_Admin_Duplicate_Product();
+}
 
 /**
  * WC_Admin_Duplicate_Product Class.
@@ -25,27 +28,44 @@ class WC_Admin_Duplicate_Product {
 	public function __construct() {
 		add_action( 'admin_action_duplicate_product', array( $this, 'duplicate_product_action' ) );
 		add_filter( 'post_row_actions', array( $this, 'dupe_link' ), 10, 2 );
-		add_filter( 'page_row_actions', array( $this, 'dupe_link' ), 10, 2 );
 		add_action( 'post_submitbox_start', array( $this, 'dupe_button' ) );
 	}
 
 	/**
 	 * Show the "Duplicate" link in admin products list.
-	 * @param  array   $actions
-	 * @param  WP_Post $post Post object
+	 *
+	 * @param array   $actions Array of actions.
+	 * @param WP_Post $post Post object.
 	 * @return array
 	 */
 	public function dupe_link( $actions, $post ) {
+		global $the_product;
+
 		if ( ! current_user_can( apply_filters( 'woocommerce_duplicate_product_capability', 'manage_woocommerce' ) ) ) {
 			return $actions;
 		}
 
-		if ( $post->post_type != 'product' ) {
+		if ( 'product' !== $post->post_type ) {
 			return $actions;
 		}
 
-		$actions['duplicate'] = '<a href="' . wp_nonce_url( admin_url( 'edit.php?post_type=product&action=duplicate_product&amp;post=' . $post->ID ), 'woocommerce-duplicate-product_' . $post->ID ) . '" title="' . esc_attr__( 'Make a duplicate from this product', 'woocommerce' )
-			. '" rel="permalink">' .  __( 'Duplicate', 'woocommerce' ) . '</a>';
+		// Add Class to Delete Permanently link in row actions.
+		if ( empty( $the_product ) || $the_product->get_id() !== $post->ID ) {
+			$the_product = wc_get_product( $post );
+		}
+
+		if ( $the_product && ProductStatus::PUBLISH === $the_product->get_status() && 0 < $the_product->get_total_sales() ) {
+			$actions['trash'] = sprintf(
+				'<a href="%s" class="submitdelete trash-product" aria-label="%s">%s</a>',
+				get_delete_post_link( $the_product->get_id(), '', false ),
+				/* translators: %s: post title */
+				esc_attr( sprintf( __( 'Move &#8220;%s&#8221; to the Trash', 'woocommerce' ), $the_product->get_name() ) ),
+				esc_html__( 'Trash', 'woocommerce' )
+			);
+		}
+
+		$actions['duplicate'] = '<a href="' . wp_nonce_url( admin_url( 'edit.php?post_type=product&action=duplicate_product&amp;post=' . $post->ID ), 'woocommerce-duplicate-product_' . $post->ID ) . '" aria-label="' . esc_attr__( 'Make a duplicate from this product', 'woocommerce' )
+			. '" rel="permalink">' . esc_html__( 'Duplicate', 'woocommerce' ) . '</a>';
 
 		return $actions;
 	}
@@ -64,127 +84,158 @@ class WC_Admin_Duplicate_Product {
 			return;
 		}
 
-		if ( $post->post_type != 'product' ) {
+		if ( 'product' !== $post->post_type ) {
 			return;
 		}
 
-		if ( isset( $_GET['post'] ) ) {
-			$notifyUrl = wp_nonce_url( admin_url( "edit.php?post_type=product&action=duplicate_product&post=" . absint( $_GET['post'] ) ), 'woocommerce-duplicate-product_' . $_GET['post'] );
-			?>
-			<div id="duplicate-action"><a class="submitduplicate duplication" href="<?php echo esc_url( $notifyUrl ); ?>"><?php _e( 'Copy to a new draft', 'woocommerce' ); ?></a></div>
-			<?php
-		}
+		$notify_url = wp_nonce_url( admin_url( 'edit.php?post_type=product&action=duplicate_product&post=' . absint( $post->ID ) ), 'woocommerce-duplicate-product_' . $post->ID );
+		?>
+		<div id="duplicate-action"><a class="submitduplicate duplication" href="<?php echo esc_url( $notify_url ); ?>"><?php esc_html_e( 'Copy to a new draft', 'woocommerce' ); ?></a></div>
+		<?php
 	}
 
 	/**
 	 * Duplicate a product action.
 	 */
 	public function duplicate_product_action() {
-
 		if ( empty( $_REQUEST['post'] ) ) {
-			wp_die( __( 'No product to duplicate has been supplied!', 'woocommerce' ) );
+			wp_die( esc_html__( 'No product to duplicate has been supplied!', 'woocommerce' ) );
 		}
 
-		// Get the original page
-		$id = isset( $_REQUEST['post'] ) ? absint( $_REQUEST['post'] ) : '';
+		$product_id = isset( $_REQUEST['post'] ) ? absint( $_REQUEST['post'] ) : '';
 
-		check_admin_referer( 'woocommerce-duplicate-product_' . $id );
+		check_admin_referer( 'woocommerce-duplicate-product_' . $product_id );
 
-		$post = $this->get_product_to_duplicate( $id );
+		$product = wc_get_product( $product_id );
 
-		// Copy the page and insert it
-		if ( ! empty( $post ) ) {
-			$new_id = $this->duplicate_product( $post );
-
-			// If you have written a plugin which uses non-WP database tables to save
-			// information about a page you can hook this action to dupe that data.
-			do_action( 'woocommerce_duplicate_product', $new_id, $post );
-
-			// Redirect to the edit screen for the new draft page
-			wp_redirect( admin_url( 'post.php?action=edit&post=' . $new_id ) );
-			exit;
-		} else {
-			wp_die( __( 'Product creation failed, could not find original product:', 'woocommerce' ) . ' ' . $id );
+		if ( false === $product ) {
+			/* translators: %s: product id */
+			wp_die( sprintf( esc_html__( 'Product creation failed, could not find original product: %s', 'woocommerce' ), esc_html( $product_id ) ) );
 		}
+
+		$duplicate = $this->product_duplicate( $product );
+
+		// Hook rename to match other woocommerce_product_* hooks, and to move away from depending on a response from the wp_posts table.
+		do_action( 'woocommerce_product_duplicate', $duplicate, $product );
+		wc_do_deprecated_action( 'woocommerce_duplicate_product', array( $duplicate->get_id(), $this->get_product_to_duplicate( $product_id ) ), '3.0', 'Use woocommerce_product_duplicate action instead.' );
+
+		// Redirect to the edit screen for the new draft page.
+		wp_redirect( admin_url( 'post.php?action=edit&post=' . $duplicate->get_id() ) );
+		exit;
 	}
 
 	/**
 	 * Function to create the duplicate of the product.
 	 *
-	 * @param mixed $post
-	 * @param int $parent (default: 0)
-	 * @param string $post_status (default: '')
-	 * @return int
+	 * @param WC_Product $product The product to duplicate.
+	 * @return WC_Product The duplicate.
 	 */
-	public function duplicate_product( $post, $parent = 0, $post_status = '' ) {
-		global $wpdb;
-
-		$new_post_author    = wp_get_current_user();
-		$new_post_date      = current_time( 'mysql' );
-		$new_post_date_gmt  = get_gmt_from_date( $new_post_date );
-
-		if ( $parent > 0 ) {
-			$post_parent        = $parent;
-			$post_status        = $post_status ? $post_status : 'publish';
-			$suffix             = '';
-		} else {
-			$post_parent        = $post->post_parent;
-			$post_status        = $post_status ? $post_status : 'draft';
-			$suffix             = ' ' . __( '(Copy)', 'woocommerce' );
-		}
-
-		// Insert the new template in the post table
-		$wpdb->insert(
-			$wpdb->posts,
-			array(
-				'post_author'               => $new_post_author->ID,
-				'post_date'                 => $new_post_date,
-				'post_date_gmt'             => $new_post_date_gmt,
-				'post_content'              => $post->post_content,
-				'post_content_filtered'     => $post->post_content_filtered,
-				'post_title'                => $post->post_title . $suffix,
-				'post_excerpt'              => $post->post_excerpt,
-				'post_status'               => $post_status,
-				'post_type'                 => $post->post_type,
-				'comment_status'            => $post->comment_status,
-				'ping_status'               => $post->ping_status,
-				'post_password'             => $post->post_password,
-				'to_ping'                   => $post->to_ping,
-				'pinged'                    => $post->pinged,
-				'post_modified'             => $new_post_date,
-				'post_modified_gmt'         => $new_post_date_gmt,
-				'post_parent'               => $post_parent,
-				'menu_order'                => $post->menu_order,
-				'post_mime_type'            => $post->post_mime_type
+	public function product_duplicate( $product ) {
+		/**
+		 * Filter to allow us to exclude meta keys from product duplication..
+		 *
+		 * @param array $exclude_meta The keys to exclude from the duplicate.
+		 * @param array $existing_meta_keys The meta keys that the product already has.
+		 * @since 2.6
+		 */
+		$meta_to_exclude = array_filter(
+			apply_filters(
+				'woocommerce_duplicate_product_exclude_meta',
+				array(),
+				array_map(
+					function ( $datum ) {
+						return $datum->key;
+					},
+					$product->get_meta_data()
+				)
 			)
 		);
 
-		$new_post_id = $wpdb->insert_id;
+		$duplicate = clone $product;
+		$duplicate->set_id( 0 );
+		/* translators: %s contains the name of the original product. */
+		$duplicate->set_name( sprintf( esc_html__( '%s (Copy)', 'woocommerce' ), $duplicate->get_name() ) );
+		$duplicate->set_total_sales( 0 );
+		if ( '' !== $product->get_sku( 'edit' ) ) {
+			$duplicate->set_sku( wc_product_generate_unique_sku( 0, $product->get_sku( 'edit' ) ) );
+		}
+		if ( '' !== $product->get_global_unique_id( 'edit' ) ) {
+			$duplicate->set_global_unique_id( '' );
+		}
+		$duplicate->set_status( ProductStatus::DRAFT );
+		$duplicate->set_date_created( null );
+		$duplicate->set_slug( '' );
+		$duplicate->set_rating_counts( 0 );
+		$duplicate->set_average_rating( 0 );
+		$duplicate->set_review_count( 0 );
 
-		// Copy the taxonomies
-		$this->duplicate_post_taxonomies( $post->ID, $new_post_id, $post->post_type );
-
-		// Copy the meta information
-		$this->duplicate_post_meta( $post->ID, $new_post_id );
-
-		// Copy the children (variations)
-		$exclude = apply_filters( 'woocommerce_duplicate_product_exclude_children', false );
-
-		if ( ! $exclude && ( $children_products = get_children( 'post_parent=' . $post->ID . '&post_type=product_variation' ) ) ) {
-			foreach ( $children_products as $child ) {
-				$this->duplicate_product( $this->get_product_to_duplicate( $child->ID ), $new_post_id, $child->post_status );
-			}
+		foreach ( $meta_to_exclude as $meta_key ) {
+			$duplicate->delete_meta_data( $meta_key );
 		}
 
-		return $new_post_id;
+		/**
+		 * This action can be used to modify the object further before it is created - it will be passed by reference.
+		 *
+		 * @since 3.0
+		 */
+		do_action( 'woocommerce_product_duplicate_before_save', $duplicate, $product );
+
+		// Save parent product.
+		$duplicate->save();
+
+		/**
+		 * Duplicate children of a variable product.
+		 *
+		 * @since 2.7
+		 */
+		if ( ! apply_filters( 'woocommerce_duplicate_product_exclude_children', false, $product ) && $product->is_type( ProductType::VARIABLE ) ) {
+			foreach ( $product->get_children() as $child_id ) {
+				$child           = wc_get_product( $child_id );
+				$child_duplicate = clone $child;
+				$child_duplicate->set_parent_id( $duplicate->get_id() );
+				$child_duplicate->set_id( 0 );
+				$child_duplicate->set_date_created( null );
+
+				// If we wait and let the insertion generate the slug, we will see extreme performance degradation
+				// in the case where a product is used as a template. Every time the template is duplicated, each
+				// variation will query every consecutive slug until it finds an empty one. To avoid this, we can
+				// optimize the generation ourselves, avoiding the issue altogether.
+				$this->generate_unique_slug( $child_duplicate );
+
+				if ( '' !== $child->get_sku( 'edit' ) ) {
+					$child_duplicate->set_sku( wc_product_generate_unique_sku( 0, $child->get_sku( 'edit' ) ) );
+				}
+				if ( '' !== $child->get_global_unique_id( 'edit' ) ) {
+					$child_duplicate->set_global_unique_id( '' );
+				}
+
+				foreach ( $meta_to_exclude as $meta_key ) {
+					$child_duplicate->delete_meta_data( $meta_key );
+				}
+
+				/**
+				 * This action can be used to modify the object further before it is created - it will be passed by reference.
+				 *
+				 * @since 3.0
+				 */
+				do_action( 'woocommerce_product_duplicate_before_save', $child_duplicate, $child );
+
+				$child_duplicate->save();
+			}
+
+			// Get new object to reflect new children.
+			$duplicate = wc_get_product( $duplicate->get_id() );
+		}
+
+		return $duplicate;
 	}
 
 	/**
 	 * Get a product from the database to duplicate.
 	 *
-	 * @param mixed $id
-	 * @return WP_Post|bool
-	 * @todo Returning false? Need to check for it in...
+	 * @deprecated 3.0.0
+	 * @param mixed $id The ID of the product to duplicate.
+	 * @return object|bool
 	 * @see duplicate_product
 	 */
 	private function get_product_to_duplicate( $id ) {
@@ -196,69 +247,53 @@ class WC_Admin_Duplicate_Product {
 			return false;
 		}
 
-		$post = $wpdb->get_results( "SELECT * FROM $wpdb->posts WHERE ID=$id" );
+		$post = $wpdb->get_row( $wpdb->prepare( "SELECT {$wpdb->posts}.* FROM {$wpdb->posts} WHERE ID = %d", $id ) );
 
-		if ( isset( $post->post_type ) && $post->post_type == "revision" ) {
+		if ( isset( $post->post_type ) && 'revision' === $post->post_type ) {
 			$id   = $post->post_parent;
-			$post = $wpdb->get_results( "SELECT * FROM $wpdb->posts WHERE ID=$id" );
+			$post = $wpdb->get_row( $wpdb->prepare( "SELECT {$wpdb->posts}.* FROM {$wpdb->posts} WHERE ID = %d", $id ) );
 		}
 
-		return $post[0];
+		return $post;
 	}
 
 	/**
-	 * Copy the taxonomies of a post to another post.
+	 * Generates a unique slug for a given product. We do this so that we can override the
+	 * behavior of wp_unique_post_slug(). The normal slug generation will run single
+	 * select queries on every non-unique slug, resulting in very bad performance.
 	 *
-	 * @param mixed $id
-	 * @param mixed $new_id
-	 * @param mixed $post_type
+	 * @param WC_Product $product The product to generate a slug for.
+	 * @since 3.9.0
 	 */
-	private function duplicate_post_taxonomies( $id, $new_id, $post_type ) {
-		$exclude    = array_filter( apply_filters( 'woocommerce_duplicate_product_exclude_taxonomies', array() ) );
-		$taxonomies = array_diff( get_object_taxonomies( $post_type ), $exclude );
-
-		foreach ( $taxonomies as $taxonomy ) {
-			$post_terms       = wp_get_object_terms( $id, $taxonomy );
-			$post_terms_count = sizeof( $post_terms );
-
-			for ( $i = 0; $i < $post_terms_count; $i++ ) {
-				wp_set_object_terms( $new_id, $post_terms[ $i ]->slug, $taxonomy, true );
-			}
-		}
-	}
-
-	/**
-	 * Copy the meta information of a post to another post.
-	 *
-	 * @param mixed $id
-	 * @param mixed $new_id
-	 */
-	private function duplicate_post_meta( $id, $new_id ) {
+	private function generate_unique_slug( $product ) {
 		global $wpdb;
 
-		$sql     = $wpdb->prepare( "SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d", absint( $id ) );
-		$exclude = array_map( 'esc_sql', array_filter( apply_filters( 'woocommerce_duplicate_product_exclude_meta', array( 'total_sales', '_wc_average_rating', '_wc_rating_count', '_wc_review_count' ) ) ) );
+		// We want to remove the suffix from the slug so that we can find the maximum suffix using this root slug.
+		// This will allow us to find the next-highest suffix that is unique. While this does not support gap
+		// filling, this shouldn't matter for our use-case.
+		$root_slug = preg_replace( '/-[0-9]+$/', '', $product->get_slug() );
 
-		if ( sizeof( $exclude ) ) {
-			$sql .= " AND meta_key NOT IN ( '" . implode( "','", $exclude ) . "' )";
+		$results = $wpdb->get_results(
+			$wpdb->prepare( "SELECT post_name FROM $wpdb->posts WHERE post_name LIKE %s AND post_type IN ( 'product', 'product_variation' )", $root_slug . '%' )
+		);
+
+		// The slug is already unique!
+		if ( empty( $results ) ) {
+			return;
 		}
 
-		$post_meta = $wpdb->get_results( $sql );
-
-		if ( sizeof( $post_meta ) ) {
-			$sql_query_sel = array();
-			$sql_query     = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
-
-			foreach ( $post_meta as $post_meta_row ) {
-				$sql_query_sel[] = $wpdb->prepare( "SELECT %d, %s, %s", $new_id, $post_meta_row->meta_key, $post_meta_row->meta_value );
+		// Find the maximum suffix so we can ensure uniqueness.
+		$max_suffix = 1;
+		foreach ( $results as $result ) {
+			// Pull a numerical suffix off the slug after the last hyphen.
+			$suffix = intval( substr( $result->post_name, strrpos( $result->post_name, '-' ) + 1 ) );
+			if ( $suffix > $max_suffix ) {
+				$max_suffix = $suffix;
 			}
-
-			$sql_query .= implode( " UNION ALL ", $sql_query_sel );
-			$wpdb->query( $sql_query );
 		}
+
+		$product->set_slug( $root_slug . '-' . ( $max_suffix + 1 ) );
 	}
 }
-
-endif;
 
 return new WC_Admin_Duplicate_Product();

@@ -1,128 +1,209 @@
 <?php
+/**
+ * Class WC_Email_Customer_Reset_Password file.
+ *
+ * @package WooCommerce\Emails
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
-if ( ! class_exists( 'WC_Email_Customer_Reset_Password' ) ) :
-
-/**
- * Customer Reset Password.
- *
- * An email sent to the customer when they reset their password.
- *
- * @class       WC_Email_Customer_Reset_Password
- * @version     2.3.0
- * @package     WooCommerce/Classes/Emails
- * @author      WooThemes
- * @extends     WC_Email
- */
-class WC_Email_Customer_Reset_Password extends WC_Email {
+if ( ! class_exists( 'WC_Email_Customer_Reset_Password', false ) ) :
 
 	/**
-	 * User login name.
+	 * Customer Reset Password.
 	 *
-	 * @var string
-	 */
-	public $user_login;
-
-	/**
-	 * User email.
+	 * An email sent to the customer when they reset their password.
 	 *
-	 * @var string
+	 * @class       WC_Email_Customer_Reset_Password
+	 * @version     3.5.0
+	 * @package     WooCommerce\Classes\Emails
+	 * @extends     WC_Email
 	 */
-	public $user_email;
+	class WC_Email_Customer_Reset_Password extends WC_Email {
 
-	/**
-	 * Reset key.
-	 *
-	 * @var string
-	 */
-	public $reset_key;
+		/**
+		 * User ID.
+		 *
+		 * @var integer
+		 */
+		public $user_id;
 
-	/**
-	 * Constructor.
-	 */
-	function __construct() {
+		/**
+		 * User login name.
+		 *
+		 * @var string
+		 */
+		public $user_login;
 
-		$this->id               = 'customer_reset_password';
-		$this->title            = __( 'Reset password', 'woocommerce' );
-		$this->description      = __( 'Customer "reset password" emails are sent when customers reset their passwords.', 'woocommerce' );
-		$this->customer_email   = true;
+		/**
+		 * User email.
+		 *
+		 * @var string
+		 */
+		public $user_email;
 
-		$this->template_html    = 'emails/customer-reset-password.php';
-		$this->template_plain   = 'emails/plain/customer-reset-password.php';
+		/**
+		 * Reset key.
+		 *
+		 * @var string
+		 */
+		public $reset_key;
 
-		$this->subject          = __( 'Password Reset for {site_title}', 'woocommerce');
-		$this->heading          = __( 'Password Reset Instructions', 'woocommerce');
+		/**
+		 * Constructor.
+		 */
+		public function __construct() {
 
-		// Trigger
-		add_action( 'woocommerce_reset_password_notification', array( $this, 'trigger' ), 10, 2 );
+			$this->id             = 'customer_reset_password';
+			$this->customer_email = true;
 
-		// Call parent constructor
-		parent::__construct();
-	}
+			$this->title       = __( 'Reset password', 'woocommerce' );
+			$this->description = __( 'Send an email to customers notifying them that their password has been reset', 'woocommerce' );
 
-	/**
-	 * Trigger.
-	 *
-	 * @param string $user_login
-	 * @param string $reset_key
-	 */
-	function trigger( $user_login = '', $reset_key = '' ) {
-		if ( $user_login && $reset_key ) {
-			$this->object     = get_user_by( 'login', $user_login );
+			$this->template_html  = 'emails/customer-reset-password.php';
+			$this->template_plain = 'emails/plain/customer-reset-password.php';
 
-			$this->user_login = $user_login;
-			$this->reset_key  = $reset_key;
-			$this->user_email = stripslashes( $this->object->user_email );
-			$this->recipient  = $this->user_email;
+			$this->email_group = 'accounts';
+
+			// Trigger.
+			add_action( 'woocommerce_reset_password_notification', array( $this, 'trigger' ), 10, 2 );
+
+			// Call parent constructor.
+			parent::__construct();
+
+			// Must be after parent's constructor which sets `block_email_editor_enabled` property.
+			if ( $this->block_email_editor_enabled ) {
+				$this->title       = __( 'Account password reset', 'woocommerce' );
+				$this->description = __( 'Notifies customers when their password has been reset.', 'woocommerce' );
+			}
 		}
 
-		if ( ! $this->is_enabled() || ! $this->get_recipient() ) {
-			return;
+		/**
+		 * Get email subject.
+		 *
+		 * @since  3.1.0
+		 * @return string
+		 */
+		public function get_default_subject() {
+			return $this->email_improvements_enabled
+				? __( 'Reset your password for {site_title}', 'woocommerce' )
+				: __( 'Password Reset Request for {site_title}', 'woocommerce' );
 		}
 
-		$this->send( $this->get_recipient(), $this->get_subject(), $this->get_content(), $this->get_headers(), $this->get_attachments() );
+		/**
+		 * Get email heading.
+		 *
+		 * @since  3.1.0
+		 * @return string
+		 */
+		public function get_default_heading() {
+			return $this->email_improvements_enabled
+				? __( 'Reset your password', 'woocommerce' )
+				: __( 'Password Reset Request', 'woocommerce' );
+		}
 
-	}
+		/**
+		 * Trigger.
+		 *
+		 * @param string $user_login User login.
+		 * @param string $reset_key Password reset key.
+		 */
+		public function trigger( $user_login = '', $reset_key = '' ) {
+			$this->setup_locale();
 
-	/**
-	 * Get content html.
-	 *
-	 * @access public
-	 * @return string
-	 */
-	function get_content_html() {
-		return wc_get_template_html( $this->template_html, array(
-			'email_heading' => $this->get_heading(),
-			'user_login'    => $this->user_login,
-			'reset_key'     => $this->reset_key,
-			'blogname'      => $this->get_blogname(),
-			'sent_to_admin' => false,
-			'plain_text'    => false,
-			'email'			=> $this
-		) );
-	}
+			if ( $user_login && $reset_key ) {
+				$this->object     = get_user_by( 'login', $user_login );
+				$this->user_id    = $this->object->ID;
+				$this->user_login = $user_login;
+				$this->reset_key  = $reset_key;
+				$this->user_email = stripslashes( $this->object->user_email );
+				$this->recipient  = $this->user_email;
+			}
 
-	/**
-	 * Get content plain.
-	 *
-	 * @access public
-	 * @return string
-	 */
-	function get_content_plain() {
-		return wc_get_template_html( $this->template_plain, array(
-			'email_heading' => $this->get_heading(),
-			'user_login'    => $this->user_login,
-			'reset_key'     => $this->reset_key,
-			'blogname'      => $this->get_blogname(),
-			'sent_to_admin' => false,
-			'plain_text'    => true,
-			'email'			=> $this
-		) );
+			if ( $this->is_enabled() && $this->get_recipient() ) {
+				$this->send( $this->get_recipient(), $this->get_subject(), $this->get_content(), $this->get_headers(), $this->get_attachments() );
+			}
+
+			$this->restore_locale();
+		}
+
+		/**
+		 * Get content html.
+		 *
+		 * @return string
+		 */
+		public function get_content_html() {
+			return wc_get_template_html(
+				$this->template_html,
+				array(
+					'email_heading'      => $this->get_heading(),
+					'user_id'            => $this->user_id,
+					'user_login'         => $this->user_login,
+					'reset_key'          => $this->reset_key,
+					'blogname'           => $this->get_blogname(),
+					'additional_content' => $this->get_additional_content(),
+					'sent_to_admin'      => false,
+					'plain_text'         => false,
+					'email'              => $this,
+				)
+			);
+		}
+
+		/**
+		 * Get content plain.
+		 *
+		 * @return string
+		 */
+		public function get_content_plain() {
+			return wc_get_template_html(
+				$this->template_plain,
+				array(
+					'email_heading'      => $this->get_heading(),
+					'user_id'            => $this->user_id,
+					'user_login'         => $this->user_login,
+					'reset_key'          => $this->reset_key,
+					'blogname'           => $this->get_blogname(),
+					'additional_content' => $this->get_additional_content(),
+					'sent_to_admin'      => false,
+					'plain_text'         => true,
+					'email'              => $this,
+				)
+			);
+		}
+
+
+		/**
+		 * Get block editor email template content.
+		 *
+		 * @return string
+		 */
+		public function get_block_editor_email_template_content() {
+			return wc_get_template_html(
+				$this->template_block_content,
+				array(
+					'user_id'       => $this->user_id,
+					'user_login'    => $this->user_login,
+					'reset_key'     => $this->reset_key,
+					'sent_to_admin' => false,
+					'plain_text'    => false,
+					'email'         => $this,
+				)
+			);
+		}
+
+
+		/**
+		 * Default content to show below main email content.
+		 *
+		 * @since 3.7.0
+		 * @return string
+		 */
+		public function get_default_additional_content() {
+			return __( 'Thanks for reading.', 'woocommerce' );
+		}
 	}
-}
 
 endif;
 

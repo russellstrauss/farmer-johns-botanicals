@@ -17,10 +17,10 @@
 			paginationTemplate = wp.template( 'wc-tax-table-pagination' ),
 			$table             = $( '.wc_tax_rates' ),
 			$tbody             = $( '#rates' ),
-			$save_button       = $( 'input[name="save"]' ),
-			$pagination        = $( '#rates-pagination' ),
+			$save_button       = $( ':input[name="save"]' ),
+			$pagination        = $( '#rates-pagination, #rates-bottom-pagination' ),
 			$search_field      = $( '#rates-search .wc-tax-rates-search-field' ),
-			$submit            = $( '.submit .button-primary[type=submit]' ),
+			$submit            = $( '.woocommerce-save-button[type=submit]' ),
 			WCTaxTableModelConstructor = Backbone.Model.extend({
 				changes: {},
 				setRateAttribute: function( rateID, attribute, value ) {
@@ -72,9 +72,13 @@
 							opacity: 0.6
 						}
 					});
+					if ( ! $submit.attr( 'disabled' ) ) {
+						$submit.addClass( 'is-busy' );
+					}
 				},
 				unblock: function() {
 					$( '.wc_tax_rates' ).unblock();
+					$submit.removeClass( 'is-busy' );
 				},
 				save: function() {
 					var self = this;
@@ -84,14 +88,14 @@
 					Backbone.ajax({
 						method: 'POST',
 						dataType: 'json',
-						url: ajaxurl + '?action=woocommerce_tax_rates_save_changes',
+						url: ajaxurl + ( ajaxurl.indexOf( '?' ) > 0 ? '&' : '?' ) + 'action=woocommerce_tax_rates_save_changes',
 						data: {
 							current_class: data.current_class,
 							wc_tax_nonce: data.wc_tax_nonce,
 							changes: self.changes
 						},
 						success: function( response, textStatus ) {
-							if ( 'success' === textStatus ) {
+							if ( 'success' === textStatus && response.success ) {
 								WCTaxTableModelInstance.set( 'rates', response.data.rates );
 								WCTaxTableModelInstance.trigger( 'change:rates' );
 
@@ -120,13 +124,12 @@
 					this.listenTo( this.model, 'change:rates', this.setUnloadConfirmation );
 					this.listenTo( this.model, 'saved:rates', this.clearUnloadConfirmation );
 					$tbody.on( 'change autocompletechange', ':input', { view: this }, this.updateModelOnChange );
-					$tbody.on( 'sortupdate', { view: this }, this.updateModelOnSort );
 					$search_field.on( 'keyup search', { view: this }, this.onSearchField );
 					$pagination.on( 'click', 'a', { view: this }, this.onPageChange );
 					$pagination.on( 'change', 'input', { view: this }, this.onPageChange );
 					$( window ).on( 'beforeunload', { view: this }, this.unloadConfirmation );
 					$submit.on( 'click', { view: this }, this.onSubmit );
-					$save_button.attr( 'disabled','disabled' );
+					$save_button.prop( 'disabled', true );
 
 					// Can bind these directly to the buttons, as they won't get overwritten.
 					$table.find( '.insert' ).on( 'click', { view: this }, this.onAddNewRow );
@@ -142,16 +145,11 @@
 						paged_rates = _.toArray( rates ).slice( first_index, last_index ),
 						view        = this;
 
-					// Blank out the contents.
-					this.$el.empty();
-
 					if ( paged_rates.length ) {
 						// Populate $tbody with the current page of results.
-						$.each( paged_rates, function( id, rowData ) {
-							view.$el.append( view.rowTemplate( rowData ) );
-						} );
+						this.el.innerHTML = paged_rates.map( rowData => view.rowTemplate( rowData ) ).join( '' );
 					} else {
-						view.$el.append( rowTemplateEmpty() );
+						this.el.innerHTML = rowTemplateEmpty();
 					}
 
 					// Initialize autocomplete for countries.
@@ -166,8 +164,9 @@
 						minLength: 3
 					});
 
-					// Postcode and city don't have `name` values by default. They're only created if the contents changes, to save on database queries (I think)
-					this.$el.find( 'td.postcode input, td.city input' ).change( function() {
+					// Postcode and city don't have `name` values by default.
+					// They're only created if the contents changes, to save on database queries (I think)
+					this.$el.find( 'td.postcode input, td.city input' ).on( 'change', function() {
 						$( this ).attr( 'name', $( this ).data( 'name' ) );
 					});
 
@@ -181,13 +180,6 @@
 					} else {
 						$pagination.empty();
 						view.page = 1;
-					}
-
-					// Disable sorting if there is a search term filtering the items.
-					if ( $search_field.val() ) {
-						$tbody.sortable( 'disable' );
-					} else {
-						$tbody.sortable( 'enable' );
 					}
 				},
 				updateUrl: function() {
@@ -240,7 +232,9 @@
 
 						reordered_rates = _.map( rates_to_reorder, function( rate ) {
 							rate.tax_rate_order++;
-							changes[ rate.tax_rate_id ] = _.extend( changes[ rate.tax_rate_id ] || {}, { tax_rate_order : rate.tax_rate_order } );
+							changes[ rate.tax_rate_id ] = _.extend(
+								changes[ rate.tax_rate_id ] || {}, { tax_rate_order : rate.tax_rate_order }
+							);
 							return rate;
 						} );
 					} else {
@@ -297,6 +291,7 @@
 					var $target  = $( event.currentTarget );
 
 					event.preventDefault();
+					event.stopPropagation();
 					event.data.view.page = $target.data( 'goto' ) ? $target.data( 'goto' ) : $target.val();
 					event.data.view.render();
 					event.data.view.updateUrl();
@@ -327,11 +322,11 @@
 				},
 				setUnloadConfirmation: function() {
 					this.needsUnloadConfirm = true;
-					$save_button.removeAttr( 'disabled' );
+					$save_button.prop( 'disabled', false );
 				},
 				clearUnloadConfirmation: function() {
 					this.needsUnloadConfirm = false;
-					$save_button.attr( 'disabled', 'disabled' );
+					$save_button.prop( 'disabled', true );
 				},
 				unloadConfirmation: function( event ) {
 					if ( event.data.view.needsUnloadConfirm ) {
@@ -363,31 +358,6 @@
 					}
 
 					model.setRateAttribute( id, attribute, val );
-				},
-				updateModelOnSort: function( event ) {
-					var view         = event.data.view,
-						model        = view.model,
-						rates        = _.indexBy( model.get( 'rates' ), 'tax_rate_id' ),
-						changes      = {};
-
-					_.each( rates, function( rate ) {
-						var new_position = 0;
-						var old_position = parseInt( rate.tax_rate_order, 10 );
-
-						if ( $table.find( 'tr[data-id="' + rate.tax_rate_id + '"]').size() ) {
-							new_position = parseInt( $table.find( 'tr[data-id="' + rate.tax_rate_id + '"]').index(), 10 ) + parseInt( ( view.page - 1 ) * view.per_page, 10 );
-						} else {
-							new_position = old_position;
-						}
-
-						if ( old_position !== new_position ) {
-							changes[ rate.tax_rate_id ] = _.extend( changes[ rate.tax_rate_id ] || {}, { tax_rate_order : new_position } );
-						}
-					} );
-
-					if ( _.size( changes ) ) {
-						model.logChanges( changes );
-					}
 				},
 				sanitizePage: function( page_num ) {
 					page_num = parseInt( page_num, 10 );

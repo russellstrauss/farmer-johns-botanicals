@@ -1,71 +1,58 @@
 <?php
 /**
  * Admin View: Page - Status Tools
+ *
+ * @package WooCommerce
  */
+
+use Automattic\WooCommerce\Utilities\ArrayUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+foreach ( $tools as $action_name => $tool ) {
+	?>
+	<form id="<?php echo esc_attr( 'form_' . $action_name ); ?>" method="GET" action="<?php echo esc_attr( esc_url( admin_url( 'admin.php?foo=bar' ) ) ); ?>">
+		<?php wp_nonce_field( 'debug_action', '_wpnonce', false ); ?>
+		<input type="hidden" name="page" value="wc-status"/>
+		<input type="hidden" name="tab" value="tools"/>
+		<input type="hidden" name="action" value="<?php echo esc_attr( $action_name ); ?>"/>
+	</form>
+	<?php
+}
 ?>
 
-<form method="post" action="options.php">
-	<?php settings_fields( 'woocommerce_status_settings_fields' ); ?>
-	<?php $options = wp_parse_args( get_option( 'woocommerce_status_options', array() ), array( 'uninstall_data' => 0, 'template_debug_mode' => 0, 'shipping_debug_mode' => 0 ) ); ?>
-	<table class="wc_status_table widefat" cellspacing="0">
-		<thead class="tools">
-			<tr>
-				<th colspan="2"><?php _e( 'Tools', 'woocommerce' ); ?></th>
-			</tr>
-		</thead>
-		<tbody class="tools">
-			<?php foreach ( $tools as $action => $tool ) : ?>
-				<tr class="<?php echo sanitize_html_class( $action ); ?>">
-					<td><?php echo esc_html( $tool['name'] ); ?></td>
-					<td>
-						<p>
-							<a href="<?php echo wp_nonce_url( admin_url('admin.php?page=wc-status&tab=tools&action=' . $action ), 'debug_action' ); ?>" class="button <?php echo esc_attr( $action ); ?>"><?php echo esc_html( $tool['button'] ); ?></a>
-							<span class="description"><?php echo wp_kses_post( $tool['desc'] ); ?></span>
-						</p>
-					</td>
-				</tr>
-			<?php endforeach; ?>
-			<tr>
-				<td><?php _e( 'Shipping Debug Mode', 'woocommerce' ); ?></td>
-				<td>
-					<p>
-						<label><input type="checkbox" class="checkbox" name="woocommerce_status_options[shipping_debug_mode]" value="1" <?php checked( '1', $options['shipping_debug_mode'] ); ?> /> <?php _e( 'Enabled', 'woocommerce' ); ?></label>
+<table class="wc_status_table wc_status_table--tools widefat" cellspacing="0">
+	<tbody class="tools">
+		<?php foreach ( $tools as $action_name => $tool ) : ?>
+			<tr class="<?php echo sanitize_html_class( $action_name ); ?>">
+				<th>
+					<strong class="name"><?php echo esc_html( $tool['name'] ); ?></strong>
+					<p class="description">
+						<?php
+						echo wp_kses_post( $tool['desc'] );
+						if ( ! is_null( ArrayUtil::get_value_or_default( $tool, 'selector' ) ) ) {
+							$selector = $tool['selector'];
+							if ( isset( $selector['description'] ) ) {
+								echo '</p><p class="description">';
+								echo wp_kses_post( $selector['description'] );
+							}
+							// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							echo "&nbsp;&nbsp;<select style='width: 300px;' form='form_$action_name' id='selector_$action_name' data-allow_clear='true' class='{$selector['class']}' name='{$selector['name']}' data-placeholder='{$selector['placeholder']}' data-action='{$selector['search_action']}'></select>";
+						}
+						?>
 					</p>
-					<p>
-						<span class="description"><?php _e( 'This tool will disable shipping rate caching.', 'woocommerce' ); ?></span>
-					</p>
+				</th>
+				<td class="run-tool">
+					<?php if ( ! empty( $tool['status_text'] ) ) : ?>
+					<span class="run-tool-status"><?php echo wp_kses_post( $tool['status_text'] ); ?></span>
+					<?php endif; ?>
+
+					<?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<input <?php echo ArrayUtil::is_truthy( $tool, 'disabled' ) ? 'disabled' : ''; ?> type="submit" form="<?php echo 'form_' . $action_name; ?>" class="button button-large" value="<?php echo esc_attr( $tool['button'] ); ?>" />
 				</td>
 			</tr>
-			<tr>
-				<td><?php _e( 'Template Debug Mode', 'woocommerce' ); ?></td>
-				<td>
-					<p>
-						<label><input type="checkbox" class="checkbox" name="woocommerce_status_options[template_debug_mode]" value="1" <?php checked( '1', $options['template_debug_mode'] ); ?> /> <?php _e( 'Enabled', 'woocommerce' ); ?></label>
-					</p>
-					<p>
-						<span class="description"><?php _e( 'This tool will disable template overrides for logged-in administrators for debugging purposes.', 'woocommerce' ); ?></span>
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td><?php _e( 'Remove All Data', 'woocommerce' ); ?></td>
-				<td>
-					<p>
-						<label><input type="checkbox" class="checkbox" name="woocommerce_status_options[uninstall_data]" value="1" <?php checked( '1', $options['uninstall_data'] ); ?> /> <?php _e( 'Enabled', 'woocommerce' ); ?></label>
-					</p>
-					<p>
-						<span class="description"><?php _e( 'This tool will remove all WooCommerce, Product and Order data when using the "Delete" link on the plugins screen. It will also remove any setting/option prepended with "woocommerce_" so may also affect installed WooCommerce Extensions.', 'woocommerce' ); ?></span>
-					</p>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-	<p class="submit">
-		<input type="submit" class="button-primary" value="<?php esc_attr_e( 'Save Changes', 'woocommerce' ) ?>" />
-	</p>
-</form>
+		<?php endforeach; ?>
+	</tbody>
+</table>

@@ -108,10 +108,10 @@
 		doresize = true, scroll_pos = _get_scroll();
 
 		// Window/Keyboard events
-		$(window).unbind('resize.prettyphoto').bind('resize.prettyphoto',function(){ _center_overlay(); _resize_overlay(); });
+		$(window).off('resize.prettyphoto').on('resize.prettyphoto',function(){ _center_overlay(); _resize_overlay(); });
 
 		if(pp_settings.keyboard_shortcuts) {
-			$(document).unbind('keydown.prettyphoto').bind('keydown.prettyphoto',function(e){
+			$(document).off('keydown.prettyphoto').on('keydown.prettyphoto',function(e){
 				if(typeof $pp_pic_holder != 'undefined'){
 					if($pp_pic_holder.is(':visible')){
 						switch(e.keyCode){
@@ -162,7 +162,7 @@
 			_build_overlay(this); // Build the overlay {this} being the caller
 
 			if(settings.allow_resize)
-				$(window).bind('scroll.prettyphoto',function(){ _center_overlay(); });
+				$(window).on('scroll.prettyphoto',function(){ _center_overlay(); });
 
 
 			$.prettyPhoto.open();
@@ -190,7 +190,7 @@
 
 			if(settings.hideflash) $('object,embed,iframe[src*=youtube],iframe[src*=vimeo]').css('visibility','hidden'); // Hide the flash
 
-			_checkPosition($(pp_images).size()); // Hide the next/previous links if on first or last images.
+			_checkPosition($(pp_images).length); // Hide the next/previous links if on first or last images.
 
 			$('.pp_loaderIcon').show();
 
@@ -208,7 +208,7 @@
 			$pp_overlay.show().fadeTo(settings.animation_speed,settings.opacity);
 
 			// Display the current position
-			$pp_pic_holder.find('.currentTextHolder').text((set_position+1) + settings.counter_separator_label + $(pp_images).size());
+			$pp_pic_holder.find('.currentTextHolder').text((set_position+1) + settings.counter_separator_label + $(pp_images).length);
 
 			// Set the description
 			if(typeof pp_descriptions[set_position] != 'undefined' && pp_descriptions[set_position] != ""){
@@ -241,7 +241,7 @@
 
 						// Preload the neighbour images
 						nextImage = new Image();
-						if(isSet && set_position < $(pp_images).size() -1) nextImage.src = pp_images[set_position + 1];
+						if(isSet && set_position < $(pp_images).length -1) nextImage.src = pp_images[set_position + 1];
 						prevImage = new Image();
 						if(isSet && pp_images[set_position - 1]) prevImage.src = pp_images[set_position - 1];
 
@@ -293,6 +293,7 @@
 						movie_id = pp_images[set_position];
 						var regExp = /http(s?):\/\/(www\.)?vimeo.com\/(\d+)/;
 						var match = movie_id.match(regExp);
+
 						movie = '//player.vimeo.com/video/'+ match[3] +'?title=0&amp;byline=0&amp;portrait=0';
 						if(settings.autoplay) movie += "&autoplay=1;";
 
@@ -381,10 +382,10 @@
 
 			if(direction == 'previous') {
 				set_position--;
-				if (set_position < 0) set_position = $(pp_images).size()-1;
+				if (set_position < 0) set_position = $(pp_images).length-1;
 			}else if(direction == 'next'){
 				set_position++;
-				if(set_position > $(pp_images).size()-1) set_position = 0;
+				if(set_position > $(pp_images).length-1) set_position = 0;
 			}else{
 				set_position=direction;
 			};
@@ -430,7 +431,7 @@
 		*/
 		$.prettyPhoto.startSlideshow = function(){
 			if(typeof pp_slideshow == 'undefined'){
-				$pp_pic_holder.find('.pp_play').unbind('click').removeClass('pp_play').addClass('pp_pause').click(function(){
+				$pp_pic_holder.find('.pp_play').off('click').removeClass('pp_play').addClass('pp_pause').on( 'click', function(){
 					$.prettyPhoto.stopSlideshow();
 					return false;
 				});
@@ -445,7 +446,7 @@
 		* Stop the slideshow...
 		*/
 		$.prettyPhoto.stopSlideshow = function(){
-			$pp_pic_holder.find('.pp_pause').unbind('click').removeClass('pp_pause').addClass('pp_play').click(function(){
+			$pp_pic_holder.find('.pp_pause').off('click').removeClass('pp_pause').addClass('pp_play').on( 'click', function(){
 				$.prettyPhoto.startSlideshow();
 				return false;
 			});
@@ -472,7 +473,7 @@
 
 				$(this).remove(); // No more need for the prettyPhoto markup
 
-				$(window).unbind('scroll.prettyphoto');
+				$(window).off('scroll.prettyphoto');
 
 				clearHashtag();
 
@@ -738,7 +739,7 @@
 
 				$pp_gallery_li.filter(':eq('+set_position+')').addClass('selected');
 			}else{
-				$pp_pic_holder.find('.pp_content').unbind('mouseenter mouseleave');
+				$pp_pic_holder.find('.pp_content').off('mouseenter mouseleave');
 				// $pp_gallery.hide();
 			}
 		}
@@ -775,22 +776,22 @@
 
 				$pp_gallery = $('.pp_pic_holder .pp_gallery'), $pp_gallery_li = $pp_gallery.find('li'); // Set the gallery selectors
 
-				$pp_gallery.find('.pp_arrow_next').click(function(){
+				$pp_gallery.find('.pp_arrow_next').on( 'click', function(){
 					$.prettyPhoto.changeGalleryPage('next');
 					$.prettyPhoto.stopSlideshow();
 					return false;
 				});
 
-				$pp_gallery.find('.pp_arrow_previous').click(function(){
+				$pp_gallery.find('.pp_arrow_previous').on( 'click', function(){
 					$.prettyPhoto.changeGalleryPage('previous');
 					$.prettyPhoto.stopSlideshow();
 					return false;
 				});
 
-				$pp_pic_holder.find('.pp_content').hover(
+				$pp_pic_holder.find('.pp_content').on( 'mouseenter',
 					function(){
 						$pp_pic_holder.find('.pp_gallery:not(.disabled)').fadeIn();
-					},
+					} ).on( 'mouseleave',
 					function(){
 						$pp_pic_holder.find('.pp_gallery:not(.disabled)').fadeOut();
 					});
@@ -799,7 +800,7 @@
 				$pp_gallery_li.each(function(i){
 					$(this)
 						.find('a')
-						.click(function(){
+						.on( 'click', function(){
 							$.prettyPhoto.changePage(i);
 							$.prettyPhoto.stopSlideshow();
 							return false;
@@ -811,7 +812,7 @@
 			// Inject the play/pause if it's a slideshow
 			if(settings.slideshow){
 				$pp_pic_holder.find('.pp_nav').prepend('<a href="#" class="pp_play">Play</a>')
-				$pp_pic_holder.find('.pp_nav .pp_play').click(function(){
+				$pp_pic_holder.find('.pp_nav .pp_play').on( 'click', function(){
 					$.prettyPhoto.startSlideshow();
 					return false;
 				});
@@ -825,15 +826,15 @@
 					'height':$(document).height(),
 					'width':$(window).width()
 					})
-				.bind('click',function(){
+				.on('click',function(){
 					if(!settings.modal) $.prettyPhoto.close();
 				});
 
-			$('a.pp_close').bind('click',function(){ $.prettyPhoto.close(); return false; });
+			$('a.pp_close').on('click',function(){ $.prettyPhoto.close(); return false; });
 
 
 			if(settings.allow_expand) {
-				$('a.pp_expand').bind('click',function(e){
+				$('a.pp_expand').on('click',function(e){
 					// Expand the image
 					if($(this).hasClass('pp_expand')){
 						$(this).removeClass('pp_expand').addClass('pp_contract');
@@ -849,13 +850,13 @@
 				});
 			}
 
-			$pp_pic_holder.find('.pp_previous, .pp_nav .pp_arrow_previous').bind('click',function(){
+			$pp_pic_holder.find('.pp_previous, .pp_nav .pp_arrow_previous').on('click',function(){
 				$.prettyPhoto.changePage('previous');
 				$.prettyPhoto.stopSlideshow();
 				return false;
 			});
 
-			$pp_pic_holder.find('.pp_next, .pp_nav .pp_arrow_next').bind('click',function(){
+			$pp_pic_holder.find('.pp_next, .pp_nav .pp_arrow_next').on('click',function(){
 				$.prettyPhoto.changePage('next');
 				$.prettyPhoto.stopSlideshow();
 				return false;
@@ -878,7 +879,7 @@
 			setTimeout(function(){ $("a["+pp_settings.hook+"^='"+hashRel+"']:eq("+hashIndex+")").trigger('click'); },50);
 		}
 
-		return this.unbind('click.prettyphoto').bind('click.prettyphoto',$.prettyPhoto.initialize); // Return the jQuery object for chaining. The unbind method is used to avoid click conflict when the plugin is called more than once
+		return this.off('click.prettyphoto').on('click.prettyphoto',$.prettyPhoto.initialize); // Return the jQuery object for chaining. The unbind method is used to avoid click conflict when the plugin is called more than once
 	};
 
 	function getHashtag(){
