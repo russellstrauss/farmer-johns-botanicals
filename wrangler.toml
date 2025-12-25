@@ -4,6 +4,7 @@ compatibility_flags = ["nodejs_compat"]
 
 # For Cloudflare Pages deployment
 # The dist directory contains the static site and _functions directory
+# Functions in dist/_functions are automatically deployed as Pages Functions
 pages_build_output_dir = "dist"
 
 # D1 Database binding
