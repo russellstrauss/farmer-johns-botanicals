@@ -1,0 +1,243 @@
+$tabletMenuFontSize: 14px;
+
+header {
+	
+	.main-navigation {
+		padding-left: 0;
+		padding-right: 0;
+		
+		@include tablet-only {
+			margin-left: 120px;
+			margin-right: 120px;
+			width: auto;
+		}
+		
+		@include desktop {
+			margin-left: 220px;
+			margin-right: 220px;
+			width: auto;
+		}
+		
+		&.toggled {
+			
+			.menu-menu-container {
+				
+				@include mobile-only {
+					height: 100vh;
+				}
+			}
+		}
+		
+		button {
+			
+			@include mobile-only {
+				z-index: $z-index-mobile-hamburger;
+				position: absolute;
+				opacity: 1 !important;
+				left: 2px;
+			}
+			
+			&.menu-toggle {
+				
+				@include tablet {
+					display: none;
+				}
+				
+				&:before {
+					content: none;
+				}
+				
+				.hamburger-inner::before {
+					border-radius: 2px;
+				}
+			}
+		}
+		
+		.menu-menu-container {
+			$menuOpenSpeed: 350ms;
+			
+			@include mobile-only {
+				position: fixed;
+				z-index: $z-index-mobile-menu;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 0;
+				background-color: white;
+				transition: height $menuOpenSpeed ease-in-out;
+			}
+			
+			#menu-menu {
+				
+				@include mobile-only {
+					top: 50%;
+					position: absolute;
+					transform: translateY(-50%);
+					
+					li {
+						margin: 0;
+						opacity: 0;
+						transition-delay: $menuOpenSpeed;
+						transition: opacity 250ms ease;
+						
+						a {
+							display: block;
+							width: 100%;
+							padding: 40px 15px;
+							text-align: center;
+						}
+					}
+				}
+			}
+			
+			ul {	
+				list-style: none;
+				margin:auto;
+				padding:0;
+				width: 100%;
+				
+				li {
+					position: relative;
+					margin: 8px;
+					
+					@include tablet-only {
+						margin: 0;
+					}
+					
+					a {
+						padding: 6px 8px 6px 8px;
+						color: #000;
+						text-decoration: none;
+						border: 1px solid transparent;
+						border-radius: 3px;
+						display: inline-block;
+						text-align: left;
+						font-size: 22px;
+						
+						@include tablet-only {
+							font-size: $tabletMenuFontSize;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	.site-branding {
+		
+		@include mobile-only {
+			margin-top: 60px;
+		}
+	}
+	
+	.fjb-checkout {
+		text-align: center;
+		
+		@include tablet {
+			position: absolute;
+			right: 20px;
+			top: 14px;
+			width: 120px;
+			z-index: $z-index-fjb-checkout;
+		}
+		
+		@include desktop {
+			width: 200px;
+			top: 25px;
+		}
+		
+		&:hover {
+			
+			a {
+				
+				.bling-shark-container {
+					
+					.bling-shark {
+						display: none;
+					}
+					
+					.bling-shark-hover {
+						display: block;
+					}
+				}
+			}
+		}
+		
+		a {
+			display: block;
+			text-decoration: none;
+			
+			@include mobile-only {
+				padding: 20px;
+				border-radius: 6px;
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
+				margin: 15px;
+				
+				border: 1px solid #ccc;
+				background-color: #eee;
+				box-shadow: 0 6px #aaa;
+				
+				// border: 1px solid #9FC2D6;
+				// background-color: #B8D0DE;
+				// box-shadow: 0 6px #6792AB;
+				
+				&:active {
+					position: relative;
+					box-shadow: none;
+					top: 6px;
+				}
+			}
+			
+			.bling-shark-container {
+				height: 160px;
+				position: relative;
+				
+				.bling-shark, .bling-shark-hover {
+					margin: 0 auto;
+					background-repeat: no-repeat;
+					height: 100%;
+					
+					
+					@include mobile-only {
+						width: 250px;
+						display: block;
+						margin: auto;
+					}
+					
+					@include tablet {
+						position: absolute;
+						left: 0;
+						bottom: 0;
+						width: 100%;
+					}
+				}
+				
+				.bling-shark {
+					display: block;
+					background-image: url(assets/img/bling-shark-color.svg);
+				}
+				
+				.bling-shark-hover {
+					display: none;
+					background-image: url(assets/img/bling-shark-color-hover.svg);
+				}
+			}
+			
+			span {
+				@include Montserrat;
+				color: black;
+				font-size: 22px;
+				text-transform: uppercase;
+				
+				@include mobile-only {
+					display: block;
+				}
+				
+				@include tablet-only {
+					font-size: $tabletMenuFontSize;
+				}
+			}
+		}
+	}
+}

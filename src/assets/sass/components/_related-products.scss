@@ -1,0 +1,30 @@
+.related {
+	
+	ul.products {
+		
+		li.product {
+			
+			@include mobile-only {
+				width: 48%;
+				float: left;
+				clear: both;
+				margin: 0 0 20px 0;
+				
+				&:nth-child(2n) {
+					float: right;
+				}
+				
+				a {
+					
+					img {
+						margin: 0;
+					}
+				}
+			}
+			
+			.add_to_cart_button {
+				display: none;
+			}
+		}
+	}
+}

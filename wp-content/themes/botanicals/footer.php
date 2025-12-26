@@ -30,6 +30,5 @@
 	</div><!-- #page -->
 
 	<?php wp_footer(); ?>
-	<script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/assets/js/bundle.js"></script>
 </body>
 </html>

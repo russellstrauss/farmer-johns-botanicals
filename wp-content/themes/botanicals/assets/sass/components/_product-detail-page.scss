@@ -1,4 +1,6 @@
-.jewelry-shop {
+// Product page styles (applies to both jewelry-shop wrapped pages and single product pages)
+.jewelry-shop,
+.woocommerce {
 	
 	.woocommerce-error, .woocommerce-message {
 		@include alert;
@@ -6,6 +8,27 @@
 	}
 	
 	div.product {
+		
+		// Ensure product title styles apply with high specificity
+		.summary .product_title.entry-title,
+		.summary .product_title.entry-title a,
+		.entry-summary .product_title.entry-title,
+		.entry-summary .product_title.entry-title a {
+			@include Montserrat;
+			font-size: 30px;
+			font-size: 3.0rem;
+			text-decoration: none;
+			margin: 10px 0 15px 0;
+			padding-bottom: 4px;
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			color: #000000;
+		}
+		
+		.summary .product_title.entry-title a:hover,
+		.entry-summary .product_title.entry-title a:hover {
+			text-decoration: underline;
+		}
 		
 		div.summary {
 			text-align: left;
@@ -46,8 +69,11 @@
 			display: none;
 		}
 		
-		button.button.alt.single_add_to_cart_button {
+		button.button.alt.single_add_to_cart_button,
+		form.cart button.button.alt.single_add_to_cart_button {
 			@include black-button;
+			cursor: pointer;
+			width: auto;
 			
 			@include mobile-only {
 				width: 100%;
@@ -57,5 +83,80 @@
 	
 	.woocommerce-tabs { // hide review forms that are visible on some random product pages
 		display: none;
+	}
+}
+
+// Direct product page styles (when not wrapped in jewelry-shop)
+.woocommerce div.product {
+	
+	// Ensure product title styles apply with high specificity
+	.summary .product_title.entry-title,
+	.summary .product_title.entry-title a,
+	.entry-summary .product_title.entry-title,
+	.entry-summary .product_title.entry-title a {
+		@include Montserrat;
+		font-size: 30px;
+		font-size: 3.0rem;
+		text-decoration: none;
+		margin: 10px 0 15px 0;
+		padding-bottom: 4px;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		color: #000000;
+	}
+	
+	.summary .product_title.entry-title a:hover,
+	.entry-summary .product_title.entry-title a:hover {
+		text-decoration: underline;
+	}
+	
+	div.summary {
+		text-align: left;
+		margin: 0;
+		
+		&.entry-summary {
+			
+			@include mobile-only {
+				margin: 0 0 100px 0;
+			}
+		}
+	}
+	
+	.price {
+		
+		.amount {	
+			color: black;
+		}
+	}
+	
+	p.stock {
+		color: black;
+	}
+	
+	[itemprop="description"] {
+		margin-bottom: 40px;
+		
+		p {
+			margin-bottom: 10px;
+		}
+	}
+	
+	.product_meta {
+		display: none;
+	}
+	
+	.quantity {
+		display: none;
+	}
+	
+	button.button.alt.single_add_to_cart_button,
+	form.cart button.button.alt.single_add_to_cart_button {
+		@include black-button;
+		cursor: pointer;
+		width: auto;
+		
+		@include mobile-only {
+			width: 100%;
+		}
 	}
 }

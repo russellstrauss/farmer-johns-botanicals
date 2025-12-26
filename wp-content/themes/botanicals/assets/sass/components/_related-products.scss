@@ -1,8 +1,25 @@
 .related {
+	margin-top: 60px;
+	margin-bottom: 40px;
+	
+	h2 {
+		margin-bottom: 30px;
+		font-size: 1.5em;
+	}
 	
 	ul.products {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		margin: 0 -15px;
 		
 		li.product {
+			width: calc(33.333% - 30px);
+			margin: 0 15px 40px 15px;
+			
+			@include tablet-only {
+				width: calc(50% - 30px);
+			}
 			
 			@include mobile-only {
 				width: 48%;

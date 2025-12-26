@@ -1,0 +1,30 @@
+/* Imports */
+// This project uses inverted triangle CSS architecture (https://www.xfive.co/blog/itcss-scalable-maintainable-css-architecture/)
+
+// vendors
+//@import '../vendors/css/swiper';
+
+// shared
+@import 'mixins';
+
+// Base WordPress Theme
+@import 'base-theme';
+
+// global
+@import 'vars';
+@import 'elements';
+@import 'global';
+
+@import 'components/about';
+@import 'components/header';
+@import 'components/hamburger';
+@import 'components/footer';
+@import 'components/shop-products';
+@import 'components/shop-front';
+@import 'components/woocommerce-lightbox';
+@import 'components/products-listing-page';
+@import 'components/product-detail-page';
+@import 'components/related-products';
+@import 'components/cart';
+
+@import 'helpers';

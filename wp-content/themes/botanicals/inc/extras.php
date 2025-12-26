@@ -19,6 +19,13 @@ function botanicals_body_classes( $classes ) {
 		$classes[] = 'group-blog';
 	}
 
+	// Add jewelry-shop class for WooCommerce shop pages
+	if ( function_exists( 'is_woocommerce' ) ) {
+		if ( is_shop() || is_product_category() || is_product_tag() || is_product() ) {
+			$classes[] = 'jewelry-shop';
+		}
+	}
+
 	return $classes;
 }
 add_filter( 'body_class', 'botanicals_body_classes' );

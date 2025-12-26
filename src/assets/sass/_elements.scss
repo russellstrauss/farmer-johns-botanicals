@@ -1,0 +1,25 @@
+// Elements – styling for bare HTML elements
+
+html {
+	overflow-x: hidden;
+}
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	color: #333;
+	overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	@include Montserrat;
+	text-transform: uppercase;
+}
+
+p {
+	font-family: 'Open Sans', sans-serif;
+	color: black;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}

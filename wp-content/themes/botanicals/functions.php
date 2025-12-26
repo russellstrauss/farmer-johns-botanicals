@@ -77,9 +77,10 @@ function botanicals_setup() {
 	add_theme_support( 'automatic-feed-links' );
 
 	add_theme_support( 'woocommerce' );
-	add_theme_support( 'wc-product-gallery-zoom' );
-	add_theme_support( 'wc-product-gallery-lightbox' );
-	add_theme_support( 'wc-product-gallery-slider' );
+	// Disable default WooCommerce gallery features - using Vue gallery instead
+	// add_theme_support( 'wc-product-gallery-zoom' );
+	// add_theme_support( 'wc-product-gallery-lightbox' );
+	// add_theme_support( 'wc-product-gallery-slider' );
 	
 	add_theme_support( 'jetpack-responsive-videos' ); 
 
@@ -165,8 +166,9 @@ if ( ! function_exists( 'botanicals_fonts_url' )) :
 		$subsets   = 'latin,latin-ext';
 
 		/* translators: If there are characters in your language that are not supported by Montserrat, translate this to 'off'. Do not translate into your own language. */
-		if ( 'off' !== _x( 'on', 'Montserrat font: on or off', 'botanicals' )) {
-			$fonts[] = 'Montserrat';
+		$font_setting = _x( 'on', 'Montserrat font: on or off', 'botanicals' );
+		if ( 'off' !== $font_setting ) {
+			$fonts[] = 'Montserrat:400,500,600';
 		}
 
 		/* translators: To add an additional character subset specific to your language, translate this to 'greek', 'cyrillic', 'devanagari' or 'vietnamese'. Do not translate into your own language. */
@@ -182,11 +184,16 @@ if ( ! function_exists( 'botanicals_fonts_url' )) :
 			$subsets .= ',vietnamese';
 		}
 
-		if ( $fonts ) {
+		if ( ! empty( $fonts ) ) {
 			$fonts_url = add_query_arg( array(
 				'family' => urlencode( implode( '|', $fonts )),
 				'subset' => urlencode( $subsets ),
-			), '//fonts.googleapis.com/css' );
+			), 'https://fonts.googleapis.com/css' );
+		}
+
+		// Fallback: if no fonts URL was generated, return default Montserrat URL
+		if ( empty( $fonts_url ) ) {
+			$fonts_url = 'https://fonts.googleapis.com/css?family=Montserrat:400,500,600&subset=latin,latin-ext';
 		}
 
 		return $fonts_url;
@@ -198,7 +205,13 @@ endif;
  */
 function botanicals_scripts() {
 	wp_enqueue_style( 'botanicals-style', get_stylesheet_uri(), array('dashicons'));
-	wp_enqueue_style( 'botanicals-fonts', botanicals_fonts_url(), array(), null );
+	
+	// Enqueue Google Fonts (Montserrat)
+	$fonts_url = botanicals_fonts_url();
+	if ( $fonts_url ) {
+		wp_enqueue_style( 'botanicals-fonts', $fonts_url, array(), null );
+	}
+	
 	wp_enqueue_style( 'open-sans');
 
 	wp_enqueue_script( 'botanicals-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true );
@@ -207,8 +220,109 @@ function botanicals_scripts() {
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' )) {
 		wp_enqueue_script( 'comment-reply' );
 	}
+	
+	// Enqueue theme JavaScript bundle with jQuery dependency
+	wp_enqueue_script( 'botanicals-theme-js', get_template_directory_uri() . '/assets/js/bundle.js', array('jquery'), filemtime( get_template_directory() . '/assets/js/bundle.js' ), true );
+	
+	// Enqueue Vue Product Gallery on product pages
+	if ( is_product() ) {
+		$gallery_js_path = get_template_directory() . '/assets/js/product-gallery.js';
+		if ( file_exists( $gallery_js_path ) ) {
+			wp_enqueue_script(
+				'botanicals-product-gallery',
+				get_template_directory_uri() . '/assets/js/product-gallery.js',
+				array(), // Vue will be bundled
+				filemtime( $gallery_js_path ),
+				true
+			);
+			// Debug: Log script enqueuing
+			error_log( 'Botanicals: Product gallery script enqueued: ' . get_template_directory_uri() . '/assets/js/product-gallery.js' );
+			
+			// Add inline script to check if container exists
+			wp_add_inline_script( 'botanicals-product-gallery', '
+				document.addEventListener("DOMContentLoaded", function() {
+					setTimeout(function() {
+						var container = document.querySelector(".vue-product-gallery-container");
+						if (!container) {
+							console.error("Botanicals Gallery: Container not found! Template may not be loading.");
+							var galleryArea = document.querySelector(".woocommerce-product-gallery");
+							if (galleryArea) {
+								galleryArea.innerHTML = "<div style=\'padding: 40px; text-align: center; background: #f5f5f5; border: 2px dashed #ccc;\'><p style=\'color: #d63638; font-weight: bold;\'>Gallery Template Not Loading</p><p>Please check WordPress debug log for errors.</p></div>";
+							}
+						}
+					}, 1000);
+				});
+			', 'after' );
+		} else {
+			error_log( 'Botanicals: Product gallery script not found at: ' . $gallery_js_path );
+		}
+	}
 }
 add_action( 'wp_enqueue_scripts', 'botanicals_scripts' );
+
+/**
+ * Disable default WooCommerce gallery scripts since we're using Vue gallery
+ */
+function botanicals_disable_woocommerce_gallery_scripts() {
+	if ( is_product() ) {
+		// Remove default WooCommerce single product scripts
+		wp_dequeue_script( 'wc-single-product' );
+		wp_dequeue_script( 'wc-zoom' );
+		wp_dequeue_script( 'wc-flexslider' );
+		wp_dequeue_script( 'wc-photoswipe-ui-default' );
+		wp_dequeue_style( 'photoswipe-default-skin' );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'botanicals_disable_woocommerce_gallery_scripts', 100 );
+
+/**
+ * Force clear WooCommerce template cache to ensure our template is used
+ */
+function botanicals_clear_wc_template_cache() {
+	if ( is_product() ) {
+		// Clear WooCommerce template cache
+		wp_cache_delete( 'template-part-single-product-product-image-' . WC_VERSION, 'woocommerce' );
+		wp_cache_delete( 'template-single-product-product-image-woocommerce-', 'woocommerce' );
+	}
+}
+add_action( 'template_redirect', 'botanicals_clear_wc_template_cache', 1 );
+
+/**
+ * Verify template is being used - add admin notice for debugging
+ */
+function botanicals_check_gallery_template() {
+	if ( is_product() && current_user_can( 'manage_options' ) ) {
+		$template = wc_locate_template( 'single-product/product-image.php' );
+		$is_our_template = strpos( $template, 'botanicals' ) !== false;
+		
+		if ( ! $is_our_template ) {
+			add_action( 'admin_notices', function() use ( $template ) {
+				echo '<div class="notice notice-warning"><p>';
+				echo 'Botanicals Gallery: Template not found! Using: ' . esc_html( $template );
+				echo '</p></div>';
+			} );
+		}
+	}
+}
+add_action( 'wp', 'botanicals_check_gallery_template' );
+
+/**
+ * Wrap WooCommerce shop content with jewelry-shop class
+ * Note: Product pages should NOT have the jewelry-shop wrapper
+ */
+function botanicals_wrap_shop_content() {
+	if ( function_exists( 'is_woocommerce' ) && ( is_shop() || is_product_category() || is_product_tag() ) ) {
+		// Only wrap shop/archive pages, not single product pages
+		add_action( 'woocommerce_before_main_content', function() {
+			echo '<div class="jewelry-shop">';
+		}, 5 );
+		
+		add_action( 'woocommerce_after_main_content', function() {
+			echo '</div>';
+		}, 25 );
+	}
+}
+add_action( 'template_redirect', 'botanicals_wrap_shop_content' );
 
 /*
  * Enqueue styles for the setup help page.
@@ -401,6 +515,7 @@ function botanicals_customize_css() {
 	/* Product Page Add to Cart Button Styling */
 	.jewelry-shop div.product button.button.alt.single_add_to_cart_button,
 	.jewelry-shop div.product form.cart button.button.alt.single_add_to_cart_button,
+	.woocommerce div.product button.button.alt.single_add_to_cart_button,
 	.woocommerce div.product form.cart button.button.alt.single_add_to_cart_button {
 		background-color: black !important;
 		color: #fff !important;
@@ -415,6 +530,7 @@ function botanicals_customize_css() {
 	}
 	.jewelry-shop div.product button.button.alt.single_add_to_cart_button:hover,
 	.jewelry-shop div.product form.cart button.button.alt.single_add_to_cart_button:hover,
+	.woocommerce div.product button.button.alt.single_add_to_cart_button:hover,
 	.woocommerce div.product form.cart button.button.alt.single_add_to_cart_button:hover {
 		background-color: white !important;
 		color: black !important;
@@ -422,6 +538,7 @@ function botanicals_customize_css() {
 	@media (max-width: 767px) {
 		.jewelry-shop div.product button.button.alt.single_add_to_cart_button,
 		.jewelry-shop div.product form.cart button.button.alt.single_add_to_cart_button,
+		.woocommerce div.product button.button.alt.single_add_to_cart_button,
 		.woocommerce div.product form.cart button.button.alt.single_add_to_cart_button {
 			width: 100% !important;
 		}
