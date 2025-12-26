@@ -1,5 +1,5 @@
 <template>
-  <div id="primary" class="content-area woocommerce woocommerce-shop">
+  <div id="primary" class="content-area">
     <main id="main" class="site-main" role="main">
       <div class="above-shop-section">
         <ul class="product-categories" id="product-categories">
@@ -15,7 +15,7 @@
                 <img :src="getProductImage(product)" :alt="product.name" />
               </div>
               <span v-if="product.sale_price" class="sale-badge">Sale</span>
-              <h3 class="woocommerce-loop-product__title">{{ product.name }}</h3>
+              <h3 class="product-title">{{ product.name }}</h3>
               <span class="price">
                 <span class="amount">
                   <span v-if="product.sale_price" class="sale-price">{{ formatPrice(product.sale_price) }}</span>

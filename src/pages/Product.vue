@@ -1,5 +1,5 @@
 <template>
-	<div id="primary" class="content-area woocommerce-shop">
+	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
 			<div v-if="product">
 				<div class="product">
