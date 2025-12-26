@@ -28,8 +28,18 @@
 </template>
 
 <script>
+import { onMounted } from 'vue'
+
 export default {
-  name: 'Home'
+  name: 'Home',
+  setup() {
+    onMounted(() => {
+      console.log('[Home] Home component mounted successfully')
+      console.log('[Home] Component is rendering')
+    })
+
+    return {}
+  }
 }
 </script>
 

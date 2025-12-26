@@ -22,15 +22,15 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'src/main.js')
-      },
+      // Let Vite use index.html as the entry point (default behavior)
+      // This ensures the Vue SPA is built correctly
+      input: resolve(__dirname, 'index.html'),
       output: {
         manualChunks: {
           'vendor': ['vue', 'vue-router'],
           'stripe': ['@stripe/stripe-js']
         },
-        entryFileNames: 'assets/js/[name].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
         chunkFileNames: 'assets/js/[name]-[hash].js',
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
       }
