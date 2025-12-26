@@ -378,3 +378,14 @@
 		}
 	}
 }
+
+.cart-actions {
+	display: flex;
+	justify-content: space-between;
+
+	a, button {
+		margin: 0 0 20px 0;
+		display: block;
+		width: 48%;
+	}
+}

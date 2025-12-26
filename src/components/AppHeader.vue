@@ -28,7 +28,12 @@
           alt="Farmer John's Botanicals Logo"
           @error="handleLogoError"
         />
-        <span v-else class="text-logo">Farmer John's Botanicals</span>
+        <img 
+          v-else
+          id="site-logo" 
+          src="/assets/images/fjb-cotton-logo.svg" 
+          alt="Farmer John's Botanicals Logo"
+        />
       </router-link>
     </div>
     <div class="fjb-checkout">

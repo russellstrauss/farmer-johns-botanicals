@@ -49,6 +49,8 @@ $desktop-large-width: 1200px;
 	border: 1px solid black;
 	transition: all 250ms ease;
 	text-align: center;
+	box-shadow: none;
+	border-radius: 5px;
 	
 	@include mobile-only {
 		font-size: 16px;
