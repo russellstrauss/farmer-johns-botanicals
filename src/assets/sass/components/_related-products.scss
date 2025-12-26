@@ -1,25 +1,23 @@
-.related {
+.related-products {
 	
 	.products {
 		
 		.product {
+			flex: 0 0 calc(25% - 30px);
+			width: calc(25% - 30px);
+			max-width: calc(25% - 30px);
+			min-width: 0;
+			
+			@include tablet-only {
+				flex: 0 0 calc(50% - 30px);
+				width: calc(50% - 30px);
+				max-width: calc(50% - 30px);
+			}
 			
 			@include mobile-only {
-				width: 48%;
-				float: left;
-				clear: both;
-				margin: 0 0 20px 0;
-				
-				&:nth-child(2n) {
-					float: right;
-				}
-				
-				a {
-					
-					img {
-						margin: 0;
-					}
-				}
+				flex: 0 0 calc(100% - 30px);
+				width: calc(100% - 30px);
+				max-width: calc(100% - 30px);
 			}
 		}
 	}

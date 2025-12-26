@@ -96,6 +96,25 @@ export function useProducts() {
     return Array.from(tagsMap.values())
   }
 
+  const getRelatedProducts = (productId, limit = 4) => {
+    const currentProduct = getProductById(productId)
+    if (!currentProduct || !currentProduct.categories || currentProduct.categories.length === 0) {
+      return []
+    }
+
+    // Get category slugs from current product
+    const categorySlugs = currentProduct.categories.map(cat => cat.slug)
+
+    // Find products in the same categories, excluding the current product
+    const related = products.value.filter(product => {
+      if (product.id === productId) return false
+      return product.categories && product.categories.some(cat => categorySlugs.includes(cat.slug))
+    })
+
+    // Limit the number of related products
+    return related.slice(0, limit)
+  }
+
   return {
     products: computed(() => products.value),
     loadProducts,
@@ -104,7 +123,8 @@ export function useProducts() {
     getProductsByCategory,
     getProductsByTag,
     getAllCategories,
-    getAllTags
+    getAllTags,
+    getRelatedProducts
   }
 }
 

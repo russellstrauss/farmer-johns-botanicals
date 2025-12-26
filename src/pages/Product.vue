@@ -70,6 +70,7 @@
 				<p>Product not found</p>
 				<router-link to="/shop">Continue Shopping</router-link>
 			</div>
+			<RelatedProducts v-if="product" :product-id="product.id" />
 		</main>
 	</div>
 </template>
@@ -80,9 +81,13 @@ import { useRoute } from 'vue-router'
 import { useProducts } from '../composables/useProducts'
 import { useCart } from '../composables/useCart'
 import { usePhotoSwipe } from '../composables/usePhotoSwipe'
+import RelatedProducts from '../components/RelatedProducts.vue'
 
 export default {
 	name: 'Product',
+	components: {
+		RelatedProducts
+	},
 	props: {
 		slug: {
 			type: String,
