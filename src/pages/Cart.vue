@@ -2,23 +2,23 @@
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
 			<h1>Shopping Cart</h1>
-			<div id="cart-container">
-				<div v-if="isEmpty()" id="cart-empty">
-					<p>Your cart is empty.</p>
-					<router-link to="/shop" class="button">Continue Shopping</router-link>
-				</div>
-				<div v-else id="cart-items">
-					<table class="cart-table">
-						<thead>
-							<tr>
-								<th>Product</th>
-								<th>Price</th>
-								<th>Quantity</th>
-								<th>Subtotal</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody id="cart-items-body">
+		<div class="cart-container">
+			<div v-if="isEmpty()" class="cart-empty">
+				<p>Your cart is empty.</p>
+				<router-link to="/shop" class="button">Continue Shopping</router-link>
+			</div>
+			<div v-else class="cart-items">
+				<table class="cart-table">
+					<thead>
+						<tr>
+							<th>Product</th>
+							<th>Price</th>
+							<th>Quantity</th>
+							<th>Subtotal</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody class="cart-items-body">
 							<tr v-for="(item, index) in cartItems" :key="index">
 								<td>
 									<img :src="item.image || '/assets/images/placeholder.jpg'" :alt="item.name"
