@@ -146,23 +146,6 @@ header {
 			top: 25px;
 		}
 		
-		&:hover {
-			
-			a {
-				
-				.bling-shark-container {
-					
-					.bling-shark {
-						display: none;
-					}
-					
-					.bling-shark-hover {
-						display: block;
-					}
-				}
-			}
-		}
-		
 		a {
 			display: block;
 			text-decoration: none;
@@ -216,11 +199,6 @@ header {
 				.bling-shark {
 					display: block;
 					background-image: url(assets/img/bling-shark-color.svg);
-				}
-				
-				.bling-shark-hover {
-					display: none;
-					background-image: url(assets/img/bling-shark-color-hover.svg);
 				}
 			}
 			

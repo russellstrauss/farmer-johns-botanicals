@@ -61,10 +61,6 @@
 						
 						@include mobile-only {
 							display: block;
-							
-							&:before {
-								display: none;
-							}
 						}
 						
 						img {
@@ -168,20 +164,6 @@
 					
 					.shop_table {
 						border-radius: 0;
-						
-						.shipping {
-							
-							.woocommerce-shipping-calculator {
-								display: none;
-								
-								.shipping-calculator-form {
-									
-									.button {
-										@include black-button;
-									}
-								}
-							}
-						}
 					}
 				}
 				
@@ -240,11 +222,6 @@
 						color: black;
 					}
 				}
-				
-				#billing_company_field, #shipping_company_field {
-					display: none;
-				}
-				
 				
 				.woocommerce-invalid {
 					

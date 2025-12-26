@@ -4,14 +4,23 @@
       <div v-if="product">
         <div class="product">
           <div class="product-images">
-            <div class="product-gallery">
-              <img 
-                v-for="(image, index) in product.images" 
+            <div id="product-gallery" class="product-gallery">
+              <a
+                v-for="(image, index) in product.images"
                 :key="index"
-                :src="image" 
-                :alt="`${product.name} ${index + 1}`" 
-                :class="index === 0 ? 'main-image' : 'gallery-image'"
-              />
+                :href="image"
+                :data-pswp-src="image"
+                :data-pswp-width="imageDimensions[index]?.width || 1200"
+                :data-pswp-height="imageDimensions[index]?.height || 1200"
+                :alt="`${product.name} ${index + 1}`"
+                class="gallery-link"
+              >
+                <img 
+                  :src="image" 
+                  :alt="`${product.name} ${index + 1}`" 
+                  :class="index === 0 ? 'main-image' : 'gallery-image'"
+                />
+              </a>
             </div>
           </div>
           <div class="summary entry-summary">
@@ -66,10 +75,11 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProducts } from '../composables/useProducts'
 import { useCart } from '../composables/useCart'
+import { usePhotoSwipe } from '../composables/usePhotoSwipe'
 
 export default {
   name: 'Product',
@@ -85,6 +95,29 @@ export default {
     const { addItem, formatPrice } = useCart()
     const product = ref(null)
     const quantity = ref(1)
+    const imageDimensions = ref([])
+
+    // Load image dimensions
+    const loadImageDimensions = async (images) => {
+      if (!images || images.length === 0) return
+      
+      const dimensions = await Promise.all(
+        images.map((imageSrc) => {
+          return new Promise((resolve) => {
+            const img = new Image()
+            img.onload = () => {
+              resolve({ width: img.naturalWidth, height: img.naturalHeight })
+            }
+            img.onerror = () => {
+              // Default dimensions if image fails to load
+              resolve({ width: 1200, height: 1200 })
+            }
+            img.src = imageSrc
+          })
+        })
+      )
+      imageDimensions.value = dimensions
+    }
 
     const formatDescription = (text) => {
       if (!text) return ''
@@ -98,15 +131,36 @@ export default {
       }
     }
 
+    // Initialize PhotoSwipe
+    const { initPhotoSwipe } = usePhotoSwipe('#product-gallery')
+
+    const initializeGallery = async () => {
+      if (product.value && product.value.images && product.value.images.length > 0) {
+        await loadImageDimensions(product.value.images)
+        await nextTick()
+        // Wait a bit for DOM to be ready
+        setTimeout(() => {
+          initPhotoSwipe()
+        }, 300)
+      }
+    }
+
     onMounted(async () => {
       await loadProducts()
       const slug = props.slug || route.params.slug
       product.value = getProductBySlug(slug)
+      await initializeGallery()
+    })
+
+    // Watch for product changes
+    watch(() => product.value, async () => {
+      await initializeGallery()
     })
 
     return {
       product,
       quantity,
+      imageDimensions,
       addToCart,
       formatPrice,
       formatDescription

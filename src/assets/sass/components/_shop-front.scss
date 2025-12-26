@@ -1,371 +1,88 @@
 @use "sass:math";
 
-.woocommerce {
+.above-shop-section {
 
-	.woocommerce-breadcrumb {
-		display: none;
-	}
-	
-	h1 {
-		//display: none;
-	}
-	
-	.term-description {
-		margin-bottom: 40px;
-	}
-	
-	.above-shop-section {
-		
-		.product-categories {
-			padding-left: 0;
-			text-align: center;
-			margin: 0 0 20px 0;
-			
-			li {
-				display: inline-block;
-				margin: 0 20px;
-			}
-		}
-	}
-	
-	.woocommerce-result-count {
-		font-size: 12px;
-	}
-	
-	// Remove to show Sort By dropdown
-	.woocommerce-ordering {
-		display: none;
-	}
-	
-	ul.products {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: stretch;
-		justify-content: flex-start;
-		margin: 0 -15px;
-		padding: 0;
-		list-style: none;
-		clear: both;
-		
-		li.product {
-			display: flex;
-			flex-direction: column;
-			width: calc(33.333% - 30px);
-			margin: 0 15px 40px 15px;
-			box-sizing: border-box;
-			float: none;
-			
-			@include tablet-only {
-				width: calc(50% - 30px);
-			}
-			
-			@include mobile-only {
-				width: calc(100% - 30px);
-			}
-			
-			a {
-				text-decoration: none;
-				display: block;
-				
-				.product-image-wrapper {
-					width: 100%;
-					padding-bottom: 100%; // Makes it square (aspect ratio 1:1)
-					position: relative;
-					overflow: hidden;
-					background-size: cover;
-					background-position: center center;
-					background-repeat: no-repeat;
-					
-					img {
-						display: none; // Hide img, use background-image instead
-					}
-				}
-			}
-			
-			.woocommerce-loop-product__title {
-				margin: 15px 0 10px 0;
-				font-size: 1.1em;
-			}
-			
-			.price {
-				margin-bottom: 10px;
-				
-				.amount {
-					color: black;
-				}
-			}
-			
-			.star-rating {
-				margin-bottom: 10px;
-			}
-		}
-	}
-	
-	// Shopping cart
-	.cart {
-		
-		.coupon {
-			display: none;
-		}
-	}
-}
-
-.shop-front {
-	
-	$columnPadding: 40px;
-	$mobileColumnPadding: 20px;
-	
-	@mixin font-style {
-		@include Montserrat;
-		letter-spacing: 3px;
+	.product-categories {
+		padding-left: 0;
 		text-align: center;
-		font-size: 56px;
-		text-transform: uppercase;
-		color: white;
-		line-height: normal;
-		
-		@include mobile-only {
-			font-size: 22px;
-		}
-	}
-	
-	a {
-		display: block;
-		position: relative;
-		text-decoration: none;
-		overflow: hidden;
-		
-		&:hover {
-			
-			.jewelry-page-link {
-				color: white;
-				
-				.overlay, .text {
-					opacity: 1;
-				}
-			}
-		}
-		
-		.overlay {
-			content: '';
-			opacity: 0;
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: 0;
-			background: rgba(0, 0, 0, .4);
-			transition: opacity 350ms ease;
-			z-index: $z-index-shop-front-overlay-background;
-			
-			@include mobile-only {
-				opacity: 1;
-				background-color: rgba(0,0,0, .25);
-			}
-		}
-		
-		.jewelry-page-link {
-			height: 100%;
-			width: 100%;
-			background-size: cover;
-			background-position: center center;
-			padding-top: 40px;
-			
-			.text {
-				@include font-style;
-				position: relative;
-				z-index: $z-index-shop-front-overlay-text;
-				transition: color 350ms ease;
-				width: 100%;
-				position: absolute;
-				bottom: 20px;
-				left: 50%;
-				transform: translateX(-50%);
-				
-				@include tablet {
-					opacity: 0;
-				}
-			}
-			
-			&.dustin, &.hillary {
-				
-				.overlay {
-					background: linear-gradient(0deg, rgba(0,0,0, .9) 0%, rgba(0,0,0,.5) 60%, rgba(0,0,0,0) 100%);
-				}
+		margin: 0 0 20px 0;
 
-				.text {
-					
-					@include mobile-only {
-						bottom: 0px;
-					}
-				}
-			}
-			
-			&.all {
-				height: 200px;
-				
-				.text {
-					width: 100%;
-					position: absolute;
-					top: 50%;
-					left: 50%;
-					transform: translate(-50%, -50%);
-					
-					@include mobile-only {
-						display: block;
-						line-height: 60px;
-					}
-				}
-			}	
-		}
-		
-		.mobile-title {
-			@include font-style;
-			color: black;
-			margin-top: 10px;
-			
-			@include tablet {
-				display: none;
-			}
-		}
-	}
-	
-	.profile-pics {
-		display: flex;
-		margin-top: $columnPadding;
-		
 		@include mobile-only {
-			margin-top: $mobileColumnPadding;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
 		}
-		
-		a {
-			
-			@include mobile-only {
-				width: 100%;
-				height: 300px;
-				$padding: math.div($mobileColumnPadding, 2); 
-				width: calc(50% - #{$padding});
-				
-				&:first-child {
-					margin-right: $mobileColumnPadding;
-				}	
-			}
-			
-			@include tablet {
-				height: 600px;
-				$padding: math.div($columnPadding, 2);
-				width: calc(50% - #{$padding});
-				
-				&:first-child {
-					margin-right: $columnPadding;
-				}
-			}
+
+		li {
+			display: inline-block;
+			margin: 0 20px;
 		}
 	}
 }
 
-.woocommerce {
-	
-	.above-shop-section {
-		
-		.product-categories {
-			
-			@include mobile-only {
-				display: flex;
-				flex-wrap: wrap;
-				justify-content: center;
-			}
-			
-			.swiper-slide {
-				display: inline;
-				margin: 10px;
+.products {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: stretch;
+	justify-content: flex-start;
+	margin: 0 -15px;
+	padding: 0;
+	list-style: none;
+	clear: both;
 
-				@include mobile-only {
-					display: block;
-					text-align: center;
-					display: block;
-					margin: 0;
-				}
-				
-				a {
-					text-decoration: none;
-					
-					@include mobile-only {
-						padding: 10px 12px;
-						display: block;
-						top: 50%;
-						position: relative;
-						transform: translateY(-50%);
-					}
+	.product {
+		display: flex;
+		flex-direction: column;
+		width: calc(33.333% - 30px);
+		margin: 0 15px 40px 15px;
+		box-sizing: border-box;
+		float: none;
+
+		@include tablet-only {
+			width: calc(50% - 30px);
+		}
+
+		@include mobile-only {
+			width: calc(100% - 30px);
+		}
+
+		a {
+			text-decoration: none;
+			display: block;
+
+			.product-image-wrapper {
+				width: 100%;
+				padding-bottom: 100%; // Makes it square (aspect ratio 1:1)
+				position: relative;
+				overflow: hidden;
+				background-size: cover;
+				background-position: center center;
+				background-repeat: no-repeat;
+
+				img {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+					opacity: 0;
+					pointer-events: none;
 				}
 			}
 		}
-	}
 
-	.woocommerce-result-count {
-		display: none;
-	}
-	
-	ul.products {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: stretch;
-		justify-content: flex-start;
-		margin: 0 -15px;
-		padding: 0;
-		list-style: none;
-		clear: both;
-		
-		li.product {
-			display: flex;
-			flex-direction: column;
-			width: calc(33.333% - 30px);
-			margin: 0 15px 40px 15px;
-			box-sizing: border-box;
-			float: none;
-			
-			@include tablet-only {
-				width: calc(50% - 30px);
+		.price {
+			margin-bottom: 10px;
+
+			.amount {
+				color: $accent-color;
+				font-weight: bold;
 			}
-			
-			@include mobile-only {
-				display: block;
-				float: none;
-				width: calc(100% - 30px);
-			}
-			
-			a {
-				text-decoration: none;
-				
-				img {
-					margin: 0;
-					border: 0;
-					width: 100%;
-					height: auto;
-					display: block;
-				}
-			}
-			
-			.woocommerce-loop-product__title {
-				margin: 15px 0 10px 0;
-				font-size: 1.1em;
-			}
-			
-			.price {
-				margin-bottom: 10px;
-				
-				.amount {
-					color: black;
-				}
-			}
-			
-			.star-rating {
-				margin-bottom: 10px;
-			}
-			
-			.add_to_cart_button {
-				display: none;
-			}
+		}
+
+		.star-rating {
+			margin-bottom: 10px;
 		}
 	}
 }

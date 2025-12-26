@@ -6,6 +6,9 @@ import routes from './routes'
 // Import SASS - Vite will process this
 import './assets/sass/style.scss'
 
+// Import PhotoSwipe CSS
+import 'photoswipe/style.css'
+
 // Diagnostic logging
 console.log('[Main] Starting Vue app initialization...')
 console.log('[Main] Routes loaded:', routes)
