@@ -53,6 +53,7 @@ export default {
       } else if (categoryFilter) {
         return getProductsByCategory(categoryFilter)
       }
+      // Return all products (with $1 item already at the top from useProducts)
       return products.value
     })
 

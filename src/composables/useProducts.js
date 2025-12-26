@@ -9,7 +9,41 @@ export function useProducts() {
     
     try {
       const response = await fetch('/data/products.json')
-      products.value = await response.json()
+      const loadedProducts = await response.json()
+      
+      // Add $1 item at the top
+      const dollarItem = {
+        id: 'dollar-item',
+        name: 'Special $1 Item',
+        slug: 'special-dollar-item',
+        sku: 'DOLLAR-ITEM',
+        description: '',
+        short_description: 'A special promotional item for just $1!',
+        price: 1,
+        regular_price: 1,
+        sale_price: null,
+        currency: 'USD',
+        images: ['/assets/images/products/woocommerce-placeholder.webp'],
+        categories: [],
+        tags: [],
+        attributes: [],
+        stock_status: 'instock',
+        stock_quantity: 999,
+        manage_stock: true,
+        in_stock: true,
+        weight: null,
+        dimensions: {
+          length: null,
+          width: null,
+          height: null
+        },
+        featured: false,
+        type: 'simple',
+        date_created: new Date().toISOString(),
+        date_modified: new Date().toISOString()
+      }
+      
+      products.value = [dollarItem, ...loadedProducts]
       loaded = true
       return products.value
     } catch (error) {
