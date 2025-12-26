@@ -5,22 +5,52 @@
         <div class="product">
           <div class="product-images">
             <div id="product-gallery" class="product-gallery">
+              <!-- Hidden gallery links for PhotoSwipe -->
               <a
                 v-for="(image, index) in product.images"
-                :key="index"
+                :key="`gallery-link-${index}`"
                 :href="image"
                 :data-pswp-src="image"
                 :data-pswp-width="imageDimensions[index]?.width || 1200"
                 :data-pswp-height="imageDimensions[index]?.height || 1200"
                 :alt="`${product.name} ${index + 1}`"
-                class="gallery-link"
-              >
-                <img 
-                  :src="image" 
-                  :alt="`${product.name} ${index + 1}`" 
-                  :class="index === 0 ? 'main-image' : 'gallery-image'"
-                />
-              </a>
+                class="gallery-link pswp-gallery-item"
+                style="position: absolute; left: -9999px; opacity: 0;"
+              ></a>
+              
+              <!-- Main image viewer -->
+              <div class="main-image-viewer">
+                <a
+                  href="#"
+                  @click.prevent="openPhotoSwipe(selectedImageIndex)"
+                  class="main-image-link"
+                  :style="{ backgroundImage: `url(${product.images[selectedImageIndex]})` }"
+                  data-pswp-ignore
+                >
+                  <img 
+                    :src="product.images[selectedImageIndex]" 
+                    :alt="`${product.name} - Main view`" 
+                    class="main-image"
+                  />
+                </a>
+              </div>
+              
+              <!-- Thumbnail gallery -->
+              <div class="thumbnail-gallery" v-if="product.images.length > 1">
+                <button
+                  v-for="(image, index) in product.images"
+                  :key="`thumb-${index}`"
+                  @click="selectedImageIndex = index"
+                  :class="['thumbnail-button', { active: selectedImageIndex === index }]"
+                  type="button"
+                >
+                  <img 
+                    :src="image" 
+                    :alt="`${product.name} thumbnail ${index + 1}`" 
+                    class="thumbnail-image"
+                  />
+                </button>
+              </div>
             </div>
           </div>
           <div class="summary entry-summary">
@@ -96,6 +126,7 @@ export default {
     const product = ref(null)
     const quantity = ref(1)
     const imageDimensions = ref([])
+    const selectedImageIndex = ref(0)
 
     // Load image dimensions
     const loadImageDimensions = async (images) => {
@@ -132,7 +163,11 @@ export default {
     }
 
     // Initialize PhotoSwipe
-    const { initPhotoSwipe } = usePhotoSwipe('#product-gallery')
+    const { initPhotoSwipe, openAtIndex } = usePhotoSwipe('#product-gallery')
+
+    const openPhotoSwipe = (index) => {
+      openAtIndex(index)
+    }
 
     const initializeGallery = async () => {
       if (product.value && product.value.images && product.value.images.length > 0) {
@@ -149,11 +184,13 @@ export default {
       await loadProducts()
       const slug = props.slug || route.params.slug
       product.value = getProductBySlug(slug)
+      selectedImageIndex.value = 0
       await initializeGallery()
     })
 
     // Watch for product changes
     watch(() => product.value, async () => {
+      selectedImageIndex.value = 0
       await initializeGallery()
     })
 
@@ -161,6 +198,8 @@ export default {
       product,
       quantity,
       imageDimensions,
+      selectedImageIndex,
+      openPhotoSwipe,
       addToCart,
       formatPrice,
       formatDescription
@@ -168,4 +207,3 @@ export default {
   }
 }
 </script>
-
