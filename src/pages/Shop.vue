@@ -1,14 +1,14 @@
 <template>
-  <div id="primary" class="content-area">
-    <main id="main" class="site-main" role="main">
+  <div class="content-area primary">
+    <main class="site-main main" role="main">
       <div class="above-shop-section">
-        <ul class="product-categories" id="product-categories">
+        <ul class="product-categories">
           <li v-for="category in categories" :key="category.slug">
             <router-link :to="`/shop?category=${category.slug}`">{{ category.name }}</router-link>
           </li>
         </ul>
       </div>
-      <ul class="products" id="products-list">
+      <ul class="products products-list">
           <li v-for="product in filteredProducts" :key="product.id" class="product">
             <router-link :to="`/product/${product.slug}`">
               <div class="product-image-wrapper" :style="{ backgroundImage: `url(${getProductImage(product)})` }">

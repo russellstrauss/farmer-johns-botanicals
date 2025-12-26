@@ -1,6 +1,6 @@
 <template>
-  <header id="masthead" class="site-header" role="banner">
-    <nav id="site-navigation" class="main-navigation" :class="{ 'toggled': menuOpen }" role="navigation">
+  <header class="site-header masthead" role="banner">
+    <nav class="main-navigation site-navigation" :class="{ 'toggled': menuOpen }" role="navigation">
       <button 
         class="menu-toggle hamburger hamburger--squeeze" 
         type="button"
@@ -12,8 +12,7 @@
         </span>
       </button>
       <div class="menu-menu-container">
-        <ul id="menu-menu" class="menu">
-          <li><router-link to="/">Home</router-link></li>
+        <ul class="menu menu-menu">
           <li><router-link to="/shop">Shop</router-link></li>
           <li><router-link to="/about">About</router-link></li>
         </ul>
@@ -23,14 +22,14 @@
       <router-link to="/">
         <img 
           v-if="logoExists"
-          id="site-logo" 
+          class="site-logo" 
           src="/assets/images/logo.png" 
           alt="Farmer John's Botanicals Logo"
           @error="handleLogoError"
         />
         <img 
           v-else
-          id="site-logo" 
+          class="site-logo" 
           src="/assets/images/fjb-cotton-logo.svg" 
           alt="Farmer John's Botanicals Logo"
         />

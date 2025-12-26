@@ -1,6 +1,6 @@
 <template>
-  <div id="primary" class="content-area">
-    <main id="main" class="site-main" role="main">
+  <div class="content-area primary">
+    <main class="site-main main" role="main">
       <h1>About Farmer John's Botanicals</h1>
       <div class="about-content" v-html="aboutContent"></div>
     </main>

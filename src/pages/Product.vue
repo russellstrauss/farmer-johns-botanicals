@@ -1,10 +1,10 @@
 <template>
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+	<div class="content-area primary">
+		<main class="site-main main" role="main">
 			<div v-if="product">
 				<div class="product">
 					<div class="product-images">
-						<div id="product-gallery" class="product-gallery">
+						<div class="product-gallery">
 							<!-- Hidden gallery links for PhotoSwipe -->
 							<a v-for="(image, index) in product.images" :key="`gallery-link-${index}`" :href="image"
 								:data-pswp-src="image" :data-pswp-width="imageDimensions[index]?.width || 1200"
@@ -48,7 +48,7 @@
 						<div v-else class="stock out-of-stock">Out of Stock</div>
 						<div class="product-actions">
 							<div class="quantity">
-								<input type="number" id="quantity" class="qty" v-model.number="quantity" min="1"
+								<input type="number" class="qty quantity" v-model.number="quantity" min="1"
 									:max="product.stock_quantity || 999" />
 							</div>
 							<button class="button alt single_add_to_cart_button" @click="addToCart"
@@ -138,7 +138,7 @@ export default {
 		}
 
 		// Initialize PhotoSwipe
-		const { initPhotoSwipe, openAtIndex } = usePhotoSwipe('#product-gallery')
+		const { initPhotoSwipe, openAtIndex } = usePhotoSwipe('.product-gallery')
 
 		const openPhotoSwipe = (index) => {
 			openAtIndex(index)

@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="hfeed site">
+  <div id="app" class="hfeed site app">
     <!-- Test: If you see red background, CSS is NOT loading. If you see normal styles, CSS IS loading. -->
     <AppHeader />
     <main class="site-content container">
@@ -48,7 +48,7 @@ export default {
 
 <style>
 /* Base app styles - these should be minimal since style.css handles most styling */
-#app {
+.app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;

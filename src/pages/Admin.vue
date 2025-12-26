@@ -1,6 +1,6 @@
 <template>
-  <div id="primary" class="content-area admin-area">
-    <main id="main" class="site-main" role="main">
+  <div class="content-area primary admin-area">
+    <main class="site-main main" role="main">
       <div class="admin-header">
         <h1>Content Management</h1>
         <div class="admin-tabs">

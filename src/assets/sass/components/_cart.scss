@@ -270,18 +270,11 @@
 					vertical-align: middle;
 					cursor: pointer;
 				}
-
-				.woocommerce-checkout-review-order-table {
-
-					@include mobile-only {
-						font-size: 12px;
-					}
-				}
 			}
 		}
 	}
 
-	#payment {
+	.payment {
 		background-color: #f7f6f7;
 		border-top-color: black;
 		border: 1px solid black;
@@ -486,27 +479,6 @@ form {
 
 				@include mobile-only {
 					width: 80px;
-				}
-			}
-
-			.remove-item-btn {
-				background-color: transparent;
-				border: 1px solid #dc3545;
-				color: #dc3545;
-				padding: 8px 16px;
-				border-radius: 3px;
-				cursor: pointer;
-				font-size: 14px;
-				transition: all 0.3s ease;
-
-				&:hover {
-					background-color: #dc3545;
-					color: white;
-				}
-
-				@include mobile-only {
-					width: 100%;
-					padding: 12px;
 				}
 			}
 		}

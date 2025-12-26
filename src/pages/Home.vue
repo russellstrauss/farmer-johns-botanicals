@@ -1,6 +1,6 @@
 <template>
-  <div id="primary" class="content-area">
-    <main id="main" class="site-main" role="main">
+  <div class="content-area primary">
+    <main class="site-main main" role="main">
       <div class="shop-front">
         <router-link to="/shop">
           <div class="jewelry-page-link all" style="background-image: url(/assets/images/all-jewelry.jpg);">

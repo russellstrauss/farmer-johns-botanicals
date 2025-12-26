@@ -1,6 +1,6 @@
 <template>
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+	<div class="content-area primary">
+		<main class="site-main main" role="main">
 			<h1>Shopping Cart</h1>
 		<div class="cart-container">
 			<div v-if="isEmpty()" class="cart-empty">
