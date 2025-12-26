@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "admin": "vite --mode admin",
     "copy-assets": "node scripts/copy-assets.js",
-    "setup": "npm run copy-assets"
+    "setup": "npm run copy-assets",
+    "pages:build": "npm install && npm run build"
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.4.0",
