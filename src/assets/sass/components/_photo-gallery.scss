@@ -1,0 +1,31 @@
+$button-opacity: .6;
+
+.pswp--zoom-allowed .pswp__button--zoom {
+	display: none;
+}
+
+.pswp__button {
+	width: 80px;
+	height: 80px;
+	opacity: $button-opacity;
+
+	&:hover, &:active, &:focus {
+		opacity: 1;
+	}
+
+	&.pswp__button--arrow, &.pswp__button--arrow--prev, &.pswp__button--arrow--next {
+		width: 100px;
+		height: 150px;
+		opacity: $button-opacity;
+
+		&:hover, &:active, &:focus {
+			opacity: 1;
+		}
+	}
+
+	.pswp__icn {
+		width: auto;
+		height: auto;
+	}
+}
+

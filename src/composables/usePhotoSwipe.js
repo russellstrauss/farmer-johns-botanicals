@@ -34,6 +34,12 @@ export function usePhotoSwipe(gallerySelector, options = {}) {
         gallery: gallerySelector,
         children: 'a.pswp-gallery-item',
         pswpModule: () => import('photoswipe'),
+        // Custom close button SVG without width/height attributes so it can be resized
+        closeSVG: '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 32 32"><path d="M24 10l-2-2-6 6-6-6-2 2 6 6-6 6 2 2 6-6 6 6 2-2-6-6z" id="pswp__icn-close"/></svg>',
+        // Custom arrow navigation SVGs without width/height attributes so they can be resized
+        // PhotoSwipe's CSS will automatically flip the next arrow using transform: scale(-1, 1)
+        arrowPrevSVG: '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 60 60"><path d="M29 43l-3 3-16-16 16-16 3 3-13 13 13 13z" id="pswp__icn-arrow"/></svg>',
+        arrowNextSVG: '<svg aria-hidden="true" class="pswp__icn" viewBox="0 0 60 60"><path d="M29 43l-3 3-16-16 16-16 3 3-13 13 13 13z" id="pswp__icn-arrow"/></svg>',
         ...options
       })
 

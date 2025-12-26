@@ -3,11 +3,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
 import routes from './routes'
 
-// Import SASS - Vite will process this
-import './assets/sass/style.scss'
-
-// Import PhotoSwipe CSS
+// Import PhotoSwipe CSS first (base styles)
 import 'photoswipe/style.css'
+
+// Import SASS after PhotoSwipe (so our custom styles can override PhotoSwipe defaults)
+import './assets/sass/style.scss'
 
 // Diagnostic logging
 console.log('[Main] Starting Vue app initialization...')

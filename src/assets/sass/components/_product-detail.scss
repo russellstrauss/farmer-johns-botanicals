@@ -23,15 +23,10 @@
 		.product-gallery {
 			display: flex;
 			flex-direction: column;
-			gap: 15px;
-
-			.gallery-link {
-				display: none; // Hidden links for PhotoSwipe
-			}
+			gap: 0; // Remove gap between main image and thumbnails
 
 			.main-image-viewer {
 				width: 100%;
-				margin-bottom: 15px;
 				position: relative;
 
 				.main-image-link {
@@ -46,7 +41,7 @@
 					background-size: cover;
 					background-position: center center;
 					background-repeat: no-repeat;
-					border: 1px solid #e0e0e0;
+					border: none;
 
 					&:hover {
 						opacity: 0.9;
@@ -67,16 +62,17 @@
 
 			.thumbnail-gallery {
 				display: flex;
-				gap: 10px;
 				flex-wrap: wrap;
 				justify-content: flex-start;
+				gap: 0; // Remove gaps between thumbnails
 
 				.thumbnail-button {
 					background: none;
-					border: 2px solid transparent;
+					border: none;
+					border-radius: 0;
 					padding: 0;
 					cursor: pointer;
-					transition: all 0.3s ease;
+					transition: opacity 0.3s ease;
 					flex: 0 0 auto;
 					width: 80px;
 					height: 80px;
@@ -84,13 +80,10 @@
 					display: flex;
 					align-items: center;
 					justify-content: center;
+					opacity: 0.5;
 
-					&:hover {
-						border-color: #ccc;
-					}
-
-					&.active {
-						border-color: $accent-color;
+					&:hover, &.active {
+						opacity: 1;
 					}
 
 					.thumbnail-image {
@@ -98,6 +91,7 @@
 						height: 100%;
 						object-fit: cover;
 						display: block;
+						border-radius: 0;
 					}
 				}
 			}
@@ -115,38 +109,35 @@
 			max-width: 100%;
 		}
 
-		&.entry-summary {
-
-			@include mobile-only {
-				margin: 0 0 100px 0;
-			}
+		h1:first-of-type  {
+			margin-top: 0;
 		}
-	}
 
-	.price {
-
-		.amount {
-			color: black;
-		}
-	}
-
-	.stock {
-		color: black;
-	}
-
-	[itemprop="description"] {
-		margin-bottom: 40px;
-
-		p {
+		.price {
+			color: $accent-color;
 			margin-bottom: 10px;
 		}
-	}
 
-	.single_add_to_cart_button {
-		@include black-button;
+		.product-short-description {
+			margin-bottom: 20px;
+		}
 
-		@include mobile-only {
-			width: 100%;
+		.stock {
+			display: none;
+		}
+
+		.product-actions {
+			.quantity {
+				display: none;
+			}
+			
+			button {
+				margin-top: 20px;
+			}
+		}
+
+		.product_meta {
+			display: none;
 		}
 	}
 }
