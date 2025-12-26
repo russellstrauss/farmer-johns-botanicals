@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:gallery": "vite build --config vite.config.product-gallery.js",
     "preview": "vite preview",
     "admin": "vite --mode admin",
     "copy-assets": "node scripts/copy-assets.js",

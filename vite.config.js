@@ -1,11 +1,10 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
-import { themeBuild } from './vite-plugin-theme-build.js'
 import { apiMiddleware } from './vite-plugin-api.js'
 
 export default defineConfig({
-  plugins: [vue(), themeBuild(), apiMiddleware()],
+  plugins: [vue(), apiMiddleware()],
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
@@ -24,21 +23,14 @@ export default defineConfig({
     assetsDir: 'assets',
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'src/main.js'),
-        productGallery: resolve(__dirname, 'wp-content/themes/botanicals/assets/js/product-gallery-init.js')
+        main: resolve(__dirname, 'src/main.js')
       },
       output: {
         manualChunks: {
           'vendor': ['vue', 'vue-router'],
           'stripe': ['@stripe/stripe-js']
         },
-        entryFileNames: (chunkInfo) => {
-          // Output product gallery to theme directory
-          if (chunkInfo.name === 'productGallery') {
-            return '../../wp-content/themes/botanicals/assets/js/product-gallery.js'
-          }
-          return 'assets/js/[name].js'
-        },
+        entryFileNames: 'assets/js/[name].js',
         chunkFileNames: 'assets/js/[name]-[hash].js',
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
       }
