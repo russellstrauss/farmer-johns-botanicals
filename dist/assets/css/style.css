@@ -595,8 +595,8 @@ Social menu
 ---------------*/
 @font-face {
   font-family: 'FontAwesome';
-  src: url("fonts/fontawesome-webfont.eot?v=4.2.0");
-  src: url("fonts/fontawesome-webfont.eot?#iefix&v=4.2.0") format("embedded-opentype"), url("fonts/fontawesome-webfont.woff?v=4.2.0") format("woff"), url("fonts/fontawesome-webfont.ttf?v=4.2.0") format("truetype"), url("fonts/fontawesome-webfont.svg?v=4.2.0#fontawesomeregular") format("svg");
+  src: url("/assets/fonts/fontawesome-webfont.eot?v=4.2.0");
+  src: url("/assets/fonts/fontawesome-webfont.eot?#iefix&v=4.2.0") format("embedded-opentype"), url("/assets/fonts/fontawesome-webfont.woff?v=4.2.0") format("woff"), url("/assets/fonts/fontawesome-webfont.ttf?v=4.2.0") format("truetype"), url("/assets/fonts/fontawesome-webfont.svg?v=4.2.0#fontawesomeregular") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -2093,10 +2093,10 @@ header .fjb-checkout {
             width: 100%; } }
       header .fjb-checkout a .bling-shark-container .bling-shark {
         display: block;
-        background-image: url(assets/img/bling-shark-color.svg); }
+        background-image: url(/assets/img/bling-shark-color.svg); }
       header .fjb-checkout a .bling-shark-container .bling-shark-hover {
         display: none;
-        background-image: url(assets/img/bling-shark-color-hover.svg); }
+        background-image: url(/assets/img/bling-shark-color-hover.svg); }
     header .fjb-checkout a span {
       font-family: 'Montserrat', sans-serif;
       font-weight: 500;
@@ -2375,13 +2375,13 @@ div.pp_woocommerce .pp_content_container {
       div.pp_woocommerce .pp_content_container .pp_content .pp_previous:before, div.pp_woocommerce .pp_content_container .pp_content .pp_next:before {
         content: none; }
       div.pp_woocommerce .pp_content_container .pp_content .pp_previous.pp_previous, div.pp_woocommerce .pp_content_container .pp_content .pp_next.pp_previous {
-        background-image: url(assets/img/caret-left.svg);
+        background-image: url(/assets/img/caret-left.svg);
         background-position: left 20px center; }
         @media (max-width: 767px) {
           div.pp_woocommerce .pp_content_container .pp_content .pp_previous.pp_previous, div.pp_woocommerce .pp_content_container .pp_content .pp_next.pp_previous {
             background-position: left 10px center; } }
       div.pp_woocommerce .pp_content_container .pp_content .pp_previous.pp_next, div.pp_woocommerce .pp_content_container .pp_content .pp_next.pp_next {
-        background-image: url(assets/img/caret-right.svg);
+        background-image: url(/assets/img/caret-right.svg);
         background-position: right 20px center; }
         @media (max-width: 767px) {
           div.pp_woocommerce .pp_content_container .pp_content .pp_previous.pp_next, div.pp_woocommerce .pp_content_container .pp_content .pp_next.pp_next {
@@ -2412,7 +2412,7 @@ div.pp_woocommerce .pp_content_container {
         left: 50%;
         display: block;
         content: "";
-        background: url(assets/img/fjb-loader.svg) center center;
+        background: url(/assets/img/fjb-loader.svg) center center;
         background-size: cover;
         margin: 0; }
   div.pp_woocommerce .pp_content_container .pp_details {
@@ -2428,15 +2428,15 @@ div.pp_woocommerce .pp_content_container {
       div.pp_woocommerce .pp_content_container .pp_details .pp_nav .pp_arrow_previous:before, div.pp_woocommerce .pp_content_container .pp_details .pp_nav .pp_arrow_next:before {
         content: none; }
       div.pp_woocommerce .pp_content_container .pp_details .pp_nav .pp_arrow_previous.pp_arrow_previous, div.pp_woocommerce .pp_content_container .pp_details .pp_nav .pp_arrow_next.pp_arrow_previous {
-        background-image: url(assets/img/left-arrow.svg); }
+        background-image: url(/assets/img/left-arrow.svg); }
       div.pp_woocommerce .pp_content_container .pp_details .pp_nav .pp_arrow_previous.pp_arrow_next, div.pp_woocommerce .pp_content_container .pp_details .pp_nav .pp_arrow_next.pp_arrow_next {
-        background-image: url(assets/img/right-arrow.svg); }
+        background-image: url(/assets/img/right-arrow.svg); }
     @media (max-width: 767px) {
       div.pp_woocommerce .pp_content_container .pp_details .pp_nav .currentTextHolder {
         line-height: normal; } }
     div.pp_woocommerce .pp_content_container .pp_details .pp_close {
       background-color: transparent;
-      background-image: url(assets/img/close.svg);
+      background-image: url(/assets/img/close.svg);
       width: 24px;
       height: 24px;
       background-size: 100%;
@@ -2599,7 +2599,7 @@ div.pp_woocommerce .pp_content_container {
   display: block;
   color: transparent !important;
   border-radius: 0;
-  background-image: url(assets/img/close-red.svg);
+  background-image: url(/assets/img/close-red.svg);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
@@ -2608,7 +2608,7 @@ div.pp_woocommerce .pp_content_container {
     .woocommerce-cart main article table.cart .cart_item .product-remove .remove {
       width: 100%;
       height: 40px;
-      background-image: url(assets/img/trash-can.svg);
+      background-image: url(/assets/img/trash-can.svg);
       opacity: 1; } }
   .woocommerce-cart main article table.cart .cart_item .product-remove .remove:hover {
     background-color: transparent;

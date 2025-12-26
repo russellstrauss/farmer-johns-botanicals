@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Vue 3 e-commerce site for Farmer John's Botanicals",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,7 +14,8 @@
     "admin": "vite --mode admin",
     "copy-assets": "node scripts/copy-assets.js",
     "setup": "npm run copy-assets",
-    "pages:build": "npm install && npm run build"
+    "pages:build": "npm install && npm run build",
+    "prebuild": "npm install"
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.4.0",
