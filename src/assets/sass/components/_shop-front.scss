@@ -1,5 +1,190 @@
 @use "sass:math";
 
+// Shop front category graphics (used on Home page)
+.shop-front {
+	a {
+		display: block;
+		position: relative;
+		text-decoration: none;
+		overflow: hidden;
+
+		&:hover {
+			.jewelry-page-link {
+				color: white;
+
+				.overlay,
+				.text {
+					opacity: 1;
+				}
+			}
+		}
+
+		.overlay {
+			content: '';
+			opacity: 0;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			background: rgba(0, 0, 0, 0.4);
+			transition: opacity 350ms ease;
+			z-index: 10;
+
+			@include mobile-only {
+				opacity: 1;
+				background-color: rgba(0, 0, 0, 0.25);
+			}
+		}
+
+		.jewelry-page-link {
+			height: 100%;
+			width: 100%;
+			background-size: cover;
+			background-position: center center;
+			padding-top: 40px;
+
+			.text {
+				@include Montserrat;
+				letter-spacing: 3px;
+				text-align: center;
+				font-size: 56px;
+				text-transform: uppercase;
+				color: white;
+				line-height: normal;
+				position: relative;
+				z-index: 11;
+				transition: color 350ms ease;
+				width: 100%;
+				position: absolute;
+				bottom: 20px;
+				left: 50%;
+				transform: translateX(-50%);
+
+				@include mobile-only {
+					font-size: 22px;
+				}
+
+				@include tablet {
+					opacity: 0;
+				}
+			}
+
+			&.dustin,
+			&.hillary {
+				.overlay {
+					background: linear-gradient(0deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0) 100%);
+				}
+
+				@include mobile-only {
+					.text {
+						bottom: 0px;
+					}
+				}
+			}
+
+			&.all {
+				height: 200px;
+
+				.text {
+					width: 100%;
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+
+					@include mobile-only {
+						display: block;
+						line-height: 60px;
+					}
+				}
+			}
+		}
+
+		.mobile-title {
+			@include Montserrat;
+			letter-spacing: 3px;
+			text-align: center;
+			font-size: 56px;
+			text-transform: uppercase;
+			color: white;
+			line-height: normal;
+			color: black;
+			margin-top: 10px;
+
+			@include mobile-only {
+				font-size: 22px;
+			}
+
+			@include tablet {
+				display: none;
+			}
+		}
+	}
+
+	.profile-pics {
+		display: flex;
+		margin-top: 40px;
+
+		@include mobile-only {
+			margin-top: 20px;
+		}
+
+		a {
+			@include mobile-only {
+				width: calc(50% - 10px);
+				height: 300px;
+
+				&:first-child {
+					margin-right: 20px;
+				}
+			}
+
+			@include tablet {
+				height: 600px;
+				width: calc(50% - 20px);
+
+				&:first-child {
+					margin-right: 40px;
+				}
+			}
+		}
+	}
+}
+
+.above-shop-section {
+	.product-categories {
+		padding-left: 0;
+		text-align: center;
+		margin: 0 0 50px 0;
+		list-style: none;
+
+		@include mobile-only {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+
+		li {
+			display: inline-block;
+			margin: 0 20px;
+
+			a {
+				text-decoration: none;
+				color: #000;
+				font-size: 16px;
+				transition: color 0.3s ease;
+
+				&:hover,
+				&:focus,
+				&:active {
+					color: #666;
+				}
+			}
+		}
+	}
+}
+
 .products {
 	display: flex;
 	flex-wrap: wrap;
