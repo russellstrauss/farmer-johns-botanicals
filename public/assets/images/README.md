@@ -28,3 +28,4 @@ If you don't have a logo file, you can:
 1. Add your logo as `logo.png` in this directory
 2. Or the site will fall back to a text logo if the image is missing
 
+

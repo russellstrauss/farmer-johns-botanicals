@@ -15,6 +15,14 @@ h1, h2, h3, h4, h5, h6 {
 	text-transform: uppercase;
 }
 
+a {
+	color: #000;
+
+	&:hover, &:focus, &:active {
+		color: #666;
+	}
+}
+
 p {
 	font-family: 'Open Sans', sans-serif;
 	color: black;
