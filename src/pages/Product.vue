@@ -156,6 +156,9 @@ export default {
 		}
 
 		onMounted(async () => {
+			// Scroll to top when product page loads
+			window.scrollTo(0, 0)
+			
 			await loadProducts()
 			const slug = props.slug || route.params.slug
 			product.value = getProductBySlug(slug)

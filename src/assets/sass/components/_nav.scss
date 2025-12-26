@@ -3,8 +3,7 @@ $tabletMenuFontSize: 14px;
 header {
 	
 	.main-navigation {
-		padding-left: 0;
-		padding-right: 0;
+		margin-bottom: 50px;;
 		
 		@include tablet-only {
 			margin-left: 120px;
@@ -90,13 +89,17 @@ header {
 				}
 			}
 			
-			ul {	
+			.menu {	
+				@include Montserrat;
+				text-transform: uppercase;
 				list-style: none;
-				margin:auto;
-				padding:0;
+				margin: auto;
+				padding: 0;
 				width: 100%;
+				text-align: center;
 				
 				li {
+					display: inline-block;
 					position: relative;
 					margin: 8px;
 					
@@ -110,7 +113,6 @@ header {
 						text-decoration: none;
 						border: 1px solid transparent;
 						border-radius: 3px;
-						display: inline-block;
 						text-align: left;
 						font-size: 22px;
 						
@@ -124,6 +126,8 @@ header {
 	}
 	
 	.site-branding {
+		max-width: 600px;
+		margin: 0 auto 50px auto;
 		
 		@include mobile-only {
 			margin-top: 60px;
@@ -160,11 +164,7 @@ header {
 				border: 1px solid #ccc;
 				background-color: #eee;
 				box-shadow: 0 6px #aaa;
-				
-				// border: 1px solid #9FC2D6;
-				// background-color: #B8D0DE;
-				// box-shadow: 0 6px #6792AB;
-				
+
 				&:active {
 					position: relative;
 					box-shadow: none;
@@ -215,6 +215,30 @@ header {
 				@include tablet-only {
 					font-size: $tabletMenuFontSize;
 				}
+			}
+		}
+	}
+}
+
+.above-shop-section {
+
+	.product-categories {
+		padding-left: 0;
+		text-align: center;
+		margin: 0 0 50px 0;
+
+		@include mobile-only {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+
+		li {
+			display: inline-block;
+			margin: 0 20px;
+
+			a {
+				text-decoration: none;
 			}
 		}
 	}

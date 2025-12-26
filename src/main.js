@@ -14,11 +14,23 @@ console.log('[Main] Starting Vue app initialization...')
 console.log('[Main] Routes loaded:', routes)
 console.log('[Main] App component:', App)
 
-try {
-	const router = createRouter({
-		history: createWebHistory(),
-		routes
-	})
+	try {
+		const router = createRouter({
+			history: createWebHistory(),
+			routes,
+			scrollBehavior(to, from, savedPosition) {
+				// If navigating to product page, always scroll to top
+				if (to.name === 'Product') {
+					return { top: 0 }
+				}
+				// If there's a saved position (e.g., back button), use it
+				if (savedPosition) {
+					return savedPosition
+				}
+				// Otherwise, scroll to top
+				return { top: 0 }
+			}
+		})
 
 	// Add router error handling
 	router.onError((error) => {

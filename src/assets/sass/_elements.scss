@@ -23,6 +23,15 @@ a {
 	}
 }
 
+button {
+	@include black-button;
+	text-shadow: none;
+}
+
+img {
+	max-width: 100%;
+}
+
 p {
 	font-family: 'Open Sans', sans-serif;
 	color: black;
@@ -32,7 +41,3 @@ p {
 	}
 }
 
-button {
-	@include black-button;
-	text-shadow: none;
-}

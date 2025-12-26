@@ -2,7 +2,7 @@
   <div id="app" class="hfeed site">
     <!-- Test: If you see red background, CSS is NOT loading. If you see normal styles, CSS IS loading. -->
     <AppHeader />
-    <main class="site-content">
+    <main class="site-content container">
       <router-view v-slot="{ Component, route }">
         <component :is="Component" v-if="Component" :key="route.path" />
         <div v-else style="padding: 20px; color: orange; font-family: monospace;">
