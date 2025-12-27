@@ -23,9 +23,10 @@
 		.product-gallery {
 			display: flex;
 			flex-direction: column;
-			gap: 0; // Remove gap between main image and thumbnails
-
+			gap: 0;
+			
 			.main-image-viewer {
+				border: 1px solid black;
 				width: 100%;
 				position: relative;
 
