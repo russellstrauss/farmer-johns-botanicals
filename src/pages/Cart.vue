@@ -15,23 +15,21 @@
 								<th>Product</th>
 								<th>Price</th>
 								<th>Quantity</th>
-								<th>Subtotal</th>
 								<th></th>
 							</tr>
 						</thead>
 						<tbody class="cart-items-body">
 							<tr v-for="(item, index) in cartItems" :key="index">
-								<td>
+								<td class="product-image">
 									<img :src="item.image || '/assets/images/placeholder.jpg'" :alt="item.name"
 										class="cart-item-image" />
 									<strong>{{ item.name }}</strong>
 								</td>
-								<td>{{ formatPrice(item.price) }}</td>
-								<td>
+								<td class="price">{{ formatPrice(item.price) }}</td>
+								<td class="quantity">
 									<input type="number" min="1" :value="item.quantity"
 										@change="updateQuantity(index, $event.target.value)" class="quantity-input" />
 								</td>
-								<td>{{ formatPrice(item.price * item.quantity) }}</td>
 								<td>
 									<button class="remove-item-btn" @click="removeItem(index)">Remove</button>
 								</td>
@@ -39,7 +37,7 @@
 						</tbody>
 						<tfoot>
 							<tr>
-								<td colspan="3"><strong>Total</strong></td>
+								<td colspan="2"><strong>Total</strong></td>
 								<td></td>
 								<td class="total-price"><strong>{{ formatPrice(getTotal()) }}</strong></td>
 							</tr>

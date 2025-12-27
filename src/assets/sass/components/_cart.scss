@@ -420,6 +420,10 @@ form {
 				background-color: #f5f5f5;
 				border-bottom: 2px solid #ddd;
 
+				@include mobile-only {
+					display: none;
+				}
+
 				th {
 					padding: 15px 0;
 					text-align: left;
@@ -441,11 +445,34 @@ form {
 					&:hover {
 						background-color: #fafafa;
 					}
+
+					@include mobile-only {
+						display: block;
+						border: 1px solid #ddd;
+						border-radius: 8px;
+						margin-bottom: 20px;
+						padding: 15px;
+						background-color: #fff;
+						box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+					}
 				}
 
 				td {
 					padding: 15px 0;
 					vertical-align: middle;
+
+					@include mobile-only {
+						display: block;
+						padding: 10px 0;
+						border: none;
+						text-align: left;
+					}
+
+					&:before {
+						@include mobile-only {
+							margin-right: 10px;
+						}
+					}
 
 					&:first-child {
 						display: flex;
@@ -455,36 +482,127 @@ form {
 						@include mobile-only {
 							flex-direction: column;
 							text-align: center;
+							padding-bottom: 15px;
+							border-bottom: 1px solid #eee;
+							margin-bottom: 10px;
+						}
+
+						&:before {
+							@include mobile-only {
+								display: none;
+							}
+						}
+					}
+
+					&.price {
+						display: flex;
+						justify-content: space-between;
+
+						&:before {
+							@include mobile-only {
+								content: "Price:";
+							}
+						}
+					}
+
+					&.quantity {
+						display: flex;
+						justify-content: space-between;
+						
+						&:before {
+							@include mobile-only {
+								content: "Quantity:";
+							}
 						}
 					}
 
 					&:last-child {
+						@include mobile-only {
+							text-align: center;
+							padding-top: 15px;
+							border-top: 1px solid #eee;
+							margin-top: 10px;
+
+							&:before {
+								display: none;
+							}
+						}
 						
 						button {
 							margin-left: auto;
+
+							@include mobile-only {
+								margin-left: 0;
+								width: 100%;
+							}
 						}
 					}
 				}
 			}
 
 			tfoot {
+				@include mobile-only {
+					display: block;
+					border: 1px solid #ddd;
+					border-radius: 8px;
+					padding: 15px;
+					background-color: #f9f9f9;
+					margin-top: 20px;
+				}
+
 				tr {
 					border-top: 2px solid #ddd;
 					background-color: #f9f9f9;
+
+					@include mobile-only {
+						display: block;
+						border: none;
+					}
 				}
 
 				td {
 					padding: 15px 0;
 					font-size: 18px;
 
+					@include mobile-only {
+						display: block;
+						padding: 10px 0;
+						text-align: center;
+
+						&:not(.total-price) {
+							display: none;
+						}
+					}
+
 					strong {
 						@include Montserrat;
 						font-size: 28px;
+
+						@include mobile-only {
+							font-size: 24px;
+						}
 					}
 				}
 
 				.total-price {
 					text-align: right;
+
+					@include mobile-only {
+						text-align: center;
+						padding: 15px 0;
+						width: 100%;
+
+						&:before {
+							content: "Total:";
+							display: block;
+							font-weight: bold;
+							text-transform: uppercase;
+							@include Montserrat;
+							font-size: 14px;
+							margin-bottom: 10px;
+							color: #666;
+						}
+					}
 				}
 			}
 
