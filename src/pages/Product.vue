@@ -23,7 +23,8 @@
 							</div>
 
 							<!-- Thumbnail gallery -->
-							<div class="thumbnail-gallery" v-if="product.images.length > 1">
+							<div class="thumbnail-gallery" v-if="product.images.length > 1"
+								:style="getThumbnailStyles(product.images.length)">
 								<button v-for="(image, index) in product.images" :key="`thumb-${index}`"
 									@click="selectedImageIndex = index"
 									:class="['thumbnail-button', { active: selectedImageIndex === index }]" type="button">
@@ -130,6 +131,22 @@ export default {
 			return text.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>')
 		}
 
+		// Calculate thumbnail styles for even distribution
+		const getThumbnailStyles = (imageCount) => {
+			// Maximum number of thumbnails per row (prevents them from becoming too small)
+			const maxPerRow = 5
+			// Calculate how many thumbnails should be per row
+			const perRow = Math.min(imageCount, maxPerRow)
+			// Calculate the percentage width for each thumbnail
+			const widthPercent = 100 / perRow
+			
+			return {
+				'--thumbnail-count': imageCount,
+				'--thumbnail-width': `${widthPercent}%`,
+				'--columns-per-row': perRow
+			}
+		}
+
 		const addToCart = () => {
 			if (product.value && product.value.in_stock) {
 				addItem(product.value, quantity.value)
@@ -180,7 +197,8 @@ export default {
 			openPhotoSwipe,
 			addToCart,
 			formatPrice,
-			formatDescription
+			formatDescription,
+			getThumbnailStyles
 		}
 	}
 }

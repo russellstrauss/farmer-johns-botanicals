@@ -143,45 +143,54 @@ header {
 		}
 	}
 	
-	.fjb-checkout {
-		text-align: center;
+	.basket-toggle {
+		padding: 5px;
+		display: inline-block;
+		position: relative;
+		cursor: pointer;
+		text-decoration: none;
+		background-color: transparent;
+		border: 0;
+		
+		@include mobile-only {
+			z-index: $z-index-mobile-hamburger;
+			position: absolute;
+			opacity: 1 !important;
+			right: 0;
+			top: 0;
+		}
 		
 		@include tablet {
 			position: absolute;
-			right: 20px;
-			top: 15px;
-			width: 200px;
+			right: 0;
+			top: 0;
 			z-index: $z-index-fjb-checkout;
 		}
 		
-		a {
+		.basket-icon {
+			width: 50px;
+			height: 50px;
 			display: block;
-			text-decoration: none;
-			@include black-button;
-			
-			@include mobile-only {
-				padding: 20px;
-				margin-bottom: 50px;
-
-				&:active {
-					position: relative;
-					box-shadow: none;
-					top: 6px;
-				}
-			}
-			
-			span {
-				@include Montserrat;
-				text-transform: uppercase;
-				
-				@include mobile-only {
-					display: block;
-				}
-				
-				@include tablet-only {
-					font-size: $tabletMenuFontSize;
-				}
-			}
+			object-fit: contain;
+		}
+		
+		.cart-badge {
+			position: absolute;
+			top: 32px;
+			right: 20px;
+			background-color: #dc3545;
+			color: white;
+			border-radius: 50%;
+			min-width: 16px;
+			height: 16px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 11px;
+			font-weight: bold;
+			line-height: 1;
+			padding: 0 4px;
+			box-sizing: border-box;
 		}
 	}
 }

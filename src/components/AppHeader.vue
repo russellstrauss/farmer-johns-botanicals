@@ -19,24 +19,27 @@
 				<img class="site-logo" src="/assets/images/fjb-cotton-logo.svg" alt="Farmer John's Botanicals Logo" />
 			</router-link>
 		</div>
-		<div class="fjb-checkout">
-			<router-link to="/cart" class="cart-link">
-				<span>checkout <span class="cart-count">{{ cartCount > 0 ? `(${cartCount})` : '' }}</span></span>
-			</router-link>
-		</div>
+		<router-link v-if="!isCartPage" to="/cart" class="basket-toggle">
+			<img src="/assets/images/icon/basket.svg" alt="Shopping Cart" class="basket-icon" />
+			<span v-if="cartCount > 0" class="cart-badge">{{ cartCount }}</span>
+		</router-link>
 	</header>
 </template>
 
 <script>
 import { useCart } from '../composables/useCart'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 export default {
 	name: 'AppHeader',
 	setup() {
 		const { getItemCount } = useCart()
+		const route = useRoute()
 		const menuOpen = ref(false)
 		const cartCount = ref(0)
+		
+		const isCartPage = computed(() => route.path === '/cart')
 
 		const updateCartCount = () => {
 			cartCount.value = getItemCount()
@@ -58,6 +61,7 @@ export default {
 		return {
 			menuOpen,
 			cartCount,
+			isCartPage,
 			toggleMenu,
 			closeMenu
 		}
