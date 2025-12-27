@@ -148,17 +148,11 @@ header {
 		a {
 			display: block;
 			text-decoration: none;
+			@include black-button;
 			
 			@include mobile-only {
 				padding: 20px;
-				border-radius: 6px;
-				border-top-left-radius: 0;
-				border-top-right-radius: 0;
-				margin: 15px;
-				
-				border: 1px solid #ccc;
-				background-color: #eee;
-				box-shadow: 0 6px #aaa;
+				margin-bottom: 50px;
 
 				&:active {
 					position: relative;
@@ -167,40 +161,8 @@ header {
 				}
 			}
 			
-			.bling-shark-container {
-				height: 160px;
-				position: relative;
-				
-				.bling-shark, .bling-shark-hover {
-					margin: 0 auto;
-					background-repeat: no-repeat;
-					height: 100%;
-					
-					
-					@include mobile-only {
-						width: 250px;
-						display: block;
-						margin: auto;
-					}
-					
-					@include tablet {
-						position: absolute;
-						left: 0;
-						bottom: 0;
-						width: 100%;
-					}
-				}
-				
-				.bling-shark {
-					display: block;
-					background-image: url(assets/img/bling-shark-color.svg);
-				}
-			}
-			
 			span {
 				@include Montserrat;
-				color: black;
-				font-size: 22px;
 				text-transform: uppercase;
 				
 				@include mobile-only {

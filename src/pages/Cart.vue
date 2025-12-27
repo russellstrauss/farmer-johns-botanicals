@@ -4,11 +4,11 @@
 			<h1>Shopping Cart</h1>
 
 			<div class="cart-container">
-				<div v-if="isEmpty()" class="cart-empty">
+				<div v-if="cartItems.length === 0" class="cart-empty">
 					<p>Your cart is empty.</p>
 					<router-link to="/shop" class="button">Continue Shopping</router-link>
 				</div>
-				<div v-else class="cart-items">
+				<div v-else-if="cartItems.length > 0" class="cart-items">
 					<table class="cart-table">
 						<thead>
 							<tr>
@@ -45,8 +45,8 @@
 							</tr>
 						</tfoot>
 					</table>
-					<div class="cart-actions">
-						<button class="button checkout-button" @click="handleCheckout" :disabled="processing">
+					<div v-if="cartItems.length > 0" class="cart-actions">
+						<button class="button checkout-button" @click="handleCheckout" :disabled="processing || cartItems.length === 0">
 							{{ processing ? 'Processing...' : 'Proceed to Checkout' }}
 						</button>
 					</div>
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useCart } from '../composables/useCart'
 import { useStripe } from '../composables/useStripe'
 
@@ -76,7 +76,10 @@ export default {
 		const { createCheckoutSession } = useStripe()
 		const processing = ref(false)
 
-		const cartItems = computed(() => getItems())
+		const cartItems = cart
+		const hasItems = computed(() => {
+			return cartItems.value?.length > 0
+		})
 
 		const removeItem = (index) => {
 			removeCartItem(index)
@@ -85,6 +88,7 @@ export default {
 		const updateQuantity = (index, quantity) => {
 			updateCartQuantity(index, parseInt(quantity))
 		}
+
 
 		const handleCheckout = async () => {
 			if (cartItems.value.length === 0) {
@@ -104,6 +108,7 @@ export default {
 
 		return {
 			cartItems,
+			hasItems,
 			isEmpty,
 			getTotal,
 			formatPrice,
