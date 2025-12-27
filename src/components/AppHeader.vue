@@ -9,8 +9,8 @@
 			</button>
 			<div class="menu-container">
 				<ul class="menu">
-					<li><router-link to="/shop">Shop</router-link></li>
-					<li><router-link to="/about">About</router-link></li>
+					<li><router-link to="/shop" @click="closeMenu">Shop</router-link></li>
+					<li><router-link to="/about" @click="closeMenu">About</router-link></li>
 				</ul>
 			</div>
 		</nav>
@@ -46,6 +46,10 @@ export default {
 			menuOpen.value = !menuOpen.value
 		}
 
+		const closeMenu = () => {
+			menuOpen.value = false
+		}
+
 		onMounted(() => {
 			updateCartCount()
 			window.addEventListener('cartUpdated', updateCartCount)
@@ -54,7 +58,8 @@ export default {
 		return {
 			menuOpen,
 			cartCount,
-			toggleMenu
+			toggleMenu,
+			closeMenu
 		}
 	}
 }
