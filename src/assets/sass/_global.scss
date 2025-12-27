@@ -1,44 +1,33 @@
-/*--------------------------------------------------------------
-Container Styles (Bootstrap-style)
---------------------------------------------------------------*/
 
-// Base container - mobile-first approach
-.container,
-.container-fluid {
+.container, .container-fluid {
 	width: 100%;
 	padding-right: 15px;
 	padding-left: 15px;
 	margin-right: auto;
 	margin-left: auto;
+	box-sizing: border-box; 
 }
 
-// Standard container with responsive max-widths
 .container {
-	// Mobile (default): full width, no max-width
 	max-width: 100%;
 
-	// Small devices (tablets, 768px and up)
 	@include tablet {
 		max-width: 720px;
 	}
 
-	// Medium devices (desktops, 992px and up)
 	@include desktop {
 		max-width: 960px;
 	}
 
-	// Large devices (large desktops, 1200px and up)
 	@include desktop-large {
 		max-width: 1140px;
 	}
 }
 
-// Container fluid - always full width
 .container-fluid {
 	max-width: 100%;
 }
 
-// Responsive container variants
 .container-sm {
 	@extend .container;
 	
@@ -77,9 +66,4 @@ Container Styles (Bootstrap-style)
 	@include desktop-large {
 		max-width: 1320px;
 	}
-}
-
-// Update content-area to use container styles (maintains backward compatibility)
-.content-area {
-	@extend .container;
 }

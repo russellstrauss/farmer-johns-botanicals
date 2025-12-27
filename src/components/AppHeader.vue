@@ -1,5 +1,5 @@
 <template>
-	<header class="site-header masthead" role="banner">
+	<header class="site-header container" role="banner">
 		<nav class="main-navigation site-navigation" :class="{ 'toggled': menuOpen }" role="navigation">
 			<button class="menu-toggle hamburger hamburger--squeeze" type="button" @click="toggleMenu"
 				:class="{ 'is-active': menuOpen }">
