@@ -31,7 +31,6 @@ export default {
   setup() {
     const { loadProducts, getAllCategories, getProductsByCategory } = useProducts()
     const categories = ref([])
-    const products = ref([])
 
     const getCategoryImage = (category) => {
       if (category.slug === 'earring' || category.slug === 'earrings') {
@@ -55,7 +54,6 @@ export default {
 
     onMounted(async () => {
       await loadProducts()
-      products.value = await loadProducts()
       categories.value = getAllCategories()
     })
 

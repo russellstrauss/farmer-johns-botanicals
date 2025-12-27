@@ -9,18 +9,6 @@ footer {
 	
 	.widget-area {
 		width: 100%;
-		
-		.site-footer .widget{
-			display: inline-block;
-			vertical-align: top;
-			list-style: none;
-			position: relative;
-			padding: 0 18px 0 18px;
-			margin: 0 0.5em  45px 0.5em;
-			box-shadow: none;
-			background: none;
-			border: none;
-		}
 	}
 
 	.social-menu {
@@ -91,10 +79,5 @@ footer {
 		a:hover .social-icon {
 			transform: translateY(-2px) scale(1.1);
 		}
-	}
-
-	// Legacy .social class support
-	.social {
-		@extend .social-menu;
 	}
 }

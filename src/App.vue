@@ -1,15 +1,9 @@
 <template>
-  <div id="app" class="hfeed site app">
+  <div id="app" class="app">
     <AppHeader />
     <main class="site-content container">
       <router-view v-slot="{ Component, route }">
         <component :is="Component" v-if="Component" :key="route.path" />
-        <div v-else style="padding: 20px; color: orange; font-family: monospace;">
-          <h2>Router View Not Rendering</h2>
-          <p>Current route: {{ $route.path }}</p>
-          <p>Matched routes: {{ $route.matched.length }}</p>
-          <p>Please check the browser console for router errors.</p>
-        </div>
       </router-view>
     </main>
     <AppFooter />

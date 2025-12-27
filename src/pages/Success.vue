@@ -1,7 +1,7 @@
 <template>
   <div class="content-area primary">
     <main class="site-main main" role="main">
-      <div class="success-page">
+      <div>
         <h1>Thank You for Your Order!</h1>
         <p>Your order has been received and we'll process it shortly.</p>
         <p>You will receive an email confirmation shortly.</p>

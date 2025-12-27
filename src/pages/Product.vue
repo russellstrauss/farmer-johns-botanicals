@@ -45,14 +45,8 @@
 							</span>
 						</div>
 						<div class="product-short-description" v-html="formatDescription(product.short_description)"></div>
-						<div v-if="product.in_stock" class="stock in-stock">In Stock</div>
-						<div v-else class="stock out-of-stock">Out of Stock</div>
 						<div class="product-actions">
-							<div class="quantity">
-								<input type="number" class="qty quantity" v-model.number="quantity" min="1"
-									:max="product.stock_quantity || 999" />
-							</div>
-							<button class="button alt single_add_to_cart_button" @click="addToCart"
+							<button class="button" @click="addToCart"
 								:disabled="!product.in_stock">
 								Add to Cart
 							</button>

@@ -18,7 +18,7 @@
 								<th></th>
 							</tr>
 						</thead>
-						<tbody class="cart-items-body">
+						<tbody>
 							<tr v-for="(item, index) in cartItems" :key="index">
 								<td class="product-image">
 									<img :src="item.image || '/assets/images/placeholder.jpg'" :alt="item.name"
@@ -31,7 +31,7 @@
 										@change="updateQuantity(index, $event.target.value)" class="quantity-input" />
 								</td>
 								<td>
-									<button class="remove-item-btn" @click="removeItem(index)">Remove</button>
+									<button class="button" @click="removeItem(index)">Remove</button>
 								</td>
 							</tr>
 						</tbody>
@@ -64,10 +64,8 @@ export default {
 	setup() {
 		const {
 			cart,
-			getItems,
 			removeItem: removeCartItem,
 			updateQuantity: updateCartQuantity,
-			isEmpty,
 			getTotal,
 			formatPrice
 		} = useCart()
@@ -75,9 +73,6 @@ export default {
 		const processing = ref(false)
 
 		const cartItems = cart
-		const hasItems = computed(() => {
-			return cartItems.value?.length > 0
-		})
 
 		const removeItem = (index) => {
 			removeCartItem(index)
@@ -106,8 +101,6 @@ export default {
 
 		return {
 			cartItems,
-			hasItems,
-			isEmpty,
 			getTotal,
 			formatPrice,
 			removeItem,

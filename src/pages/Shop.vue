@@ -8,7 +8,7 @@
           </li>
         </ul>
       </div>
-      <ul class="products products-list">
+      <ul class="products">
           <li v-for="product in filteredProducts" :key="product.id" class="product">
             <router-link :to="`/product/${product.slug}`">
               <div class="product-image-wrapper" :style="{ backgroundImage: `url(${getProductImage(product)})` }">
@@ -40,7 +40,7 @@ export default {
   setup() {
     const route = useRoute()
     const { loadProducts, getProductsByCategory, getProductsByTag, getAllCategories } = useProducts()
-    const { addItem, formatPrice } = useCart()
+    const { formatPrice } = useCart()
     const products = ref([])
     const categories = ref([])
 
@@ -63,11 +63,6 @@ export default {
         : '/assets/images/placeholder.jpg'
     }
 
-    const addToCart = (product) => {
-      addItem(product, 1)
-      alert('Product added to cart!')
-    }
-
     onMounted(async () => {
       products.value = await loadProducts()
       categories.value = getAllCategories()
@@ -78,7 +73,6 @@ export default {
       categories,
       filteredProducts,
       getProductImage,
-      addToCart,
       formatPrice
     }
   }
