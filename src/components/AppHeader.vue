@@ -19,9 +19,9 @@
 				<img class="site-logo" src="/assets/images/fjb-cotton-logo.svg" alt="Farmer John's Botanicals Logo" />
 			</router-link>
 		</div>
-		<router-link v-if="!isCartPage" to="/cart" class="basket-toggle">
+		<router-link v-if="!isCartPage && cartCount > 0" to="/cart" class="basket-toggle">
 			<img src="/assets/images/icon/basket.svg" alt="Shopping Cart" class="basket-icon" />
-			<span v-if="cartCount > 0" class="cart-badge">{{ cartCount }}</span>
+			<span class="cart-badge">{{ cartCount }}</span>
 		</router-link>
 	</header>
 </template>

@@ -500,7 +500,14 @@ form {
 
 						&:before {
 							@include mobile-only {
-								content: "Price:";
+								content: attr(data-label);
+								font-weight: bold;
+								text-transform: uppercase;
+								@include Montserrat;
+								font-size: 12px;
+								display: block;
+								margin-bottom: 5px;
+								color: #666;
 							}
 						}
 					}
@@ -511,7 +518,14 @@ form {
 						
 						&:before {
 							@include mobile-only {
-								content: "Quantity:";
+								content: attr(data-label);
+								font-weight: bold;
+								text-transform: uppercase;
+								@include Montserrat;
+								font-size: 12px;
+								display: block;
+								margin-bottom: 5px;
+								color: #666;
 							}
 						}
 					}

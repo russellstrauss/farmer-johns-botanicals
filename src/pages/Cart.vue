@@ -25,8 +25,8 @@
 										class="cart-item-image" />
 									<strong>{{ item.name }}</strong>
 								</td>
-								<td class="price">{{ formatPrice(item.price) }}</td>
-								<td class="quantity">
+								<td class="price" data-label="Price:">{{ formatPrice(item.price) }}</td>
+								<td class="quantity" data-label="Quantity:">
 									<input type="number" min="1" :value="item.quantity"
 										@change="updateQuantity(index, $event.target.value)" class="quantity-input" />
 								</td>
