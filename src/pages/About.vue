@@ -1,7 +1,7 @@
 <template>
   <div class="content-area primary">
     <main class="site-main main" role="main">
-      <h1>About Farmer John's Botanicals</h1>
+      <h1>Farmer John Technologies</h1>
       <div class="about-content" v-html="aboutContent"></div>
     </main>
   </div>
@@ -20,7 +20,16 @@ export default {
         const response = await fetch('/data/about.json')
         if (response.ok) {
           const data = await response.json()
-          aboutContent.value = data.content || '<p>Welcome to Farmer John\'s Botanicals. We create handcrafted jewelry with care and attention to detail.</p>'
+          if (data.html) {
+            const htmlResponse = await fetch(data.html)
+            if (htmlResponse.ok) {
+              aboutContent.value = await htmlResponse.text()
+            } else {
+              aboutContent.value = '<p>Welcome to Farmer John\'s Botanicals. We create handcrafted jewelry with care and attention to detail.</p>'
+            }
+          } else {
+            aboutContent.value = '<p>Welcome to Farmer John\'s Botanicals. We create handcrafted jewelry with care and attention to detail.</p>'
+          }
         } else {
           aboutContent.value = '<p>Welcome to Farmer John\'s Botanicals. We create handcrafted jewelry with care and attention to detail.</p>'
         }

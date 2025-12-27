@@ -140,14 +140,9 @@ header {
 		@include tablet {
 			position: absolute;
 			right: 20px;
-			top: 14px;
-			width: 120px;
-			z-index: $z-index-fjb-checkout;
-		}
-		
-		@include desktop {
+			top: 15px;
 			width: 200px;
-			top: 25px;
+			z-index: $z-index-fjb-checkout;
 		}
 		
 		a {

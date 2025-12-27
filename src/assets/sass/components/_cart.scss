@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .woocommerce-cart {
 
 	main {
@@ -526,20 +528,29 @@ form {
 
 			.button {
 				@include black-button;
-				display: block;
+				display: inline-block;
 				text-align: center;
 				text-decoration: none;
-				flex: 1;
+				width: auto;
+				min-width: auto;
 
 				&.checkout-button {
 					background-color: $accent-color;
 					border-color: $accent-color;
 					color: white;
+					@include Montserrat;
+					font-size: 22px;
+					padding: 20px;
+					text-transform: uppercase;
 
-					&:hover {
-						background-color: darken($accent-color, 10%);
-						border-color: darken($accent-color, 10%);
+					@include tablet-only {
+						font-size: 14px;
 					}
+
+				&:hover {
+					background-color: color.adjust($accent-color, $lightness: -10%);
+					border-color: color.adjust($accent-color, $lightness: -10%);
+				}
 
 					&:disabled {
 						opacity: 0.6;

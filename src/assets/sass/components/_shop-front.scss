@@ -9,19 +9,18 @@
 		overflow: hidden;
 
 		&:hover {
-			.jewelry-page-link {
+			.category-link {
 				color: white;
 
-				.overlay,
-				.text {
-					opacity: 1;
+				.overlay {
+					opacity: 0.6;
 				}
 			}
 		}
 
 		.overlay {
 			content: '';
-			opacity: 0;
+			opacity: 0.4;
 			position: absolute;
 			width: 100%;
 			height: 100%;
@@ -32,19 +31,18 @@
 			z-index: 10;
 
 			@include mobile-only {
-				opacity: 1;
+				opacity: 0.25;
 				background-color: rgba(0, 0, 0, 0.25);
 			}
 		}
 
-		.jewelry-page-link {
+		.category-link {
 			height: 100%;
 			width: 100%;
 			background-size: cover;
 			background-position: center center;
-			padding-top: 40px;
 
-			.text {
+			h2 {
 				@include Montserrat;
 				letter-spacing: 3px;
 				text-align: center;
@@ -57,46 +55,13 @@
 				transition: color 350ms ease;
 				width: 100%;
 				position: absolute;
-				bottom: 20px;
 				left: 50%;
 				transform: translateX(-50%);
+				opacity: 1;
+				margin: 0;
 
 				@include mobile-only {
 					font-size: 22px;
-				}
-
-				@include tablet {
-					opacity: 0;
-				}
-			}
-
-			&.dustin,
-			&.hillary {
-				.overlay {
-					background: linear-gradient(0deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0) 100%);
-				}
-
-				@include mobile-only {
-					.text {
-						bottom: 0px;
-					}
-				}
-			}
-
-			&.all {
-				height: 200px;
-
-				.text {
-					width: 100%;
-					position: absolute;
-					top: 50%;
-					left: 50%;
-					transform: translate(-50%, -50%);
-
-					@include mobile-only {
-						display: block;
-						line-height: 60px;
-					}
 				}
 			}
 		}
@@ -122,30 +87,40 @@
 		}
 	}
 
-	.profile-pics {
+	.category-links {
 		display: flex;
-		margin-top: 40px;
+		flex-direction: column;
+		gap: 50px;
+		width: 100%;
 
 		@include mobile-only {
-			margin-top: 20px;
+			gap: 15px;
 		}
 
 		a {
-			@include mobile-only {
-				width: calc(50% - 10px);
-				height: 300px;
+			width: 100%;
+			opacity: 1;
+			transition: opacity 0.3s ease;
 
-				&:first-child {
-					margin-right: 20px;
-				}
+			&:hover {
+				opacity: 0.9;
 			}
 
-			@include tablet {
-				height: 600px;
-				width: calc(50% - 20px);
+			.category-link {
+				height: 250px;
 
-				&:first-child {
-					margin-right: 40px;
+				h2 {
+					width: 100%;
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+
+					@include mobile-only {
+						display: block;
+						line-height: 60px;
+						font-size: 22px;
+					}
 				}
 			}
 		}
@@ -173,12 +148,15 @@
 				text-decoration: none;
 				color: #000;
 				font-size: 16px;
-				transition: color 0.3s ease;
+				transition: opacity 0.3s ease;
+				display: inline-block;
+				opacity: 1;
 
 				&:hover,
 				&:focus,
 				&:active {
-					color: #666;
+					opacity: 0.9;
+					color: #000; // Override global a:hover color change
 				}
 			}
 		}
@@ -230,6 +208,8 @@
 				flex-shrink: 0;
 				min-height: 0;
 				display: block;
+
+				border: 1px solid black;
 
 				img {
 					position: absolute;
