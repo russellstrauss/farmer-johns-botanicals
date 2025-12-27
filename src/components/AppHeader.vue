@@ -7,8 +7,8 @@
 					<span class="hamburger-inner"></span>
 				</span>
 			</button>
-			<div class="menu-menu-container">
-				<ul class="menu menu-menu">
+			<div class="menu-container">
+				<ul class="menu">
 					<li><router-link to="/shop">Shop</router-link></li>
 					<li><router-link to="/about">About</router-link></li>
 				</ul>
