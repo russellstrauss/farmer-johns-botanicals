@@ -29,7 +29,7 @@
 
 <script>
 import { useCart } from '../composables/useCart'
-import { computed, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 export default {
 	name: 'AppHeader',
@@ -54,8 +54,7 @@ export default {
 		return {
 			menuOpen,
 			cartCount,
-			toggleMenu,
-			handleLogoError
+			toggleMenu
 		}
 	}
 }

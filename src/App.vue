@@ -1,6 +1,5 @@
 <template>
   <div id="app" class="hfeed site app">
-    <!-- Test: If you see red background, CSS is NOT loading. If you see normal styles, CSS IS loading. -->
     <AppHeader />
     <main class="site-content container">
       <router-view v-slot="{ Component, route }">
@@ -18,7 +17,7 @@
 </template>
 
 <script>
-import { onMounted, onErrorCaptured } from 'vue'
+import { onErrorCaptured } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 
@@ -29,10 +28,6 @@ export default {
     AppFooter
   },
   setup() {
-    onMounted(() => {
-      console.log('[App] App component mounted')
-      console.log('[App] Router view should be rendering...')
-    })
 
     onErrorCaptured((err, instance, info) => {
       console.error('[App] Error captured in App component:', err)
@@ -52,12 +47,6 @@ export default {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-/* If you see this red background, the external CSS is NOT loading */
-body {
-  /* Remove this line once CSS is confirmed working */
-  /* background: red !important; */
 }
 </style>
 

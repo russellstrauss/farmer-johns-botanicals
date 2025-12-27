@@ -57,7 +57,6 @@ export default {
       await loadProducts()
       products.value = await loadProducts()
       categories.value = getAllCategories()
-      console.log('[Home] Categories loaded:', categories.value)
     })
 
     return {

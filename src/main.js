@@ -9,11 +9,6 @@ import 'photoswipe/style.css'
 // Import SASS after PhotoSwipe (so our custom styles can override PhotoSwipe defaults)
 import './assets/sass/style.scss'
 
-// Diagnostic logging
-console.log('[Main] Starting Vue app initialization...')
-console.log('[Main] Routes loaded:', routes)
-console.log('[Main] App component:', App)
-
 	try {
 		const router = createRouter({
 			history: createWebHistory(),
@@ -37,24 +32,13 @@ console.log('[Main] App component:', App)
 		console.error('[Router] Navigation error:', error)
 	})
 
-	// Log router ready state
 	router.beforeEach((to, from, next) => {
-		console.log('[Router] Navigating from', from.path, 'to', to.path)
 		next()
 	})
 
-	router.afterEach((to, from) => {
-		console.log('[Router] Navigation complete to', to.path)
-		console.log('[Router] Matched route:', to.matched)
-	})
-
-	console.log('[Main] Router created successfully')
-
 	const app = createApp(App)
-	console.log('[Main] Vue app created')
 
 	app.use(router)
-	console.log('[Main] Router registered with app')
 
 	// Check if mount target exists
 	const mountTarget = document.querySelector('#app')
@@ -62,11 +46,8 @@ console.log('[Main] App component:', App)
 		console.error('[Main] ERROR: #app element not found in DOM!')
 		throw new Error('#app element not found')
 	}
-	console.log('[Main] Mount target found:', mountTarget)
 
 	app.mount('#app')
-	console.log('[Main] App mounted successfully')
-	console.log('[Main] Initialization complete')
 } catch (error) {
 	console.error('[Main] ERROR during app initialization:', error)
 	// Display error in the DOM if app fails to mount
