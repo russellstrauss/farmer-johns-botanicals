@@ -11,9 +11,10 @@
 </template>
 
 <script>
-import { onErrorCaptured } from 'vue'
+import { onErrorCaptured, onMounted } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
+import { useTheme } from './composables/useTheme'
 
 export default {
   name: 'App',
@@ -22,6 +23,11 @@ export default {
     AppFooter
   },
   setup() {
+    const { initTheme } = useTheme()
+
+    onMounted(() => {
+      initTheme()
+    })
 
     onErrorCaptured((err, instance, info) => {
       console.error('[App] Error captured in App component:', err)

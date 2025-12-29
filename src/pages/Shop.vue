@@ -3,6 +3,9 @@
     <main class="site-main main" role="main">
       <div class="above-shop-section">
         <ul class="product-categories">
+          <li>
+            <router-link to="/shop">All Dyes</router-link>
+          </li>
           <li v-for="category in categories" :key="category.slug">
             <router-link :to="`/shop?category=${category.slug}`">{{ category.name }}</router-link>
           </li>

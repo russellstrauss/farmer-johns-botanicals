@@ -24,6 +24,9 @@
 									<img :src="item.image || '/assets/images/placeholder.jpg'" :alt="item.name"
 										class="cart-item-image" />
 									<strong>{{ item.name }}</strong>
+									<span v-if="item.variation && item.variation.size" class="item-size">
+										Size: {{ item.variation.size }}
+									</span>
 								</td>
 								<td class="price" data-label="Price:">{{ formatPrice(item.price) }}</td>
 								<td class="quantity" data-label="Quantity:">

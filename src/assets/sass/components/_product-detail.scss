@@ -128,8 +128,41 @@
 			margin-bottom: 10px;
 		}
 
+		.product-colors {
+			margin-bottom: 20px;
+			
+			.colors-list {
+				list-style-type: disc;
+				padding-left: 20px;
+				margin: 0;
+				
+				li {
+					margin-bottom: 5px;
+					color: var(--text-primary);
+				}
+			}
+		}
+
 		.product-short-description {
 			margin-bottom: 20px;
+		}
+
+		.product-size-selector {
+			margin-bottom: 20px;
+			
+			label {
+				display: block;
+				margin-bottom: 0.5rem;
+				font-weight: bold;
+			}
+			
+			.size-select {
+				padding: 0.5rem;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				font-size: 1rem;
+				min-width: 150px;
+			}
 		}
 
 		.stock {
@@ -147,7 +180,36 @@
 		}
 
 		.product_meta {
-			display: none;
+			margin-top: 20px;
+			padding-top: 20px;
+			border-top: 1px solid var(--border-color);
+
+			.categories-description {
+				margin-bottom: 10px;
+				color: var(--text-secondary);
+				font-size: 0.9rem;
+			}
+
+			.categories-list {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+
+				a {
+					color: var(--text-primary);
+					text-decoration: none;
+					padding: 0.25rem 0.75rem;
+					border: 1px solid var(--border-color);
+					border-radius: 4px;
+					transition: all 0.2s ease;
+					font-size: 0.9rem;
+
+					&:hover {
+						background-color: var(--bg-secondary);
+						border-color: var(--text-primary);
+					}
+				}
+			}
 		}
 	}
 }

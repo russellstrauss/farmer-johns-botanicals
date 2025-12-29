@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
 import routes from './routes'
+import { useAuth } from './composables/useAuth'
 
 // Import PhotoSwipe CSS first (base styles)
 import 'photoswipe/style.css'
@@ -32,8 +33,23 @@ import './assets/sass/style.scss'
 		console.error('[Router] Navigation error:', error)
 	})
 
+	// Route protection with authentication
 	router.beforeEach((to, from, next) => {
-		next()
+		// Check if route requires authentication
+		if (to.meta.requiresAuth) {
+			const { checkAuth } = useAuth()
+			if (checkAuth()) {
+				next()
+			} else {
+				// Redirect to login with return path
+				next({
+					name: 'Login',
+					query: { redirect: to.fullPath }
+				})
+			}
+		} else {
+			next()
+		}
 	})
 
 	const app = createApp(App)

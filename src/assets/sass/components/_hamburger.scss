@@ -45,7 +45,7 @@ $hamburger-active-hover-opacity: $hamburger-hover-opacity;
 		.hamburger-inner,
 		.hamburger-inner::before,
 		.hamburger-inner::after {
-			background-color: $hamburger-active-layer-color;
+			background-color: var(--text-primary, $hamburger-active-layer-color);
 		}
 	}
 }
@@ -67,10 +67,10 @@ $hamburger-active-hover-opacity: $hamburger-hover-opacity;
 	&::after {
 		width: $hamburger-layer-width;
 		height: $hamburger-layer-height;
-		background-color: $hamburger-layer-color;
+		background-color: var(--text-primary, $hamburger-layer-color);
 		border-radius: $hamburger-layer-border-radius;
 		position: absolute;
-		transition-property: transform;
+		transition-property: transform, background-color;
 		transition-duration: 0.15s;
 		transition-timing-function: ease;
 	}

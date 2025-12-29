@@ -5,6 +5,7 @@ import Cart from './pages/Cart.vue'
 import About from './pages/About.vue'
 import Success from './pages/Success.vue'
 import Admin from './pages/Admin.vue'
+import Login from './pages/Login.vue'
 
 const routes = [
   {
@@ -43,6 +44,11 @@ const routes = [
     name: 'Admin',
     component: Admin,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
   }
 ]
 

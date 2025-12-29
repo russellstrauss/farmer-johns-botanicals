@@ -45,18 +45,31 @@
 							</span>
 						</div>
 						<div class="product-short-description" v-html="formatDescription(product.short_description)"></div>
+						<div v-if="product.colors && product.colors.length > 0" class="product-colors">
+							<ul class="colors-list">
+								<li v-for="color in product.colors" :key="color">{{ color }}</li>
+							</ul>
+						</div>
+						<div v-if="product.sizes && product.sizes.length > 0" class="product-size-selector">
+							<label for="size-select">Size:</label>
+							<select id="size-select" v-model="selectedSize" class="size-select">
+								<option value="">Select a size</option>
+								<option v-for="size in product.sizes" :key="size" :value="size">{{ size }}</option>
+							</select>
+						</div>
 						<div class="product-actions">
 							<button class="button" @click="addToCart"
-								:disabled="!product.in_stock">
+								:disabled="product.sizes && product.sizes.length > 0 && !selectedSize">
 								Add to Cart
 							</button>
 						</div>
 						<div v-if="product.categories && product.categories.length > 0" class="product_meta">
-							Categories:
-							<router-link v-for="category in product.categories" :key="category.slug"
-								:to="`/shop?category=${category.slug}`">
-								{{ category.name }}
-							</router-link>
+							<div class="categories-list">
+								<router-link v-for="category in product.categories" :key="category.slug"
+									:to="`/shop?category=${category.slug}`">
+									{{ category.name }}
+								</router-link>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -95,6 +108,7 @@ export default {
 		const { addItem, formatPrice } = useCart()
 		const product = ref(null)
 		const quantity = ref(1)
+		const selectedSize = ref('')
 		const imageDimensions = ref([])
 		const selectedImageIndex = ref(0)
 
@@ -142,9 +156,21 @@ export default {
 		}
 
 		const addToCart = () => {
-			if (product.value && product.value.in_stock) {
-				addItem(product.value, quantity.value)
+			if (product.value) {
+				// Check if size is required
+				if (product.value.sizes && product.value.sizes.length > 0 && !selectedSize.value) {
+					alert('Please select a size')
+					return
+				}
+				
+				// Create variation object if size is selected
+				const variation = selectedSize.value ? { size: selectedSize.value } : null
+				addItem(product.value, quantity.value, variation)
 				alert('Product added to cart!')
+				// Reset size selection after adding to cart
+				if (product.value.sizes && product.value.sizes.length > 0) {
+					selectedSize.value = ''
+				}
 			}
 		}
 
@@ -186,6 +212,7 @@ export default {
 		return {
 			product,
 			quantity,
+			selectedSize,
 			imageDimensions,
 			selectedImageIndex,
 			openPhotoSwipe,
