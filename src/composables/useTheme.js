@@ -24,28 +24,13 @@ export function useTheme() {
   }
 
   const initTheme = () => {
-    // Check localStorage first
+    // Always default to light theme
+    // Remove any existing dark theme preference from localStorage
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY)
-    
-    if (savedTheme && (savedTheme === THEME_LIGHT || savedTheme === THEME_DARK)) {
-      setTheme(savedTheme)
-    } else {
-      // Check system preference
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-      const systemTheme = prefersDark ? THEME_DARK : THEME_LIGHT
-      setTheme(systemTheme)
+    if (savedTheme === THEME_DARK) {
+      localStorage.removeItem(THEME_STORAGE_KEY)
     }
-    
-    // Listen for system theme changes
-    if (window.matchMedia) {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-      mediaQuery.addEventListener('change', (e) => {
-        // Only auto-switch if user hasn't manually set a preference
-        if (!localStorage.getItem(THEME_STORAGE_KEY)) {
-          setTheme(e.matches ? THEME_DARK : THEME_LIGHT)
-        }
-      })
-    }
+    setTheme(THEME_LIGHT)
   }
 
   return {

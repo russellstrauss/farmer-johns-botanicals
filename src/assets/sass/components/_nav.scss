@@ -154,7 +154,7 @@ header {
 		}
 	}
 	
-	[data-theme="dark"] & {
+	:root[data-theme="dark"] & {
 		.site-branding {
 			.site-logo {
 				path {
