@@ -12,19 +12,29 @@ import fs from 'fs/promises'
  * Handles /api/save-products and /api/save-pages for admin content management
  */
 export function apiMiddleware() {
-  // Load .env file using dotenv for server-side access
   // Get the root directory (project root)
   const __filename = fileURLToPath(import.meta.url)
   const __dirname = dirname(__filename)
   
-  // Load environment variables from .env file in the project root
-  dotenv.config({ path: resolve(__dirname, '.env') })
-  
   return {
     name: 'api-middleware',
     configureServer(server) {
+      // Load .env file using dotenv for server-side access
+      // Load it here to ensure it's fresh when server configures
+      const envPath = resolve(server.config.root || __dirname, '.env')
+      const dotenvResult = dotenv.config({ path: envPath })
+      
+      if (dotenvResult.error) {
+        console.warn('[dotenv] Failed to load .env file:', dotenvResult.error.message)
+        console.warn('[dotenv] Attempted path:', envPath)
+      } else if (dotenvResult.parsed) {
+        console.log('[dotenv] Loaded .env file successfully')
+        // Merge parsed env vars into process.env
+        Object.assign(process.env, dotenvResult.parsed)
+      }
+      
       // Also load env vars using Vite's loadEnv as a fallback
-      const viteEnv = loadEnv(server.config.mode || 'development', server.config.root, '')
+      const viteEnv = loadEnv(server.config.mode || 'development', server.config.root || __dirname, '')
       
       server.middlewares.use('/api/create-checkout', async (req, res, next) => {
         // Only handle POST requests
@@ -37,15 +47,37 @@ export function apiMiddleware() {
         try {
           // Get Stripe secret key from environment
           // Check both prefixed and non-prefixed versions, from both dotenv and Vite loadEnv
+          // Also check server.config.env which Vite might have loaded
           const stripeSecretKey = process.env.STRIPE_SECRET_KEY || 
                                    process.env.VITE_STRIPE_SECRET_KEY || 
                                    viteEnv.STRIPE_SECRET_KEY || 
-                                   viteEnv.VITE_STRIPE_SECRET_KEY
+                                   viteEnv.VITE_STRIPE_SECRET_KEY ||
+                                   server.config.env?.STRIPE_SECRET_KEY ||
+                                   server.config.env?.VITE_STRIPE_SECRET_KEY
           
           if (!stripeSecretKey) {
+            // Debug: Log what we found (without exposing the actual key)
+            console.error('[Stripe] Secret key not found. Checked:')
+            console.error('  - process.env.STRIPE_SECRET_KEY:', !!process.env.STRIPE_SECRET_KEY)
+            console.error('  - process.env.VITE_STRIPE_SECRET_KEY:', !!process.env.VITE_STRIPE_SECRET_KEY)
+            console.error('  - viteEnv.STRIPE_SECRET_KEY:', !!viteEnv.STRIPE_SECRET_KEY)
+            console.error('  - viteEnv.VITE_STRIPE_SECRET_KEY:', !!viteEnv.VITE_STRIPE_SECRET_KEY)
+            console.error('  - server.config.root:', server.config.root)
+            console.error('  - env file path:', resolve(server.config.root || __dirname, '.env'))
+            
+            // Check if .env file exists
+            const envPath = resolve(server.config.root || __dirname, '.env')
+            try {
+              await fs.access(envPath)
+              console.error('  - .env file exists but STRIPE_SECRET_KEY is not set')
+            } catch {
+              console.error('  - .env file does not exist at:', envPath)
+              console.error('  - Please create a .env file in the project root (see .env.example for template)')
+            }
+            
             res.writeHead(500, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ 
-              message: 'Stripe secret key not configured. Please set STRIPE_SECRET_KEY or VITE_STRIPE_SECRET_KEY environment variable.'
+              message: 'Stripe secret key not configured. Please create a .env file in the project root with STRIPE_SECRET_KEY or VITE_STRIPE_SECRET_KEY. See .env.example for a template.'
             }))
             return
           }

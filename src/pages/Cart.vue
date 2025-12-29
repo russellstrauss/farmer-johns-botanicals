@@ -13,8 +13,8 @@
 						<thead>
 							<tr>
 								<th>Product</th>
+								<th>Size</th>
 								<th>Price</th>
-								<th>Quantity</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -24,17 +24,16 @@
 									<img :src="item.image || '/assets/images/placeholder.jpg'" :alt="item.name"
 										class="cart-item-image" />
 									<strong>{{ item.name }}</strong>
-									<span v-if="item.variation && item.variation.size" class="item-size">
-										Size: {{ item.variation.size }}
-									</span>
+								</td>
+								<td class="size" data-label="Size:">
+									<span v-if="item.variation && item.variation.size">{{ item.variation.size }}</span>
+									<span v-else>-</span>
 								</td>
 								<td class="price" data-label="Price:">{{ formatPrice(item.price) }}</td>
-								<td class="quantity" data-label="Quantity:">
-									<input type="number" min="1" :value="item.quantity"
-										@change="updateQuantity(index, $event.target.value)" class="quantity-input" />
-								</td>
-								<td>
-									<button class="button" @click="removeItem(index)">Remove</button>
+								<td class="remove">
+									<div>
+										<button class="button" @click="removeItem(index)">Remove</button>
+									</div>
 								</td>
 							</tr>
 						</tbody>

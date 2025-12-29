@@ -50,16 +50,19 @@
 								<li v-for="color in product.colors" :key="color">{{ color }}</li>
 							</ul>
 						</div>
-						<div v-if="product.sizes && product.sizes.length > 0" class="product-size-selector">
-							<label for="size-select">Size:</label>
-							<select id="size-select" v-model="selectedSize" class="size-select">
+						<div v-if="product.sizes && product.sizes.length > 0" 
+							:class="['product-size-selector', { 'error': showSizeError }]">
+							<label for="size-select">Size: <span class="required-indicator">*</span></label>
+							<select id="size-select" v-model="selectedSize" 
+								:class="['size-select', { 'error': showSizeError }]"
+								@change="showSizeError = false">
 								<option value="">Select a size</option>
 								<option v-for="size in product.sizes" :key="size" :value="size">{{ size }}</option>
 							</select>
+							<p v-if="showSizeError" class="error-message">Please select a size to continue</p>
 						</div>
 						<div class="product-actions">
-							<button class="button" @click="addToCart"
-								:disabled="product.sizes && product.sizes.length > 0 && !selectedSize">
+							<button class="button" @click="addToCart">
 								Add to Cart
 							</button>
 						</div>
@@ -111,6 +114,7 @@ export default {
 		const selectedSize = ref('')
 		const imageDimensions = ref([])
 		const selectedImageIndex = ref(0)
+		const showSizeError = ref(false)
 
 		// Load image dimensions
 		const loadImageDimensions = async (images) => {
@@ -159,9 +163,20 @@ export default {
 			if (product.value) {
 				// Check if size is required
 				if (product.value.sizes && product.value.sizes.length > 0 && !selectedSize.value) {
-					alert('Please select a size')
+					showSizeError.value = true
+					// Scroll to size selector if error
+					nextTick(() => {
+						const sizeSelector = document.getElementById('size-select')
+						if (sizeSelector) {
+							sizeSelector.scrollIntoView({ behavior: 'smooth', block: 'center' })
+							sizeSelector.focus()
+						}
+					})
 					return
 				}
+				
+				// Clear any error state
+				showSizeError.value = false
 				
 				// Create variation object if size is selected
 				const variation = selectedSize.value ? { size: selectedSize.value } : null
@@ -209,10 +224,18 @@ export default {
 			await initializeGallery()
 		})
 
+		// Watch for size selection to clear error
+		watch(selectedSize, (newSize) => {
+			if (newSize && showSizeError.value) {
+				showSizeError.value = false
+			}
+		})
+
 		return {
 			product,
 			quantity,
 			selectedSize,
+			showSizeError,
 			imageDimensions,
 			selectedImageIndex,
 			openPhotoSwipe,
