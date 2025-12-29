@@ -1,24 +1,14 @@
 .related-products {
-	
-	.products {
-		
-		.product {
-			flex: 0 0 calc(25% - 30px);
-			width: calc(25% - 30px);
-			max-width: calc(25% - 30px);
-			min-width: 0;
-			
-			@include tablet-only {
-				flex: 0 0 calc(50% - 30px);
-				width: calc(50% - 30px);
-				max-width: calc(50% - 30px);
-			}
-			
-			@include mobile-only {
-				flex: 0 0 calc(100% - 30px);
-				width: calc(100% - 30px);
-				max-width: calc(100% - 30px);
-			}
-		}
+	margin-top: 60px;
+	padding-top: 40px;
+	border-top: 1px solid #e0e0e0;
+
+	.related-products-title {
+		margin-bottom: 30px;
+		font-size: 24px;
+		font-weight: bold;
 	}
+
+	// Product cards use the same styles from _shop-front.scss
+	// No need to override here - they inherit from .products .product
 }

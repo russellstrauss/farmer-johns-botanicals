@@ -43,9 +43,9 @@ $desktop-large-width: 1200px;
 @mixin black-button {
 	background-color: black;
 	color: #fff;
-	font-size: 16px;
+	font-size: $font-size-body;
 	display: block;
-	padding: 20px 50px;
+	padding: 1.25rem 3.125rem; // 20px 50px
 	border: 1px solid black;
 	transition: all 250ms ease;
 	text-align: center;
@@ -54,19 +54,73 @@ $desktop-large-width: 1200px;
 	cursor: pointer;
 	
 	@include mobile-only {
-		font-size: 16px;
+		font-size: $font-size-body;
 	}
 	
 	&:hover {
 		background-color: white;
 		color: black;
 	}
+	
+	&.primary {
+		background-color: $accent-color;
+	}
+}
+
+@mixin outline-button {
+	@include black-button;
+	background-color: white;
 }
 
 @mixin form-input-style {
 	border-radius: 3px;
 	border: 1px solid #666;
 	padding: 6px;
+}
+
+// Font size mixins for consistent typography
+@mixin font-size-h1 {
+	font-size: $font-size-h1;
+}
+
+@mixin font-size-h2 {
+	font-size: $font-size-h2;
+}
+
+@mixin font-size-h3 {
+	font-size: $font-size-h3;
+}
+
+@mixin font-size-h4 {
+	font-size: $font-size-h4;
+}
+
+@mixin font-size-h5 {
+	font-size: $font-size-h5;
+}
+
+@mixin font-size-h6 {
+	font-size: $font-size-h6;
+}
+
+@mixin font-size-body {
+	font-size: $font-size-body;
+}
+
+@mixin font-size-large {
+	font-size: $font-size-large;
+}
+
+@mixin font-size-small {
+	font-size: $font-size-small;
+}
+
+@mixin font-size-xs {
+	font-size: $font-size-xs;
+}
+
+@mixin font-size-xxs {
+	font-size: $font-size-xxs;
 }
 
 @mixin alert {

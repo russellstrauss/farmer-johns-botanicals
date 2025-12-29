@@ -12,21 +12,7 @@
         </ul>
       </div>
       <ul class="products">
-          <li v-for="product in filteredProducts" :key="product.id" class="product">
-            <router-link :to="`/product/${product.slug}`">
-              <div class="product-image-wrapper" :style="{ backgroundImage: `url(${getProductImage(product)})` }">
-                <img :src="getProductImage(product)" :alt="product.name" />
-              </div>
-              <span v-if="product.sale_price" class="sale-badge">Sale</span>
-              <h3 class="product-title">{{ product.name }}</h3>
-              <span class="price">
-                <span class="amount">
-                  <span v-if="product.sale_price" class="sale-price">{{ formatPrice(product.sale_price) }}</span>
-                  <span :class="{ 'regular-price': product.sale_price }">{{ formatPrice(product.price) }}</span>
-                </span>
-              </span>
-            </router-link>
-          </li>
+          <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product" />
         </ul>
     </main>
   </div>
@@ -36,14 +22,16 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProducts } from '../composables/useProducts'
-import { useCart } from '../composables/useCart'
+import ProductCard from '../components/ProductCard.vue'
 
 export default {
   name: 'Shop',
+  components: {
+    ProductCard
+  },
   setup() {
     const route = useRoute()
     const { loadProducts, getProductsByCategory, getProductsByTag, getAllCategories } = useProducts()
-    const { formatPrice } = useCart()
     const products = ref([])
     const categories = ref([])
 
@@ -60,12 +48,6 @@ export default {
       return products.value
     })
 
-    const getProductImage = (product) => {
-      return product.images && product.images.length > 0 
-        ? product.images[0] 
-        : '/assets/images/placeholder.jpg'
-    }
-
     onMounted(async () => {
       products.value = await loadProducts()
       categories.value = getAllCategories()
@@ -74,9 +56,7 @@ export default {
     return {
       products,
       categories,
-      filteredProducts,
-      getProductImage,
-      formatPrice
+      filteredProducts
     }
   }
 }

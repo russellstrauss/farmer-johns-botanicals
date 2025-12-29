@@ -15,7 +15,7 @@ export function useStripe() {
     return stripePromise
   }
 
-  const createCheckoutSession = async (cartItems, customerEmail = null) => {
+  const createCheckoutSession = async (cartItems, customerDetails = null) => {
     try {
       if (!cartItems || cartItems.length === 0) {
         throw new Error('Cart is empty')
@@ -46,7 +46,46 @@ export function useStripe() {
       })
 
       const successUrl = new URL('/success', window.location.origin).href
-      const cancelUrl = new URL('/cart', window.location.origin).href
+      const cancelUrl = new URL('/checkout', window.location.origin).href
+
+      // Prepare request body
+      const requestBody = {
+        line_items: lineItems,
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: {
+          cart_items: JSON.stringify(cartItems.map(item => ({
+            sku: item.sku,
+            name: item.name,
+            quantity: item.quantity
+          })))
+        }
+      }
+
+      // Add customer details if provided
+      if (customerDetails) {
+        requestBody.customer_email = customerDetails.email
+        requestBody.customer_name = customerDetails.name
+        requestBody.shipping_address = customerDetails.shipping?.address
+        requestBody.shipping_name = customerDetails.shipping?.name
+        
+        // Add customer details to metadata
+        requestBody.metadata.customer_name = customerDetails.name
+        requestBody.metadata.customer_email = customerDetails.email
+        if (customerDetails.phone) {
+          requestBody.metadata.customer_phone = customerDetails.phone
+        }
+        if (customerDetails.shipping) {
+          requestBody.metadata.shipping_address = JSON.stringify({
+            line1: customerDetails.shipping.address.line1,
+            line2: customerDetails.shipping.address.line2,
+            city: customerDetails.shipping.address.city,
+            state: customerDetails.shipping.address.state,
+            postal_code: customerDetails.shipping.address.postal_code,
+            country: customerDetails.shipping.address.country
+          })
+        }
+      }
 
       // Call serverless function to create Stripe Checkout session
       const apiUrl = import.meta.env.VITE_API_URL || '/api/create-checkout'
@@ -55,19 +94,7 @@ export function useStripe() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          line_items: lineItems,
-          customer_email: customerEmail,
-          success_url: successUrl,
-          cancel_url: cancelUrl,
-          metadata: {
-            cart_items: JSON.stringify(cartItems.map(item => ({
-              sku: item.sku,
-              name: item.name,
-              quantity: item.quantity
-            })))
-          }
-        })
+        body: JSON.stringify(requestBody)
       })
 
       if (!response.ok) {

@@ -117,6 +117,7 @@
 			display: flex;
 			flex-direction: column;
 			flex: 1;
+			position: relative;
 
 			.product-image-wrapper {
 				width: 100%;
@@ -146,6 +147,27 @@
 					display: block;
 				}
 			}
+
+			.sale-badge {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				background-color: $accent-color;
+				color: white;
+				padding: 5px 10px;
+				font-size: 12px;
+				font-weight: bold;
+				text-transform: uppercase;
+				z-index: 10;
+			}
+
+			.product-title {
+				margin: 15px 0 10px 0;
+				font-size: 16px;
+				font-weight: normal;
+				line-height: 1.4;
+				color: inherit;
+			}
 		}
 
 		.price {
@@ -154,6 +176,18 @@
 			.amount {
 				color: $accent-color;
 				font-weight: bold;
+
+				.sale-price {
+					color: $accent-color;
+					margin-right: 8px;
+				}
+
+				.regular-price {
+					text-decoration: line-through;
+					color: #999;
+					font-weight: normal;
+					margin-right: 8px;
+				}
 			}
 		}
 

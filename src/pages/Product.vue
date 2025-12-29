@@ -46,6 +46,7 @@
 						</div>
 						<div class="product-short-description" v-html="formatDescription(product.short_description)"></div>
 						<div v-if="product.colors && product.colors.length > 0" class="product-colors">
+							<h4>Color Palette</h4>
 							<ul class="colors-list">
 								<li v-for="color in product.colors" :key="color">{{ color }}</li>
 							</ul>
@@ -247,3 +248,9 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+	.product-short-description {
+		font-size: 1rem;
+	}
+</style>

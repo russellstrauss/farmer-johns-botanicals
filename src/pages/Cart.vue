@@ -46,8 +46,8 @@
 						</tfoot>
 					</table>
 					<div v-if="cartItems.length > 0" class="cart-actions">
-						<button class="button checkout-button" @click="handleCheckout" :disabled="processing || cartItems.length === 0">
-							{{ processing ? 'Processing...' : 'Proceed to Checkout' }}
+						<button class="button checkout-button" @click="handleCheckout" :disabled="cartItems.length === 0">
+							Proceed to Checkout
 						</button>
 					</div>
 				</div>
@@ -57,13 +57,14 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useCart } from '../composables/useCart'
-import { useStripe } from '../composables/useStripe'
 
 export default {
 	name: 'Cart',
 	setup() {
+		const router = useRouter()
 		const {
 			cart,
 			removeItem: removeCartItem,
@@ -71,8 +72,6 @@ export default {
 			getTotal,
 			formatPrice
 		} = useCart()
-		const { createCheckoutSession } = useStripe()
-		const processing = ref(false)
 
 		const cartItems = cart
 
@@ -84,21 +83,12 @@ export default {
 			updateCartQuantity(index, parseInt(quantity))
 		}
 
-
-		const handleCheckout = async () => {
+		const handleCheckout = () => {
 			if (cartItems.value.length === 0) {
 				alert('Your cart is empty')
 				return
 			}
-
-			processing.value = true
-			try {
-				await createCheckoutSession(cartItems.value)
-			} catch (error) {
-				console.error('Checkout error:', error)
-			} finally {
-				processing.value = false
-			}
+			router.push('/checkout')
 		}
 
 		return {
@@ -107,8 +97,7 @@ export default {
 			formatPrice,
 			removeItem,
 			updateQuantity,
-			handleCheckout,
-			processing
+			handleCheckout
 		}
 	}
 }
