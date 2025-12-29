@@ -44,10 +44,13 @@
 								<p v-if="fieldErrors.email" class="error-message">Email is required.</p>
 							</div>
 
-							<div class="form-group">
-								<label for="phone">Phone (Optional)</label>
-								<input id="phone" v-model="form.phone" type="tel" autocomplete="tel"
-									placeholder="(555) 123-4567" />
+							<div class="form-group" :class="{ 'error': fieldErrors.phone }">
+								<label for="phone">Phone <span class="required-indicator">*</span></label>
+								<input id="phone" v-model="form.phone" type="tel"
+									:class="{ 'error': fieldErrors.phone }"
+									@input="fieldErrors.phone = false"
+									autocomplete="tel" placeholder="(555) 123-4567" />
+								<p v-if="fieldErrors.phone" class="error-message">Phone is required.</p>
 							</div>
 						</section>
 
@@ -196,13 +199,14 @@ export default {
 			city: '',
 			state: '',
 			postalCode: '',
-			country: ''
+			country: 'US'
 		})
 
 		const fieldErrors = ref({
 			firstName: false,
 			lastName: false,
 			email: false,
+			phone: false,
 			address: false,
 			city: false,
 			state: false,
@@ -231,6 +235,11 @@ export default {
 
 			if (!form.value.email.trim()) {
 				fieldErrors.value.email = true
+				isValid = false
+			}
+
+			if (!form.value.phone.trim()) {
+				fieldErrors.value.phone = true
 				isValid = false
 			}
 
@@ -288,7 +297,7 @@ export default {
 				const customerDetails = {
 					name: `${form.value.firstName} ${form.value.lastName}`,
 					email: form.value.email,
-					phone: form.value.phone || undefined,
+					phone: form.value.phone,
 					shipping: {
 						name: `${form.value.firstName} ${form.value.lastName}`,
 						address: {
@@ -332,7 +341,6 @@ export default {
 	.checkout-container {
 		max-width: 800px;
 		margin: 0 auto;
-		padding: 2rem 1rem;
 		
 		h1 {
 			margin-bottom: 2rem;
@@ -522,24 +530,36 @@ export default {
 		.form-actions {
 			display: flex;
 			justify-content: space-between;
+			gap: 1rem;
 			
 			@include mobile-only {
-				display: flex;
-				gap: 1rem;
-				justify-content: flex-end;
+				flex-direction: column;
 				padding-top: 1rem;
 				border-top: 1px solid #e0e0e0;
+				width: 100%;
 			}
 			
 			a {
 				@include outline-button;
 				color: black;
 				text-decoration: none;
+				
+				@include mobile-only {
+					width: 100%;
+					box-sizing: border-box;
+					min-width: 0;
+				}
 			}
 			
 			button {
 				@include black-button;
 				display: inline-block;
+				
+				@include mobile-only {
+					width: 100%;
+					box-sizing: border-box;
+					min-width: 0;
+				}
 			}
 		}
 	
@@ -553,18 +573,6 @@ export default {
 			@include mobile-only {
 				grid-template-columns: 1fr;
 				gap: 0.5rem;
-			}
-		}
-	
-		.form-actions {
-			@include mobile-only {
-				flex-direction: column;
-			}
-		}
-	
-		.button {
-			@include mobile-only {
-				width: 100%;
 			}
 		}
 	}
