@@ -93,6 +93,7 @@ import { useRoute } from 'vue-router'
 import { useProducts } from '../composables/useProducts'
 import { useCart } from '../composables/useCart'
 import { usePhotoSwipe } from '../composables/usePhotoSwipe'
+import { useDialog } from '../composables/useDialog'
 import RelatedProducts from '../components/RelatedProducts.vue'
 
 export default {
@@ -110,6 +111,7 @@ export default {
 		const route = useRoute()
 		const { loadProducts, getProductBySlug } = useProducts()
 		const { addItem, formatPrice } = useCart()
+		const { alert } = useDialog()
 		const product = ref(null)
 		const quantity = ref(1)
 		const selectedSize = ref('')
@@ -160,7 +162,7 @@ export default {
 			}
 		}
 
-		const addToCart = () => {
+		const addToCart = async () => {
 			if (product.value) {
 				// Check if size is required
 				if (product.value.sizes && product.value.sizes.length > 0 && !selectedSize.value) {
@@ -182,7 +184,7 @@ export default {
 				// Create variation object if size is selected
 				const variation = selectedSize.value ? { size: selectedSize.value } : null
 				addItem(product.value, quantity.value, variation)
-				alert('Product added to cart!')
+				await alert('Product added to cart!', 'Success')
 				// Reset size selection after adding to cart
 				if (product.value.sizes && product.value.sizes.length > 0) {
 					selectedSize.value = ''

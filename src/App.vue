@@ -7,6 +7,7 @@
       </router-view>
     </main>
     <AppFooter />
+    <AlertDialog />
   </div>
 </template>
 
@@ -14,13 +15,15 @@
 import { onErrorCaptured, onMounted } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
+import AlertDialog from './components/AlertDialog.vue'
 import { useTheme } from './composables/useTheme'
 
 export default {
   name: 'App',
   components: {
     AppHeader,
-    AppFooter
+    AppFooter,
+    AlertDialog
   },
   setup() {
     const { initTheme } = useTheme()

@@ -4,8 +4,8 @@
     "name": "Midnight Mountain Moonrise",
     "slug": "midnight-mountain-moonrise",
     "sku": "midnight-mountain-moonrise",
-    "price": 50,
-    "regular_price": 50,
+    "price": 1,
+    "regular_price": 1,
     "sale_price": null,
     "short_description": "The Midnight Mountain Moonrise design captures the serenity of a highlands watercolor moonrise.",
     "images": [
@@ -47,8 +47,8 @@
     "name": "Rainbow Gravity Heart",
     "slug": "rainbow-gravity-heart",
     "sku": "rainbow-gravity-heart",
-    "price": 50,
-    "regular_price": 50,
+    "price": 1,
+    "regular_price": 1,
     "sale_price": null,
     "short_description": "Show your favorite person how special they are with a watercolor style rainbow gravity heart!",
     "images": [

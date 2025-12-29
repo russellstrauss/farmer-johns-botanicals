@@ -60,6 +60,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCart } from '../composables/useCart'
+import { useDialog } from '../composables/useDialog'
 
 export default {
 	name: 'Cart',
@@ -72,6 +73,7 @@ export default {
 			getTotal,
 			formatPrice
 		} = useCart()
+		const { alert } = useDialog()
 
 		const cartItems = cart
 
@@ -83,9 +85,9 @@ export default {
 			updateCartQuantity(index, parseInt(quantity))
 		}
 
-		const handleCheckout = () => {
+		const handleCheckout = async () => {
 			if (cartItems.value.length === 0) {
-				alert('Your cart is empty')
+				await alert('Your cart is empty', 'Cart Empty')
 				return
 			}
 			router.push('/checkout')

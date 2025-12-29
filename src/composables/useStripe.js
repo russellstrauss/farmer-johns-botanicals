@@ -1,8 +1,10 @@
 import { loadStripe } from '@stripe/stripe-js'
+import { useDialog } from './useDialog'
 
 let stripePromise = null
 
 export function useStripe() {
+  const { alert } = useDialog()
   const getStripe = () => {
     if (!stripePromise) {
       const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
@@ -122,7 +124,7 @@ export function useStripe() {
       }
     } catch (error) {
       console.error('Error creating checkout session:', error)
-      alert('Error starting checkout: ' + error.message)
+      await alert('Error starting checkout: ' + error.message, 'Checkout Error')
       throw error
     }
   }

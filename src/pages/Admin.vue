@@ -275,6 +275,7 @@ import { useRouter } from 'vue-router'
 import { useProducts } from '../composables/useProducts'
 import { useCart } from '../composables/useCart'
 import { useAuth } from '../composables/useAuth'
+import { useDialog } from '../composables/useDialog'
 
 export default {
 	name: 'Admin',
@@ -282,6 +283,7 @@ export default {
 		const { loadProducts, products: productsData } = useProducts()
 		const { formatPrice } = useCart()
 		const { authToken, logout } = useAuth()
+		const { alert, confirm } = useDialog()
 		const router = useRouter()
 		const activeTab = ref('products')
 		const showAddProduct = ref(false)
@@ -536,7 +538,7 @@ export default {
 				// Check if slug already exists
 				const existingCategory = categories.value.find(c => c.slug === categoryForm.value.slug)
 				if (existingCategory) {
-					alert('A category with this slug already exists')
+					alert('A category with this slug already exists', 'Duplicate Category')
 					return
 				}
 				categories.value.push({
@@ -567,20 +569,23 @@ export default {
 			closePageEditor()
 		}
 
-		const deleteProduct = (id) => {
-			if (confirm('Are you sure you want to delete this product?')) {
+		const deleteProduct = async (id) => {
+			const confirmed = await confirm('Are you sure you want to delete this product?', 'Delete Product')
+			if (confirmed) {
 				products.value = products.value.filter(p => p.id !== id)
 			}
 		}
 
-		const deleteCategory = (slug) => {
-			if (confirm('Are you sure you want to delete this category? Products using this category will keep it, but you won\'t be able to manage it.')) {
+		const deleteCategory = async (slug) => {
+			const confirmed = await confirm('Are you sure you want to delete this category? Products using this category will keep it, but you won\'t be able to manage it.', 'Delete Category')
+			if (confirmed) {
 				categories.value = categories.value.filter(c => c.slug !== slug)
 			}
 		}
 
-		const deletePage = (slug) => {
-			if (confirm('Are you sure you want to delete this page?')) {
+		const deletePage = async (slug) => {
+			const confirmed = await confirm('Are you sure you want to delete this page?', 'Delete Page')
+			if (confirmed) {
 				pages.value = pages.value.filter(p => p.slug !== slug)
 			}
 		}
@@ -627,7 +632,7 @@ export default {
 		const saveProducts = async () => {
 			try {
 				if (!authToken.value) {
-					alert('You must be logged in to save products')
+					await alert('You must be logged in to save products', 'Authentication Required')
 					return
 				}
 
@@ -646,7 +651,7 @@ export default {
 
 				if (response.ok) {
 					console.log('Products saved successfully:', result)
-					alert(`Products saved successfully! (${result.count || productsToSave.length} products)`)
+					await alert(`Products saved successfully! (${result.count || productsToSave.length} products)`, 'Success')
 					// Reload products directly from the file to get fresh data
 					// Use cache-busting query parameter to ensure we get the latest version
 					try {
@@ -669,19 +674,19 @@ export default {
 						originalProducts.value = JSON.parse(JSON.stringify(productsData.value))
 					}
 				} else {
-					alert(`Error saving products: ${result.message || 'Unknown error'}`)
+					await alert(`Error saving products: ${result.message || 'Unknown error'}`, 'Error')
 					console.error('Save products error:', result)
 				}
 			} catch (error) {
 				console.error('Error saving products:', error)
-				alert(`Error saving products: ${error.message}`)
+				await alert(`Error saving products: ${error.message}`, 'Error')
 			}
 		}
 
 		const saveCategories = async () => {
 			try {
 				if (!authToken.value) {
-					alert('You must be logged in to save categories')
+					await alert('You must be logged in to save categories', 'Authentication Required')
 					return
 				}
 
@@ -697,22 +702,22 @@ export default {
 				const result = await response.json()
 
 				if (response.ok) {
-					alert('Categories saved successfully!')
+					await alert('Categories saved successfully!', 'Success')
 					// Reload categories to get the latest data
 					await loadCategories()
 				} else {
-					alert(`Error saving categories: ${result.message || 'Unknown error'}`)
+					await alert(`Error saving categories: ${result.message || 'Unknown error'}`, 'Error')
 				}
 			} catch (error) {
 				console.error('Error saving categories:', error)
-				alert(`Error saving categories: ${error.message}`)
+				await alert(`Error saving categories: ${error.message}`, 'Error')
 			}
 		}
 
 		const savePages = async () => {
 			try {
 				if (!authToken.value) {
-					alert('You must be logged in to save pages')
+					await alert('You must be logged in to save pages', 'Authentication Required')
 					return
 				}
 
@@ -728,20 +733,21 @@ export default {
 				const result = await response.json()
 
 				if (response.ok) {
-					alert('Pages saved successfully!')
+					await alert('Pages saved successfully!', 'Success')
 					// Reload pages to get the latest data
 					await loadPages()
 				} else {
-					alert(`Error saving pages: ${result.message || 'Unknown error'}`)
+					await alert(`Error saving pages: ${result.message || 'Unknown error'}`, 'Error')
 				}
 			} catch (error) {
 				console.error('Error saving pages:', error)
-				alert(`Error saving pages: ${error.message}`)
+				await alert(`Error saving pages: ${error.message}`, 'Error')
 			}
 		}
 
-		const handleLogout = () => {
-			if (confirm('Are you sure you want to logout?')) {
+		const handleLogout = async () => {
+			const confirmed = await confirm('Are you sure you want to logout?', 'Confirm Logout')
+			if (confirmed) {
 				logout()
 				router.push('/login')
 			}
@@ -785,15 +791,15 @@ export default {
 					} else {
 						// Handle duplicate file error (409) or other errors
 						if (response.status === 409) {
-							alert(`Upload blocked: ${result.message || 'File already exists'}`)
+							await alert(`Upload blocked: ${result.message || 'File already exists'}`, 'Upload Blocked')
 						} else {
-							alert(`Error uploading ${file.name}: ${result.message || 'Unknown error'}`)
+							await alert(`Error uploading ${file.name}: ${result.message || 'Unknown error'}`, 'Upload Error')
 						}
 					}
 				}
 			} catch (error) {
 				console.error('Error uploading files:', error)
-				alert(`Error uploading files: ${error.message}`)
+				await alert(`Error uploading files: ${error.message}`, 'Upload Error')
 			} finally {
 				uploading.value = false
 				// Reset file input
@@ -855,9 +861,9 @@ export default {
 			}
 		}
 
-		const addSelectedImages = () => {
+		const addSelectedImages = async () => {
 			if (selectedImages.value.length === 0) {
-				alert('Please select at least one image')
+				await alert('Please select at least one image', 'No Selection')
 				return
 			}
 
