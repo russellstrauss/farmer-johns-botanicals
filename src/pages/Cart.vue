@@ -41,9 +41,19 @@
 						</tbody>
 						<tfoot>
 							<tr>
-								<td colspan="2"><strong>Total</strong></td>
+								<td colspan="2"><strong>Subtotal</strong></td>
 								<td></td>
 								<td class="total-price"><strong>{{ formatPrice(getTotal()) }}</strong></td>
+							</tr>
+							<tr>
+								<td colspan="2"><strong>Shipping (USPS Priority Mail)</strong></td>
+								<td></td>
+								<td class="total-price"><strong>{{ formatPrice(getShippingCost()) }}</strong></td>
+							</tr>
+							<tr>
+								<td colspan="2"><strong>Total</strong></td>
+								<td></td>
+								<td class="total-price"><strong>{{ formatPrice(getTotalWithShipping()) }}</strong></td>
 							</tr>
 						</tfoot>
 					</table>
@@ -87,6 +97,27 @@ export default {
 			updateCartQuantity(index, parseInt(quantity))
 		}
 
+		const getTotalShirtCount = () => {
+			return cartItems.value.reduce((total, item) => {
+				return total + (item.quantity || 1)
+			}, 0)
+		}
+
+		const getShippingCost = () => {
+			const shirtCount = getTotalShirtCount()
+			if (shirtCount <= 3) {
+				return 10
+			} else if (shirtCount <= 8) {
+				return 20
+			} else {
+				return 30
+			}
+		}
+
+		const getTotalWithShipping = () => {
+			return getTotal() + getShippingCost()
+		}
+
 		const handleCheckout = async () => {
 			if (cartItems.value.length === 0) {
 				await alert('Your cart is empty', 'Cart Empty')
@@ -98,6 +129,8 @@ export default {
 		return {
 			cartItems,
 			getTotal,
+			getShippingCost,
+			getTotalWithShipping,
 			formatPrice,
 			removeItem,
 			updateQuantity,
