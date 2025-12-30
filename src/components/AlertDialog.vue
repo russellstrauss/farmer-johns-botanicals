@@ -7,11 +7,11 @@
 						<h3 v-if="dialogState.title" class="dialog-title">{{ dialogState.title }}</h3>
 						<div class="dialog-message">{{ dialogState.message }}</div>
 						<div class="dialog-actions">
-							<button class="dialog-button dialog-button-primary" @click="handleConfirm">
-								{{ dialogState.confirmText }}
-							</button>
 							<button v-if="dialogState.showCancel" class="dialog-button dialog-button-secondary" @click="handleCancel">
 								{{ dialogState.cancelText }}
+							</button>
+							<button class="dialog-button dialog-button-primary" @click="handleConfirm">
+								{{ dialogState.confirmText }}
 							</button>
 						</div>
 					</div>
@@ -78,7 +78,7 @@ export default {
 	background-color: var(--bg-primary);
 	border-radius: 8px;
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-	max-width: 400px;
+	max-width: 550px;
 	width: 100%;
 	max-height: 90vh;
 	overflow: auto;
@@ -108,13 +108,15 @@ export default {
 .dialog-actions {
 	display: flex;
 	gap: 12px;
-	justify-content: flex-end;
-	flex-wrap: wrap;
+	justify-content: space-between;
+	flex-wrap: nowrap;
 }
 
 .dialog-button {
 	@include black-button;
 	display: inline-block;
+	white-space: nowrap;
+	flex-shrink: 0;
 
 	&:hover {
 		opacity: 0.9;
@@ -123,6 +125,28 @@ export default {
 
 	&:active {
 		transform: translateY(0);
+	}
+}
+
+.dialog-button-primary {
+	background-color: var(--accent-color);
+	border-color: var(--accent-color);
+	
+	&:hover {
+		background-color: var(--accent-color);
+		opacity: 0.9;
+		color: #fff;
+	}
+}
+
+.dialog-button-secondary {
+	background-color: transparent;
+	color: var(--text-primary);
+	border-color: var(--text-primary);
+	
+	&:hover {
+		background-color: var(--text-primary);
+		color: var(--bg-primary);
 	}
 }
 
@@ -168,11 +192,9 @@ export default {
 	}
 
 	.dialog-actions {
-		flex-direction: column;
-
-		.dialog-button {
-			width: 100%;
-		}
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: space-between;
 	}
 }
 </style>

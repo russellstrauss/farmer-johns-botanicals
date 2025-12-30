@@ -89,7 +89,7 @@
 
 <script>
 import { ref, onMounted, watch, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useProducts } from '../composables/useProducts'
 import { useCart } from '../composables/useCart'
 import { usePhotoSwipe } from '../composables/usePhotoSwipe'
@@ -109,9 +109,10 @@ export default {
 	},
 	setup(props) {
 		const route = useRoute()
+		const router = useRouter()
 		const { loadProducts, getProductBySlug } = useProducts()
 		const { addItem, formatPrice } = useCart()
-		const { alert } = useDialog()
+		const { dialog } = useDialog()
 		const product = ref(null)
 		const quantity = ref(1)
 		const selectedSize = ref('')
@@ -184,7 +185,25 @@ export default {
 				// Create variation object if size is selected
 				const variation = selectedSize.value ? { size: selectedSize.value } : null
 				addItem(product.value, quantity.value, variation)
-				await alert('Product added to cart!', 'Success')
+				
+				// Show dialog with two options
+				try {
+					const result = await dialog({
+						message: 'Product added to cart!',
+						title: 'Success',
+						confirmText: 'Check Out Now',
+						cancelText: 'Continue Shopping',
+						showCancel: true
+					})
+					
+					// If user clicked "Check Out Now", navigate to checkout
+					if (result) {
+						router.push('/checkout')
+					}
+				} catch {
+					// User clicked "Continue Shopping" or closed dialog - do nothing
+				}
+				
 				// Reset size selection after adding to cart
 				if (product.value.sizes && product.value.sizes.length > 0) {
 					selectedSize.value = ''
