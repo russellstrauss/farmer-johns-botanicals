@@ -21,9 +21,11 @@
 						<tbody>
 							<tr v-for="(item, index) in cartItems" :key="index">
 								<td class="product-image">
-									<img :src="item.image || '/assets/images/placeholder.jpg'" :alt="item.name"
-										class="cart-item-image" />
-									<strong>{{ item.name }}</strong>
+									<router-link :to="`/product/${item.slug}`" class="product-link">
+										<img :src="item.image || '/assets/images/placeholder.jpg'" :alt="item.name"
+											class="cart-item-image" />
+										<strong>{{ item.name }}</strong>
+									</router-link>
 								</td>
 								<td class="size" data-label="Size:">
 									<span v-if="item.variation && item.variation.size">{{ item.variation.size }}</span>

@@ -1,2 +1,98 @@
-[]
-
+[
+  {
+    "id": "order_1767060134368_ff912egfr",
+    "stripeSessionId": "cs_live_b1Ft9mofOIdJGsHoeIuqCrbTlcW6n5erwLGzKTuDPCW1hwBrhgdiR990GT",
+    "stripePaymentIntentId": null,
+    "orderNumber": "ORD-2025-001",
+    "status": "pending",
+    "createdAt": "2025-12-30T02:02:14.368Z",
+    "updatedAt": "2025-12-30T02:02:14.368Z",
+    "customer": {
+      "name": "russell strauss",
+      "email": "russellstrauss@gmail.com",
+      "phone": "(678) 927-3289"
+    },
+    "shipping": {
+      "name": "russell strauss",
+      "address": {
+        "line1": "333 Lawton St SW",
+        "city": "Atlanta",
+        "state": "GA",
+        "postal_code": "30310",
+        "country": "US"
+      }
+    },
+    "items": [
+      {
+        "name": "Chilled Gravity Spiral",
+        "sku": "cosmic-purple-gravity-spiral",
+        "quantity": 1,
+        "price": 50,
+        "total": 50
+      },
+      {
+        "name": "Chilled Gravity Spiral",
+        "sku": "cosmic-purple-gravity-spiral",
+        "quantity": 1,
+        "price": 50,
+        "total": 50
+      }
+    ],
+    "totals": {
+      "subtotal": 100,
+      "shipping": 0,
+      "tax": 0,
+      "total": 100
+    },
+    "currency": "usd",
+    "notes": ""
+  },
+  {
+    "id": "order_1767060800428_4u73d6785",
+    "stripeSessionId": "cs_test_b1WnxSl94QBgJjisklbNuzovOfgrMP0AiiwvrhpkhBnPJDC6X8W7jdBbVt",
+    "stripePaymentIntentId": null,
+    "orderNumber": "ORD-2025-002",
+    "status": "paid",
+    "createdAt": "2025-12-30T02:13:20.427Z",
+    "updatedAt": "2025-12-30T02:13:59.461Z",
+    "customer": {
+      "name": "russell strauss",
+      "email": "russellstrauss@gmail.com",
+      "phone": "(678) 927-3289"
+    },
+    "shipping": {
+      "name": "russell strauss",
+      "address": {
+        "line1": "333 Lawton St SW",
+        "city": "Atlanta",
+        "state": "GA",
+        "postal_code": "30310",
+        "country": "US"
+      }
+    },
+    "items": [
+      {
+        "name": "Chilled Gravity Spiral",
+        "sku": "cosmic-purple-gravity-spiral",
+        "quantity": 1,
+        "price": 50,
+        "total": 50
+      },
+      {
+        "name": "Chilled Gravity Spiral",
+        "sku": "cosmic-purple-gravity-spiral",
+        "quantity": 1,
+        "price": 50,
+        "total": 50
+      }
+    ],
+    "totals": {
+      "subtotal": 100,
+      "shipping": 0,
+      "tax": 0,
+      "total": 100
+    },
+    "currency": "usd",
+    "notes": ""
+  }
+]

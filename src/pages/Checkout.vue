@@ -48,7 +48,7 @@
 								<label for="phone">Phone <span class="required-indicator">*</span></label>
 								<input id="phone" v-model="form.phone" type="tel"
 									:class="{ 'error': fieldErrors.phone }"
-									@input="fieldErrors.phone = false"
+									@input="formatPhoneNumber"
 									autocomplete="tel" placeholder="(555) 123-4567" />
 								<p v-if="fieldErrors.phone" class="error-message">Phone is required.</p>
 							</div>
@@ -214,6 +214,29 @@ export default {
 			country: false
 		})
 
+		const formatPhoneNumber = (event) => {
+			fieldErrors.value.phone = false
+			
+			// Remove all non-digit characters
+			let value = event.target.value.replace(/\D/g, '')
+			
+			// Limit to 10 digits
+			if (value.length > 10) {
+				value = value.slice(0, 10)
+			}
+			
+			// Format based on length
+			if (value.length === 0) {
+				form.value.phone = ''
+			} else if (value.length <= 3) {
+				form.value.phone = `(${value}`
+			} else if (value.length <= 6) {
+				form.value.phone = `(${value.slice(0, 3)}) ${value.slice(3)}`
+			} else {
+				form.value.phone = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`
+			}
+		}
+
 		const validateForm = () => {
 			let isValid = true
 			
@@ -328,6 +351,7 @@ export default {
 			error,
 			getTotal,
 			formatPrice,
+			formatPhoneNumber,
 			handleSubmit
 		}
 	}

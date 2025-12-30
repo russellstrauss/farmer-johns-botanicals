@@ -35,41 +35,33 @@ function dispatchCartUpdate() {
 
 function getTotal() {
   return cart.value.reduce((total, item) => {
-    return total + (item.price * item.quantity)
+    return total + item.price
   }, 0)
 }
 
 function getItemCount() {
-  return cart.value.reduce((count, item) => {
-    return count + item.quantity
-  }, 0)
+  return cart.value.length
 }
 
 export function useCart() {
   const addItem = (product, quantity = 1, variation = null) => {
+    if (!product.slug) {
+      console.error('Product missing slug:', product)
+    }
+    
     const item = {
       id: product.id,
+      slug: product.slug,
       sku: product.sku || `PROD-${product.id}`,
       name: product.name,
       price: parseFloat(product.price),
       image: product.images && product.images.length > 0 ? product.images[0] : null,
-      quantity: parseInt(quantity),
+      quantity: 1,
       variation: variation || null
     }
 
-    const existingIndex = cart.value.findIndex(cartItem => {
-      if (variation) {
-        return cartItem.id === product.id && 
-               JSON.stringify(cartItem.variation) === JSON.stringify(variation)
-      }
-      return cartItem.id === product.id && !cartItem.variation
-    })
-
-    if (existingIndex > -1) {
-      cart.value[existingIndex].quantity += item.quantity
-    } else {
-      cart.value.push(item)
-    }
+    // Always push a new item - no merging
+    cart.value.push(item)
 
     saveCart()
     return cart.value
