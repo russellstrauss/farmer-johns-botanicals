@@ -3,19 +3,7 @@ $tabletMenuFontSize: 14px;
 header {
 	
 	.main-navigation {
-		margin-bottom: 50px;;
-		
-		@include tablet-only {
-			margin-left: 120px;
-			margin-right: 120px;
-			width: auto;
-		}
-		
-		@include desktop {
-			margin-left: 220px;
-			margin-right: 220px;
-			width: auto;
-		}
+		margin: 20px auto 50px auto;
 		
 		&.toggled {
 			
