@@ -47,7 +47,8 @@ export function useStripe() {
         }
       })
 
-      const successUrl = new URL('/success', window.location.origin).href
+      // Include session_id in success URL so success page can finalize order
+      const successUrl = new URL('/success?session_id={CHECKOUT_SESSION_ID}', window.location.origin).href
       const cancelUrl = new URL('/checkout', window.location.origin).href
 
       // Prepare request body
@@ -72,6 +73,10 @@ export function useStripe() {
         requestBody.shipping_name = customerDetails.shipping?.name
         
         // Add customer details to metadata
+        requestBody.customer_name = customerDetails.name
+        requestBody.shipping_address = customerDetails.shipping?.address
+        requestBody.shipping_name = customerDetails.shipping?.name
+        
         requestBody.metadata.customer_name = customerDetails.name
         requestBody.metadata.customer_email = customerDetails.email
         if (customerDetails.phone) {

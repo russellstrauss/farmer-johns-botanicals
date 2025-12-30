@@ -5,6 +5,7 @@ import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import fs from 'fs/promises'
+import nodemailer from 'nodemailer'
 
 /**
  * Vite plugin to add API middleware for local development
@@ -105,21 +106,77 @@ export function apiMiddleware() {
                 throw new Error(`Invalid JSON in request body: ${parseError.message}`)
               }
 
-              const { line_items, customer_email, success_url, cancel_url, metadata } = requestData
+              const { line_items, customer_email, customer_name, shipping_address, shipping_name, success_url, cancel_url, metadata } = requestData
 
               // Get origin from request headers
               const origin = req.headers.origin || req.headers.referer || 'http://localhost:5173'
 
-              // Create Stripe Checkout session
+              // Calculate totals from line items
+              const subtotal = line_items.reduce((sum, item) => {
+                return sum + (item.price_data.unit_amount * item.quantity) / 100
+              }, 0)
+
+              // Create order object (will be saved as pending)
+              const orders = await loadOrders()
+              const orderNumber = generateOrderNumber(orders)
+              const now = new Date().toISOString()
+
+              const order = {
+                id: `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                stripeSessionId: null, // Will be set after session creation
+                stripePaymentIntentId: null,
+                orderNumber: orderNumber,
+                status: 'pending',
+                createdAt: now,
+                updatedAt: now,
+                customer: {
+                  name: customer_name || metadata?.customer_name || '',
+                  email: customer_email || metadata?.customer_email || '',
+                  phone: metadata?.customer_phone || ''
+                },
+                shipping: {
+                  name: shipping_name || customer_name || metadata?.customer_name || '',
+                  address: shipping_address || (metadata?.shipping_address ? JSON.parse(metadata.shipping_address) : {
+                    line1: '',
+                    line2: null,
+                    city: '',
+                    state: '',
+                    postal_code: '',
+                    country: 'US'
+                  })
+                },
+                items: line_items.map(item => ({
+                  name: item.price_data.product_data.name,
+                  sku: metadata?.cart_items ? JSON.parse(metadata.cart_items).find(ci => ci.name === item.price_data.product_data.name)?.sku || 'N/A' : 'N/A',
+                  quantity: item.quantity,
+                  price: item.price_data.unit_amount / 100,
+                  total: (item.price_data.unit_amount * item.quantity) / 100
+                })),
+                totals: {
+                  subtotal: subtotal,
+                  shipping: 0, // Stripe will calculate shipping if configured
+                  tax: 0, // Stripe will calculate tax if configured
+                  total: subtotal
+                },
+                currency: line_items[0]?.price_data?.currency || 'usd',
+                notes: ''
+              }
+
+              // Create Stripe Checkout session (before saving order, so we can get session ID)
               const session = await stripe.checkout.sessions.create({
                 payment_method_types: ['card'],
                 line_items,
                 mode: 'payment',
-                success_url: success_url || `${origin}/success`,
+                success_url: success_url || `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
                 cancel_url: cancel_url || `${origin}/cart`,
                 customer_email: customer_email || undefined,
                 metadata: metadata || {}
               })
+
+              // Update order with session ID and save
+              order.stripeSessionId = session.id
+              orders.push(order)
+              await saveOrders(orders)
 
               res.writeHead(200, { 'Content-Type': 'application/json' })
               res.end(JSON.stringify({
@@ -173,6 +230,203 @@ export function apiMiddleware() {
         // so we'll do a simple check - in production, validate against a session store)
         // For now, we'll accept any Bearer token as the client-side auth handles validation
         return token && token.length > 0
+      }
+
+      // Helper function to load orders from JSON file
+      const loadOrders = async () => {
+        const projectRoot = server.config.root || __dirname
+        const ordersPath = resolve(projectRoot, 'public', 'data', 'orders.json')
+        try {
+          const data = await fs.readFile(ordersPath, 'utf8')
+          return JSON.parse(data)
+        } catch (error) {
+          if (error.code === 'ENOENT') {
+            // File doesn't exist, return empty array
+            return []
+          }
+          throw error
+        }
+      }
+
+      // Helper function to save orders to JSON file
+      const saveOrders = async (orders) => {
+        const projectRoot = server.config.root || __dirname
+        const ordersPath = resolve(projectRoot, 'public', 'data', 'orders.json')
+        const dataDir = resolve(projectRoot, 'public', 'data')
+        
+        // Ensure directory exists
+        await fs.mkdir(dataDir, { recursive: true })
+        
+        const dataStr = JSON.stringify(orders, null, 2)
+        await fs.writeFile(ordersPath, dataStr, 'utf8')
+      }
+
+      // Helper function to generate order number
+      const generateOrderNumber = (orders) => {
+        const year = new Date().getFullYear()
+        const yearOrders = orders.filter(o => {
+          const orderYear = new Date(o.createdAt).getFullYear()
+          return orderYear === year
+        })
+        const nextNum = (yearOrders.length + 1).toString().padStart(3, '0')
+        return `ORD-${year}-${nextNum}`
+      }
+
+      // Helper function to send email via nodemailer (local dev)
+      const sendOrderEmail = async (order) => {
+        const adminEmail = process.env.ADMIN_EMAIL || process.env.VITE_ADMIN_EMAIL
+        const fromEmail = process.env.SMTP_FROM || process.env.VITE_SMTP_FROM || 'noreply@example.com'
+        const smtpHost = process.env.SMTP_HOST || process.env.VITE_SMTP_HOST
+        const smtpPort = parseInt(process.env.SMTP_PORT || process.env.VITE_SMTP_PORT || '587')
+        const smtpUser = process.env.SMTP_USER || process.env.VITE_SMTP_USER
+        const smtpPassword = process.env.SMTP_PASSWORD || process.env.VITE_SMTP_PASSWORD
+
+        if (!adminEmail) {
+          console.warn('ADMIN_EMAIL not configured, skipping email')
+          return { success: false, error: 'ADMIN_EMAIL not configured' }
+        }
+
+        if (!smtpHost || !smtpUser || !smtpPassword) {
+          console.warn('SMTP not configured, skipping email')
+          return { success: false, error: 'SMTP not configured' }
+        }
+
+        try {
+          const transporter = nodemailer.createTransport({
+            host: smtpHost,
+            port: smtpPort,
+            secure: smtpPort === 465,
+            auth: {
+              user: smtpUser,
+              pass: smtpPassword
+            }
+          })
+
+          const emailHtml = generateOrderEmailHtml(order)
+          const subject = `New Order Received - ${order.orderNumber}`
+
+          const info = await transporter.sendMail({
+            from: fromEmail,
+            to: adminEmail,
+            subject: subject,
+            html: emailHtml
+          })
+
+          return { success: true, messageId: info.messageId }
+        } catch (error) {
+          console.error('Error sending email:', error)
+          return { success: false, error: error.message }
+        }
+      }
+
+      // Helper function to generate email HTML
+      const generateOrderEmailHtml = (order) => {
+        const formatPrice = (price) => {
+          return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: order.currency || 'USD'
+          }).format(price)
+        }
+
+        const itemsHtml = order.items.map(item => `
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.name}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.sku || 'N/A'}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: center;">${item.quantity}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: right;">${formatPrice(item.price)}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: right;">${formatPrice(item.total)}</td>
+          </tr>
+        `).join('')
+
+        return `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              h1 { color: #333; border-bottom: 2px solid #0098d6; padding-bottom: 10px; }
+              .section { margin: 20px 0; }
+              .section-title { font-weight: bold; color: #0098d6; margin-bottom: 10px; }
+              table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+              th { background-color: #f5f5f5; padding: 10px; text-align: left; border-bottom: 2px solid #ddd; }
+              .total-row { font-weight: bold; font-size: 1.1em; }
+              .address { background-color: #f9f9f9; padding: 15px; border-radius: 5px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>New Order Received</h1>
+              
+              <div class="section">
+                <div class="section-title">Order Information</div>
+                <p><strong>Order Number:</strong> ${order.orderNumber}</p>
+                <p><strong>Order ID:</strong> ${order.id}</p>
+                <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+                <p><strong>Status:</strong> ${order.status}</p>
+              </div>
+
+              <div class="section">
+                <div class="section-title">Customer Information</div>
+                <p><strong>Name:</strong> ${order.customer.name}</p>
+                <p><strong>Email:</strong> ${order.customer.email}</p>
+                <p><strong>Phone:</strong> ${order.customer.phone || 'N/A'}</p>
+              </div>
+
+              <div class="section">
+                <div class="section-title">Shipping Address</div>
+                <div class="address">
+                  ${order.shipping.name}<br>
+                  ${order.shipping.address.line1}<br>
+                  ${order.shipping.address.line2 ? order.shipping.address.line2 + '<br>' : ''}
+                  ${order.shipping.address.city}, ${order.shipping.address.state} ${order.shipping.address.postal_code}<br>
+                  ${order.shipping.address.country}
+                </div>
+              </div>
+
+              <div class="section">
+                <div class="section-title">Order Items</div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>SKU</th>
+                      <th>Qty</th>
+                      <th>Price</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${itemsHtml}
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="section">
+                <table>
+                  <tr>
+                    <td style="text-align: right; padding: 5px;"><strong>Subtotal:</strong></td>
+                    <td style="text-align: right; padding: 5px;">${formatPrice(order.totals.subtotal)}</td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: right; padding: 5px;"><strong>Shipping:</strong></td>
+                    <td style="text-align: right; padding: 5px;">${formatPrice(order.totals.shipping || 0)}</td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: right; padding: 5px;"><strong>Tax:</strong></td>
+                    <td style="text-align: right; padding: 5px;">${formatPrice(order.totals.tax || 0)}</td>
+                  </tr>
+                  <tr class="total-row">
+                    <td style="text-align: right; padding: 10px; border-top: 2px solid #333;"><strong>Total:</strong></td>
+                    <td style="text-align: right; padding: 10px; border-top: 2px solid #333;">${formatPrice(order.totals.total)}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </body>
+          </html>
+        `
       }
 
       // Save Products endpoint
@@ -511,6 +765,136 @@ export function apiMiddleware() {
           res.writeHead(500, { 'Content-Type': 'application/json' })
           res.end(JSON.stringify({
             message: error.message || 'Failed to upload file'
+          }))
+        }
+      })
+
+      // Finalize Order endpoint
+      server.middlewares.use('/api/finalize-order', async (req, res, next) => {
+        if (req.method !== 'GET' && req.method !== 'POST') {
+          res.writeHead(405, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ message: 'Method not allowed' }))
+          return
+        }
+
+        try {
+          const url = new URL(req.url, `http://${req.headers.host}`)
+          const sessionId = url.searchParams.get('session_id')
+
+          if (!sessionId) {
+            res.writeHead(400, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ message: 'session_id parameter required' }))
+            return
+          }
+
+          const orders = await loadOrders()
+          const orderIndex = orders.findIndex(o => o.stripeSessionId === sessionId)
+
+          if (orderIndex === -1) {
+            res.writeHead(404, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ message: 'Order not found' }))
+            return
+          }
+
+          const order = orders[orderIndex]
+
+          // Only finalize if status is pending
+          if (order.status === 'pending') {
+            order.status = 'paid'
+            order.updatedAt = new Date().toISOString()
+            orders[orderIndex] = order
+            await saveOrders(orders)
+
+            // Send email notification
+            await sendOrderEmail(order)
+          }
+
+          res.writeHead(200, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({
+            success: true,
+            order: order
+          }))
+        } catch (error) {
+          console.error('Error finalizing order:', error)
+          res.writeHead(500, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({
+            message: error.message || 'Failed to finalize order'
+          }))
+        }
+      })
+
+      // Get Orders endpoint
+      server.middlewares.use('/api/orders', async (req, res, next) => {
+        if (req.method !== 'GET') {
+          res.writeHead(405, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ message: 'Method not allowed' }))
+          return
+        }
+
+        // Verify authentication
+        if (!verifyAdminAuth(req)) {
+          res.writeHead(401, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ message: 'Unauthorized' }))
+          return
+        }
+
+        try {
+          const orders = await loadOrders()
+          // Sort by date, newest first
+          orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+          res.writeHead(200, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({
+            success: true,
+            orders: orders
+          }))
+        } catch (error) {
+          console.error('Error loading orders:', error)
+          res.writeHead(500, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({
+            message: error.message || 'Failed to load orders'
+          }))
+        }
+      })
+
+      // Save Orders endpoint (for admin updates)
+      server.middlewares.use('/api/save-orders', async (req, res, next) => {
+        if (req.method !== 'POST') {
+          res.writeHead(405, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ message: 'Method not allowed' }))
+          return
+        }
+
+        // Verify authentication
+        if (!verifyAdminAuth(req)) {
+          res.writeHead(401, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ message: 'Unauthorized' }))
+          return
+        }
+
+        try {
+          const requestData = await readBody(req)
+          const { orders } = requestData
+
+          if (!orders || !Array.isArray(orders)) {
+            res.writeHead(400, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ message: 'Invalid request: orders array required' }))
+            return
+          }
+
+          await saveOrders(orders)
+
+          res.writeHead(200, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({
+            success: true,
+            message: 'Orders saved successfully',
+            count: orders.length
+          }))
+        } catch (error) {
+          console.error('Error saving orders:', error)
+          res.writeHead(500, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({
+            message: error.message || 'Failed to save orders'
           }))
         }
       })
