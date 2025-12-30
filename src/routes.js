@@ -8,7 +8,7 @@ import Success from './pages/Success.vue'
 import Admin from './pages/Admin.vue'
 import Orders from './pages/Orders.vue'
 import Login from './pages/Login.vue'
-
+ 
 const routes = [
   {
     path: '/',
