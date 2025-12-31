@@ -115,3 +115,58 @@ export async function onRequestPost(context) {
   }
 }
 
+export async function onRequestDelete(context) {
+  const { request, env } = context
+
+  // Verify authentication
+  if (!verifyAdminAuth(request)) {
+    return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+
+  try {
+    const url = new URL(request.url)
+    const orderId = url.searchParams.get('id')
+
+    if (!orderId) {
+      return new Response(JSON.stringify({ 
+        message: 'Invalid request: order ID required' 
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    const orders = await loadOrders(env.ORDERS_KV)
+    const filteredOrders = orders.filter(o => o.id !== orderId)
+
+    if (filteredOrders.length === orders.length) {
+      return new Response(JSON.stringify({ 
+        message: 'Order not found' 
+      }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    await saveOrders(env.ORDERS_KV, filteredOrders)
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Order deleted successfully'
+    }), {
+      headers: { 'Content-Type': 'application/json' }
+    })
+  } catch (error) {
+    console.error('Error deleting order:', error)
+    return new Response(JSON.stringify({
+      message: error.message || 'Failed to delete order'
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+}
+

@@ -864,6 +864,52 @@ export function apiMiddleware() {
 
       // Get Orders endpoint
       server.middlewares.use('/api/orders', async (req, res, next) => {
+        // Handle DELETE requests
+        if (req.method === 'DELETE') {
+          // Verify authentication
+          if (!verifyAdminAuth(req)) {
+            res.writeHead(401, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ message: 'Unauthorized' }))
+            return
+          }
+
+          try {
+            const url = new URL(req.url, `http://${req.headers.host}`)
+            const orderId = url.searchParams.get('id')
+
+            if (!orderId) {
+              res.writeHead(400, { 'Content-Type': 'application/json' })
+              res.end(JSON.stringify({ message: 'Invalid request: order ID required' }))
+              return
+            }
+
+            const orders = await loadOrders()
+            const filteredOrders = orders.filter(o => o.id !== orderId)
+
+            if (filteredOrders.length === orders.length) {
+              res.writeHead(404, { 'Content-Type': 'application/json' })
+              res.end(JSON.stringify({ message: 'Order not found' }))
+              return
+            }
+
+            await saveOrders(filteredOrders)
+
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({
+              success: true,
+              message: 'Order deleted successfully'
+            }))
+          } catch (error) {
+            console.error('Error deleting order:', error)
+            res.writeHead(500, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({
+              message: error.message || 'Failed to delete order'
+            }))
+          }
+          return
+        }
+
+        // Handle GET requests
         if (req.method !== 'GET') {
           res.writeHead(405, { 'Content-Type': 'application/json' })
           res.end(JSON.stringify({ message: 'Method not allowed' }))
