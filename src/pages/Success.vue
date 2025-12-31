@@ -17,7 +17,9 @@
         <div v-else>
           <p>Your order has been received and we'll process it shortly.</p>
         </div>
-        <router-link to="/shop" class="button">Continue Shopping</router-link>
+		<div>
+			<p>If you have and questions, comments, or concerns, please contact Farmer J directly at (678) 927-3289 or <a href="mailto:farmerjsbotanicals@gmail.com">farmerjsbotanicals@gmail.com</a>.</p>
+		</div>
       </div>
     </main>
   </div>
@@ -88,10 +90,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.error-message {
-  color: #c00;
-  font-weight: 600;
-  margin: 1rem 0;
-}
+	.error-message {
+	color: #c00;
+	font-weight: 600;
+	margin: 1rem 0;
+	}
+
 </style>
 

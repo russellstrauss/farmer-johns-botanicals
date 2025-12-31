@@ -368,6 +368,7 @@ export default {
 <style scoped lang="scss">
 	@import '../assets/sass/_vars.scss';
 	@import '../assets/sass/_mixins.scss';
+	@import '../assets/sass/_responsive.scss';
 	
 	.checkout-container {
 		max-width: 800px;

@@ -28,42 +28,7 @@
 	max-width: 100%;
 }
 
-.container-sm {
-	@extend .container;
-	
-	@include tablet {
-		max-width: 540px;
-	}
-}
-
-.container-md {
-	@extend .container;
-	
-	@include tablet {
-		max-width: 720px;
-	}
-}
-
-.container-lg {
-	@extend .container;
-	
-	@include desktop {
-		max-width: 960px;
-	}
-	
-	@include desktop-large {
-		max-width: 1140px;
-	}
-}
-
-.container-xl {
-	@extend .container;
-	
-	@include desktop {
-		max-width: 960px;
-	}
-	
-	@include desktop-large {
-		max-width: 1320px;
-	}
+a.button {
+	@include black-button;
+	display: inline-block;
 }
