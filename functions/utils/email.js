@@ -21,6 +21,26 @@ export async function sendOrderEmail(order, env) {
   return { success: false, error: 'Email service not configured' }
 }
 
+export async function sendCustomerConfirmationEmail(order, env) {
+  const customerEmail = order.customer?.email
+  const fromEmail = env.SMTP_FROM || env.VITE_SMTP_FROM || 'noreply@example.com'
+  const resendApiKey = env.RESEND_API_KEY || env.VITE_RESEND_API_KEY
+
+  if (!customerEmail) {
+    console.error('Customer email not found in order')
+    return { success: false, error: 'Customer email not found' }
+  }
+
+  // Use Resend API if available
+  if (resendApiKey) {
+    return await sendCustomerEmailViaResend(order, customerEmail, fromEmail, resendApiKey)
+  }
+
+  // Fallback: Try other email services or log error
+  console.error('No email API key configured. Please set RESEND_API_KEY')
+  return { success: false, error: 'Email service not configured' }
+}
+
 async function sendViaResend(order, adminEmail, fromEmail, apiKey) {
   const emailHtml = generateOrderEmailHtml(order)
   const subject = `New Order Received - ${order.orderNumber}`
@@ -54,7 +74,40 @@ async function sendViaResend(order, adminEmail, fromEmail, apiKey) {
   }
 }
 
-function generateOrderEmailHtml(order) {
+async function sendCustomerEmailViaResend(order, customerEmail, fromEmail, apiKey) {
+  const emailHtml = generateCustomerConfirmationEmailHtml(order)
+  const subject = `Order Confirmation - ${order.orderNumber}`
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: customerEmail,
+        subject: subject,
+        html: emailHtml
+      })
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      console.error('Resend API error:', error)
+      return { success: false, error: error.message || 'Failed to send email' }
+    }
+
+    const data = await response.json()
+    return { success: true, id: data.id }
+  } catch (error) {
+    console.error('Error sending customer email via Resend:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+export function generateOrderEmailHtml(order) {
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -156,6 +209,226 @@ function generateOrderEmailHtml(order) {
               <td style="text-align: right; padding: 10px; border-top: 2px solid #333;">${formatPrice(order.totals.total)}</td>
             </tr>
           </table>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+}
+
+export function generateCustomerConfirmationEmailHtml(order) {
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: order.currency || 'USD'
+    }).format(price)
+  }
+
+  const itemsHtml = order.items.map(item => `
+    <tr>
+      <td style="padding: 12px; border-bottom: 1px solid #e0e0e0;">${item.name}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: center;">${item.quantity}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right;">${formatPrice(item.price)}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #e0e0e0; text-align: right;">${formatPrice(item.total)}</td>
+    </tr>
+  `).join('')
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        body { 
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+          line-height: 1.6; 
+          color: #333; 
+          background-color: #f5f5f5;
+          margin: 0;
+          padding: 0;
+        }
+        .email-container { 
+          max-width: 600px; 
+          margin: 0 auto; 
+          background-color: #ffffff;
+        }
+        .email-header {
+          background-color: #0098d6;
+          color: #ffffff;
+          padding: 30px 20px;
+          text-align: center;
+        }
+        .email-header h1 {
+          margin: 0;
+          font-size: 24px;
+          font-weight: 600;
+        }
+        .email-body {
+          padding: 30px 20px;
+        }
+        .greeting {
+          font-size: 18px;
+          margin-bottom: 20px;
+          color: #333;
+        }
+        .message {
+          margin-bottom: 30px;
+          color: #666;
+          line-height: 1.8;
+        }
+        .section { 
+          margin: 25px 0; 
+        }
+        .section-title { 
+          font-weight: 600; 
+          color: #0098d6; 
+          margin-bottom: 12px;
+          font-size: 16px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        .order-number {
+          background-color: #f9f9f9;
+          padding: 15px;
+          border-radius: 5px;
+          border-left: 4px solid #0098d6;
+          margin: 20px 0;
+        }
+        .order-number strong {
+          display: block;
+          margin-bottom: 5px;
+          color: #333;
+        }
+        .order-number span {
+          font-size: 18px;
+          color: #0098d6;
+          font-weight: 600;
+        }
+        table { 
+          width: 100%; 
+          border-collapse: collapse; 
+          margin: 15px 0; 
+        }
+        th { 
+          background-color: #f5f5f5; 
+          padding: 12px; 
+          text-align: left; 
+          border-bottom: 2px solid #ddd;
+          font-weight: 600;
+          color: #333;
+        }
+        .total-row { 
+          font-weight: 600; 
+          font-size: 1.1em; 
+          background-color: #f9f9f9;
+        }
+        .address { 
+          background-color: #f9f9f9; 
+          padding: 15px; 
+          border-radius: 5px;
+          line-height: 1.8;
+        }
+        .footer {
+          background-color: #f9f9f9;
+          padding: 20px;
+          text-align: center;
+          color: #666;
+          font-size: 14px;
+          border-top: 1px solid #e0e0e0;
+        }
+        .footer p {
+          margin: 5px 0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="email-header">
+          <h1>Thank You for Your Order!</h1>
+        </div>
+        <div class="email-body">
+          <div class="greeting">
+            Hello ${order.customer.name || 'Valued Customer'},
+          </div>
+          
+          <div class="message">
+            We're excited to confirm that we've received your order and payment has been processed successfully. 
+            We'll begin preparing your items for shipment right away.
+          </div>
+
+          <div class="order-number">
+            <strong>Order Number:</strong>
+            <span>${order.orderNumber}</span>
+          </div>
+          
+          <div class="section">
+            <div class="section-title">Order Details</div>
+            <p style="margin: 5px 0; color: #666;"><strong>Order Date:</strong> ${new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <p style="margin: 5px 0; color: #666;"><strong>Order Status:</strong> ${order.status === 'paid' ? 'Confirmed' : order.status}</p>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Shipping Address</div>
+            <div class="address">
+              ${order.shipping.name}<br>
+              ${order.shipping.address.line1}<br>
+              ${order.shipping.address.line2 ? order.shipping.address.line2 + '<br>' : ''}
+              ${order.shipping.address.city}, ${order.shipping.address.state} ${order.shipping.address.postal_code}<br>
+              ${order.shipping.address.country}
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Order Items</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th style="text-align: center;">Quantity</th>
+                  <th style="text-align: right;">Price</th>
+                  <th style="text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="section">
+            <table>
+              <tr>
+                <td style="text-align: right; padding: 8px; color: #666;"><strong>Subtotal:</strong></td>
+                <td style="text-align: right; padding: 8px; color: #666;">${formatPrice(order.totals.subtotal)}</td>
+              </tr>
+              ${order.totals.shipping ? `
+              <tr>
+                <td style="text-align: right; padding: 8px; color: #666;"><strong>Shipping:</strong></td>
+                <td style="text-align: right; padding: 8px; color: #666;">${formatPrice(order.totals.shipping)}</td>
+              </tr>
+              ` : ''}
+              ${order.totals.tax ? `
+              <tr>
+                <td style="text-align: right; padding: 8px; color: #666;"><strong>Tax:</strong></td>
+                <td style="text-align: right; padding: 8px; color: #666;">${formatPrice(order.totals.tax)}</td>
+              </tr>
+              ` : ''}
+              <tr class="total-row">
+                <td style="text-align: right; padding: 12px; border-top: 2px solid #333; color: #333;"><strong>Total:</strong></td>
+                <td style="text-align: right; padding: 12px; border-top: 2px solid #333; color: #333;">${formatPrice(order.totals.total)}</td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="message" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+            <p style="margin: 0;">If you have any questions about your order, please contact Farmer John directly at (678) 927-3289 or farmerjsbotanicals@gmail.com</p>
+          </div>
+        </div>
+        
+        <div class="footer">
+          <p><strong>Thank you for your business!</strong></p>
+          <p>Farmer John's Botanicals</p>
         </div>
       </div>
     </body>

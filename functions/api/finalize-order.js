@@ -1,5 +1,5 @@
 // Cloudflare Pages Function for finalizing orders after successful payment
-import { sendOrderEmail } from '../utils/email.js'
+import { sendOrderEmail, sendCustomerConfirmationEmail } from '../utils/email.js'
 
 export async function onRequestGet(context) {
   return handleFinalizeOrder(context)
@@ -47,8 +47,19 @@ async function handleFinalizeOrder(context) {
       orders[orderIndex] = order
       await saveOrders(env.ORDERS_KV, orders)
 
-      // Send email notification
-      await sendOrderEmail(order, env)
+      // Send email notifications (admin and customer)
+      // Send both emails independently so one failure doesn't prevent the other
+      try {
+        await sendOrderEmail(order, env)
+      } catch (error) {
+        console.error('Failed to send admin email notification:', error)
+      }
+      
+      try {
+        await sendCustomerConfirmationEmail(order, env)
+      } catch (error) {
+        console.error('Failed to send customer confirmation email:', error)
+      }
     }
 
     return new Response(JSON.stringify({

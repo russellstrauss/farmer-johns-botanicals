@@ -49,6 +49,7 @@
 								<input id="phone" v-model="form.phone" type="tel"
 									:class="{ 'error': fieldErrors.phone }"
 									@input="formatPhoneNumber"
+									@change="formatPhoneNumber"
 									autocomplete="tel" placeholder="(555) 123-4567" />
 								<p v-if="fieldErrors.phone" class="error-message">Phone is required.</p>
 							</div>
@@ -220,7 +221,13 @@ export default {
 			// Remove all non-digit characters
 			let value = event.target.value.replace(/\D/g, '')
 			
-			// Limit to 10 digits
+			// Handle country codes: remove leading 1 if present (US/Canada country code)
+			// This handles cases where autofill includes +1 or 1 as country code
+			if (value.length === 11 && value.startsWith('1')) {
+				value = value.slice(1)
+			}
+			
+			// Limit to 10 digits (US phone number format)
 			if (value.length > 10) {
 				value = value.slice(0, 10)
 			}

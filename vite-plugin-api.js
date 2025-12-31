@@ -5,7 +5,7 @@ import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import fs from 'fs/promises'
-import nodemailer from 'nodemailer'
+import { generateOrderEmailHtml, generateCustomerConfirmationEmailHtml } from './functions/utils/email.js'
 
 /**
  * Vite plugin to add API middleware for local development
@@ -272,162 +272,165 @@ export function apiMiddleware() {
         return `ORD-${year}-${nextNum}`
       }
 
-      // Helper function to send email via nodemailer (local dev)
+      // Helper function to send email via Resend API (local dev)
       const sendOrderEmail = async (order) => {
-        const adminEmail = process.env.ADMIN_EMAIL || process.env.VITE_ADMIN_EMAIL
-        const fromEmail = process.env.SMTP_FROM || process.env.VITE_SMTP_FROM || 'noreply@example.com'
-        const smtpHost = process.env.SMTP_HOST || process.env.VITE_SMTP_HOST
-        const smtpPort = parseInt(process.env.SMTP_PORT || process.env.VITE_SMTP_PORT || '587')
-        const smtpUser = process.env.SMTP_USER || process.env.VITE_SMTP_USER
-        const smtpPassword = process.env.SMTP_PASSWORD || process.env.VITE_SMTP_PASSWORD
+        console.log('[sendOrderEmail] Called for order:', order.orderNumber)
+        // Check multiple sources for environment variables (same pattern as Stripe config)
+        const adminEmail = process.env.ADMIN_EMAIL || 
+                          process.env.VITE_ADMIN_EMAIL || 
+                          viteEnv.ADMIN_EMAIL || 
+                          viteEnv.VITE_ADMIN_EMAIL ||
+                          server.config.env?.ADMIN_EMAIL ||
+                          server.config.env?.VITE_ADMIN_EMAIL
+        
+        const fromEmail = process.env.SMTP_FROM || 
+                         process.env.VITE_SMTP_FROM || 
+                         viteEnv.SMTP_FROM || 
+                         viteEnv.VITE_SMTP_FROM ||
+                         server.config.env?.SMTP_FROM ||
+                         server.config.env?.VITE_SMTP_FROM ||
+                         'noreply@example.com'
+        
+        const resendApiKey = process.env.RESEND_API_KEY || 
+                            process.env.VITE_RESEND_API_KEY || 
+                            viteEnv.RESEND_API_KEY || 
+                            viteEnv.VITE_RESEND_API_KEY ||
+                            server.config.env?.RESEND_API_KEY ||
+                            server.config.env?.VITE_RESEND_API_KEY
 
         if (!adminEmail) {
-          console.warn('ADMIN_EMAIL not configured, skipping email')
+          console.error('[Email] ADMIN_EMAIL not configured. Checked:')
+          console.error('  - process.env.ADMIN_EMAIL:', !!process.env.ADMIN_EMAIL)
+          console.error('  - process.env.VITE_ADMIN_EMAIL:', !!process.env.VITE_ADMIN_EMAIL)
+          console.error('  - viteEnv.ADMIN_EMAIL:', !!viteEnv.ADMIN_EMAIL)
+          console.error('  - viteEnv.VITE_ADMIN_EMAIL:', !!viteEnv.VITE_ADMIN_EMAIL)
           return { success: false, error: 'ADMIN_EMAIL not configured' }
         }
 
-        if (!smtpHost || !smtpUser || !smtpPassword) {
-          console.warn('SMTP not configured, skipping email')
-          return { success: false, error: 'SMTP not configured' }
+        // Use Resend API if available
+        if (resendApiKey) {
+          return await sendViaResend(order, adminEmail, fromEmail, resendApiKey)
         }
 
+        // Fallback: Try other email services or log error
+        console.error('[Email] No email API key configured. Please set RESEND_API_KEY. Checked:')
+        console.error('  - process.env.RESEND_API_KEY:', !!process.env.RESEND_API_KEY)
+        console.error('  - process.env.VITE_RESEND_API_KEY:', !!process.env.VITE_RESEND_API_KEY)
+        console.error('  - viteEnv.RESEND_API_KEY:', !!viteEnv.RESEND_API_KEY)
+        console.error('  - viteEnv.VITE_RESEND_API_KEY:', !!viteEnv.VITE_RESEND_API_KEY)
+        return { success: false, error: 'Email service not configured' }
+      }
+
+      // Helper function to send customer confirmation email via Resend API
+      const sendCustomerConfirmationEmail = async (order) => {
+        console.log('[sendCustomerConfirmationEmail] Called for order:', order.orderNumber)
+        const customerEmail = order.customer?.email
+        
+        // Check multiple sources for environment variables (same pattern as Stripe config)
+        const fromEmail = process.env.SMTP_FROM || 
+                         process.env.VITE_SMTP_FROM || 
+                         viteEnv.SMTP_FROM || 
+                         viteEnv.VITE_SMTP_FROM ||
+                         server.config.env?.SMTP_FROM ||
+                         server.config.env?.VITE_SMTP_FROM ||
+                         'noreply@farmerjohnsbotanicals.com'
+        
+        const resendApiKey = process.env.RESEND_API_KEY || 
+                            process.env.VITE_RESEND_API_KEY || 
+                            viteEnv.RESEND_API_KEY || 
+                            viteEnv.VITE_RESEND_API_KEY ||
+                            server.config.env?.RESEND_API_KEY ||
+                            server.config.env?.VITE_RESEND_API_KEY
+
+        if (!customerEmail) {
+          console.error('Customer email not found in order')
+          return { success: false, error: 'Customer email not found' }
+        }
+
+        // Use Resend API if available
+        if (resendApiKey) {
+          return await sendCustomerEmailViaResend(order, customerEmail, fromEmail, resendApiKey)
+        }
+
+        // Fallback: Try other email services or log error
+        console.error('[Email] No email API key configured for customer email. Please set RESEND_API_KEY. Checked:')
+        console.error('  - process.env.RESEND_API_KEY:', !!process.env.RESEND_API_KEY)
+        console.error('  - process.env.VITE_RESEND_API_KEY:', !!process.env.VITE_RESEND_API_KEY)
+        console.error('  - viteEnv.RESEND_API_KEY:', !!viteEnv.RESEND_API_KEY)
+        console.error('  - viteEnv.VITE_RESEND_API_KEY:', !!viteEnv.VITE_RESEND_API_KEY)
+        return { success: false, error: 'Email service not configured' }
+      }
+
+      // Helper function to send admin email via Resend API
+      async function sendViaResend(order, adminEmail, fromEmail, apiKey) {
+        const emailHtml = generateOrderEmailHtml(order)
+        const subject = `New Order Received - ${order.orderNumber}`
+
         try {
-          const transporter = nodemailer.createTransport({
-            host: smtpHost,
-            port: smtpPort,
-            secure: smtpPort === 465,
-            auth: {
-              user: smtpUser,
-              pass: smtpPassword
-            }
+          const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              from: fromEmail,
+              to: adminEmail,
+              subject: subject,
+              html: emailHtml
+            })
           })
 
-          const emailHtml = generateOrderEmailHtml(order)
-          const subject = `New Order Received - ${order.orderNumber}`
+          if (!response.ok) {
+            const error = await response.json()
+            console.error('Resend API error:', error)
+            return { success: false, error: error.message || 'Failed to send email' }
+          }
 
-          const info = await transporter.sendMail({
-            from: fromEmail,
-            to: adminEmail,
-            subject: subject,
-            html: emailHtml
-          })
-
-          return { success: true, messageId: info.messageId }
+          const data = await response.json()
+          return { success: true, id: data.id }
         } catch (error) {
-          console.error('Error sending email:', error)
+          console.error('Error sending email via Resend:', error)
           return { success: false, error: error.message }
         }
       }
 
-      // Helper function to generate email HTML
-      const generateOrderEmailHtml = (order) => {
-        const formatPrice = (price) => {
-          return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: order.currency || 'USD'
-          }).format(price)
+      // Helper function to send customer email via Resend API
+      async function sendCustomerEmailViaResend(order, customerEmail, fromEmail, apiKey) {
+        const emailHtml = generateCustomerConfirmationEmailHtml(order)
+        const subject = `Order Confirmation - ${order.orderNumber}`
+
+        try {
+          const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              from: fromEmail,
+              to: customerEmail,
+              subject: subject,
+              html: emailHtml
+            })
+          })
+
+          if (!response.ok) {
+            const error = await response.json()
+            console.error('Resend API error:', error)
+            return { success: false, error: error.message || 'Failed to send email' }
+          }
+
+          const data = await response.json()
+          return { success: true, id: data.id }
+        } catch (error) {
+          console.error('Error sending customer email via Resend:', error)
+          return { success: false, error: error.message }
         }
-
-        const itemsHtml = order.items.map(item => `
-          <tr>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.name}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.sku || 'N/A'}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: center;">${item.quantity}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: right;">${formatPrice(item.price)}</td>
-            <td style="padding: 8px; border-bottom: 1px solid #ddd; text-align: right;">${formatPrice(item.total)}</td>
-          </tr>
-        `).join('')
-
-        return `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8">
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              h1 { color: #333; border-bottom: 2px solid #0098d6; padding-bottom: 10px; }
-              .section { margin: 20px 0; }
-              .section-title { font-weight: bold; color: #0098d6; margin-bottom: 10px; }
-              table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-              th { background-color: #f5f5f5; padding: 10px; text-align: left; border-bottom: 2px solid #ddd; }
-              .total-row { font-weight: bold; font-size: 1.1em; }
-              .address { background-color: #f9f9f9; padding: 15px; border-radius: 5px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <h1>New Order Received</h1>
-              
-              <div class="section">
-                <div class="section-title">Order Information</div>
-                <p><strong>Order Number:</strong> ${order.orderNumber}</p>
-                <p><strong>Order ID:</strong> ${order.id}</p>
-                <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
-                <p><strong>Status:</strong> ${order.status}</p>
-              </div>
-
-              <div class="section">
-                <div class="section-title">Customer Information</div>
-                <p><strong>Name:</strong> ${order.customer.name}</p>
-                <p><strong>Email:</strong> ${order.customer.email}</p>
-                <p><strong>Phone:</strong> ${order.customer.phone || 'N/A'}</p>
-              </div>
-
-              <div class="section">
-                <div class="section-title">Shipping Address</div>
-                <div class="address">
-                  ${order.shipping.name}<br>
-                  ${order.shipping.address.line1}<br>
-                  ${order.shipping.address.line2 ? order.shipping.address.line2 + '<br>' : ''}
-                  ${order.shipping.address.city}, ${order.shipping.address.state} ${order.shipping.address.postal_code}<br>
-                  ${order.shipping.address.country}
-                </div>
-              </div>
-
-              <div class="section">
-                <div class="section-title">Order Items</div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Product</th>
-                      <th>SKU</th>
-                      <th>Qty</th>
-                      <th>Price</th>
-                      <th>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${itemsHtml}
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="section">
-                <table>
-                  <tr>
-                    <td style="text-align: right; padding: 5px;"><strong>Subtotal:</strong></td>
-                    <td style="text-align: right; padding: 5px;">${formatPrice(order.totals.subtotal)}</td>
-                  </tr>
-                  <tr>
-                    <td style="text-align: right; padding: 5px;"><strong>Shipping:</strong></td>
-                    <td style="text-align: right; padding: 5px;">${formatPrice(order.totals.shipping || 0)}</td>
-                  </tr>
-                  <tr>
-                    <td style="text-align: right; padding: 5px;"><strong>Tax:</strong></td>
-                    <td style="text-align: right; padding: 5px;">${formatPrice(order.totals.tax || 0)}</td>
-                  </tr>
-                  <tr class="total-row">
-                    <td style="text-align: right; padding: 10px; border-top: 2px solid #333;"><strong>Total:</strong></td>
-                    <td style="text-align: right; padding: 10px; border-top: 2px solid #333;">${formatPrice(order.totals.total)}</td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          </body>
-          </html>
-        `
       }
+
+      // Email HTML generation functions are now imported from functions/utils/email.js
+      // This ensures both local dev and production use the same email templates
 
       // Save Products endpoint
       server.middlewares.use('/api/save-products', async (req, res, next) => {
@@ -771,6 +774,8 @@ export function apiMiddleware() {
 
       // Finalize Order endpoint
       server.middlewares.use('/api/finalize-order', async (req, res, next) => {
+        console.log('[Finalize Order] Request received:', req.method, req.url)
+        
         if (req.method !== 'GET' && req.method !== 'POST') {
           res.writeHead(405, { 'Content-Type': 'application/json' })
           res.end(JSON.stringify({ message: 'Method not allowed' }))
@@ -780,33 +785,67 @@ export function apiMiddleware() {
         try {
           const url = new URL(req.url, `http://${req.headers.host}`)
           const sessionId = url.searchParams.get('session_id')
+          console.log('[Finalize Order] Session ID:', sessionId)
 
           if (!sessionId) {
+            console.error('[Finalize Order] No session_id provided')
             res.writeHead(400, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ message: 'session_id parameter required' }))
             return
           }
 
           const orders = await loadOrders()
+          console.log('[Finalize Order] Loaded orders:', orders.length)
           const orderIndex = orders.findIndex(o => o.stripeSessionId === sessionId)
+          console.log('[Finalize Order] Order index:', orderIndex)
 
           if (orderIndex === -1) {
+            console.error('[Finalize Order] Order not found for session:', sessionId)
             res.writeHead(404, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ message: 'Order not found' }))
             return
           }
 
           const order = orders[orderIndex]
+          console.log('[Finalize Order] Order status:', order.status)
+          console.log('[Finalize Order] Order customer email:', order.customer?.email)
 
           // Only finalize if status is pending
           if (order.status === 'pending') {
+            console.log('[Finalize Order] Finalizing order...')
             order.status = 'paid'
             order.updatedAt = new Date().toISOString()
             orders[orderIndex] = order
             await saveOrders(orders)
+            console.log('[Finalize Order] Order saved with status: paid')
 
-            // Send email notification
-            await sendOrderEmail(order)
+            // Send email notifications (admin and customer)
+            // Send both emails independently so one failure doesn't prevent the other
+            console.log('[Finalize Order] Attempting to send admin email...')
+            try {
+              const adminEmailResult = await sendOrderEmail(order)
+              if (!adminEmailResult.success) {
+                console.error('[Finalize Order] Failed to send admin email notification:', adminEmailResult.error)
+              } else {
+                console.log('[Finalize Order] Admin email sent successfully:', adminEmailResult.id)
+              }
+            } catch (error) {
+              console.error('[Finalize Order] Error sending admin email notification:', error)
+            }
+            
+            console.log('[Finalize Order] Attempting to send customer confirmation email...')
+            try {
+              const customerEmailResult = await sendCustomerConfirmationEmail(order)
+              if (!customerEmailResult.success) {
+                console.error('[Finalize Order] Failed to send customer confirmation email:', customerEmailResult.error)
+              } else {
+                console.log('[Finalize Order] Customer confirmation email sent successfully:', customerEmailResult.id)
+              }
+            } catch (error) {
+              console.error('[Finalize Order] Error sending customer confirmation email:', error)
+            }
+          } else {
+            console.log('[Finalize Order] Order already finalized, skipping email sending. Status:', order.status)
           }
 
           res.writeHead(200, { 'Content-Type': 'application/json' })
