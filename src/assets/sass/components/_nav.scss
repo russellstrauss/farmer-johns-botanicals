@@ -19,6 +19,13 @@ header {
 						
 						li {
 							opacity: 1;
+							transform: translateX(0);
+						}
+						
+						@for $i from 1 through 10 {
+							li:nth-child(#{$i}) {
+								transition-delay: #{$i * 80ms};
+							}
 						}
 					}
 				}
@@ -51,8 +58,6 @@ header {
 		}
 		
 		.menu-container {
-			$menuOpenSpeed: 350ms;
-			
 			@include mobile-only {
 				position: fixed;
 				z-index: $z-index-mobile-menu;
@@ -61,7 +66,8 @@ header {
 				width: 100vw;
 				height: 0;
 				background-color: var(--bg-primary);
-				transition: height $menuOpenSpeed ease-in-out;
+				overflow: hidden;
+				// No transition - background appears instantly
 			}
 			
 			.menu {	
@@ -89,8 +95,8 @@ header {
 						display: block;
 						margin: 0;
 						opacity: 0;
-						transition-delay: $menuOpenSpeed;
-						transition: opacity 250ms ease;
+						transform: translateX(-50px);
+						transition: opacity 300ms ease, transform 300ms ease;
 					}
 					
 					@include tablet-only {

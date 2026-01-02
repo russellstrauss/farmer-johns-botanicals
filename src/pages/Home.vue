@@ -3,7 +3,9 @@
 		<main class="site-main main" role="main">
 			<div class="shop-front">
 				<div class="categories-description">
-					<h2>Welcome to Farmer John's Botanicals!</h2><br>Farmer John's Botanicals makes the world a more colorful place by specializing in natural fiber fashion lines and textiles. Make your wardrobe slay with Farmer J!
+					<h2>Welcome to Farmer John's Botanicals!</h2>
+					<p>Farmer John's Botanicals makes the world a more colorful place by specializing in natural fiber fashion lines and textiles.</p>
+					<p>Make your wardrobe slay with Farmer J!</p>
 				</div>
 				<div class="category-links">
 					<router-link to="/shop">
