@@ -82,6 +82,9 @@ export function useStripe() {
         if (customerDetails.phone) {
           requestBody.metadata.customer_phone = customerDetails.phone
         }
+        if (customerDetails.notes) {
+          requestBody.metadata.order_notes = customerDetails.notes
+        }
         if (customerDetails.shipping) {
           requestBody.metadata.shipping_address = JSON.stringify({
             line1: customerDetails.shipping.address.line1,

@@ -181,7 +181,7 @@ export function apiMiddleware() {
                   total: subtotal
                 },
                 currency: line_items[0]?.price_data?.currency || 'usd',
-                notes: ''
+                notes: metadata?.order_notes || ''
               }
 
               // Create Stripe Checkout session (before saving order, so we can get session ID)

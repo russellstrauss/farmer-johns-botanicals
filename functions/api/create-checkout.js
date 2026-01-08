@@ -188,7 +188,7 @@ export async function onRequestPost(context) {
         total: subtotal
       },
       currency: line_items[0]?.price_data?.currency || 'usd',
-      notes: ''
+      notes: metadata?.order_notes || ''
     }
 
     // Save order to KV
