@@ -101,9 +101,14 @@
 									</select>
 								</td>
 								<td>
-									<button @click="toggleOrderDetails(order.id)" class="button small">
-										{{ expandedOrder === order.id ? 'Hide' : 'View' }}
-									</button>
+									<div class="action-buttons">
+										<button @click="toggleOrderDetails(order.id)" class="button small">
+											{{ expandedOrder === order.id ? 'Hide' : 'View' }}
+										</button>
+										<button @click="handleDeleteOrder(order.id, order.orderNumber)" class="button small delete-button" :disabled="loading">
+											Delete
+										</button>
+									</div>
 								</td>
 							</tr>
 							<!-- Expanded Order Details -->
@@ -209,12 +214,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { useOrders } from '../composables/useOrders'
 import { useCart } from '../composables/useCart'
+import { useDialog } from '../composables/useDialog'
 
 export default {
 	name: 'Orders',
 	setup() {
-		const { orders, loading, error, loadOrders, getOrderById, updateOrderStatus, addOrderNote } = useOrders()
+		const { orders, loading, error, loadOrders, getOrderById, updateOrderStatus, addOrderNote, deleteOrder } = useOrders()
 		const { formatPrice } = useCart()
+		const { confirm, alert } = useDialog()
 
 		const searchQuery = ref('')
 		const statusFilter = ref('')
@@ -306,7 +313,7 @@ export default {
 			try {
 				await updateOrderStatus(orderId, newStatus)
 			} catch (err) {
-				alert('Failed to update order status: ' + err.message)
+				await alert('Failed to update order status: ' + err.message, 'Error')
 			}
 		}
 
@@ -317,7 +324,7 @@ export default {
 				await addOrderNote(orderId, newNote.value)
 				newNote.value = ''
 			} catch (err) {
-				alert('Failed to add note: ' + err.message)
+				await alert('Failed to add note: ' + err.message, 'Error')
 			}
 		}
 
@@ -326,6 +333,25 @@ export default {
 				await loadOrders()
 			} catch (err) {
 				// Error already set in composable
+			}
+		}
+
+		const handleDeleteOrder = async (orderId, orderNumber) => {
+			try {
+				const confirmed = await confirm(
+					`Are you sure you want to delete order #${orderNumber}? This action cannot be undone.`,
+					'Delete Order'
+				)
+				
+				if (confirmed) {
+					await deleteOrder(orderId)
+					// Close expanded order if it was the one deleted
+					if (expandedOrder.value === orderId) {
+						expandedOrder.value = null
+					}
+				}
+			} catch (err) {
+				await alert('Failed to delete order: ' + err.message, 'Error')
 			}
 		}
 
@@ -353,7 +379,8 @@ export default {
 			toggleOrderDetails,
 			updateStatus,
 			addNoteToOrder,
-			refreshOrders
+			refreshOrders,
+			handleDeleteOrder
 		}
 	}
 }
@@ -510,6 +537,28 @@ export default {
 	border-radius: 4px;
 	font-size: 0.9rem;
 	cursor: pointer;
+}
+
+.action-buttons {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.delete-button {
+	background-color: #dc3545;
+	color: white;
+	border-color: #dc3545;
+
+	&:hover:not(:disabled) {
+		background-color: #c82333;
+		border-color: #bd2130;
+	}
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
 }
 
 .order-details-row {

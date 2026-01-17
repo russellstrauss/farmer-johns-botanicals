@@ -90,6 +90,39 @@ export function useOrders() {
     return getOrderById(id)
   }
 
+  const deleteOrder = async (id) => {
+    const order = getOrderById(id)
+    if (!order) {
+      throw new Error('Order not found')
+    }
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || '/api/orders'
+      const response = await fetch(`${apiUrl}?id=${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${authToken.value}`,
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Unauthorized. Please log in.')
+        }
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to delete order')
+      }
+
+      // Remove from local state
+      orders.value = orders.value.filter(o => o.id !== id)
+      return true
+    } catch (err) {
+      console.error('Error deleting order:', err)
+      throw err
+    }
+  }
+
   const saveOrders = async (ordersToSave) => {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || '/api/save-orders'
@@ -125,7 +158,8 @@ export function useOrders() {
     loadOrders,
     getOrderById,
     updateOrderStatus,
-    addOrderNote
+    addOrderNote,
+    deleteOrder
   }
 }
 

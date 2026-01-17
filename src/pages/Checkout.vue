@@ -136,6 +136,18 @@
 							</div>
 						</section>
 
+						<!-- Order Notes -->
+						<section class="form-section">
+							<h2>Order Notes</h2>
+							<div class="form-group">
+								<label for="orderNotes">Order Notes and Customization Requests (Optional)</label>
+								<textarea id="orderNotes" v-model="form.orderNotes" 
+									rows="4"
+									placeholder="Any special instructions, customization requests, or notes about your order..."
+									class="form-textarea"></textarea>
+							</div>
+						</section>
+
 						<!-- Order Summary -->
 						<section class="order-summary">
 							<h2>Order Summary</h2>
@@ -200,7 +212,8 @@ export default {
 			city: '',
 			state: '',
 			postalCode: '',
-			country: 'US'
+			country: 'US',
+			orderNotes: ''
 		})
 
 		const fieldErrors = ref({
@@ -338,7 +351,8 @@ export default {
 							postal_code: form.value.postalCode,
 							country: form.value.country
 						}
-					}
+					},
+					notes: form.value.orderNotes.trim() || undefined
 				}
 
 				await createCheckoutSession(cartItems.value, customerDetails)
@@ -441,7 +455,7 @@ export default {
 			font-weight: bold;
 		}
 	
-		.form-group input, .form-group select {
+		.form-group input, .form-group select, .form-group textarea {
 			padding: 0.75rem;
 			border: 1px solid #ddd;
 			border-radius: 4px;
@@ -450,10 +464,15 @@ export default {
 			transition: border-color 0.2s;
 		}
 	
-		.form-group input:focus, .form-group select:focus {
+		.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
 			outline: none;
 			border-color: var(--accent-color, #0098d6);
 			box-shadow: 0 0 0 2px rgba(0, 152, 214, 0.2);
+		}
+		
+		.form-textarea {
+			resize: vertical;
+			min-height: 100px;
 		}
 
 		.form-group.error {

@@ -43,17 +43,17 @@
 							<tr>
 								<td colspan="2"><strong>Subtotal</strong></td>
 								<td></td>
-								<td class="total-price"><strong>{{ formatPrice(getTotal()) }}</strong></td>
+								<td class="total-price" data-label="Subtotal:"><strong>{{ formatPrice(getTotal()) }}</strong></td>
 							</tr>
 							<tr>
 								<td colspan="2"><strong>Shipping (USPS Priority Mail)</strong></td>
 								<td></td>
-								<td class="total-price"><strong>{{ formatPrice(getShippingCost()) }}</strong></td>
+								<td class="total-price" data-label="Shipping:"><strong>{{ formatPrice(getShippingCost()) }}</strong></td>
 							</tr>
 							<tr>
 								<td colspan="2"><strong>Total</strong></td>
 								<td></td>
-								<td class="total-price"><strong>{{ formatPrice(getTotalWithShipping()) }}</strong></td>
+								<td class="total-price" data-label="Total:"><strong>{{ formatPrice(getTotalWithShipping()) }}</strong></td>
 							</tr>
 						</tfoot>
 					</table>

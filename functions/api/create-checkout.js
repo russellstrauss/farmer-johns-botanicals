@@ -2,7 +2,8 @@
 // Add STRIPE_SECRET_KEY in Cloudflare Pages environment variables
 
 import Stripe from 'stripe'
-import { sendOrderEmail } from '../utils/email.js'
+import { sendOrderEmail, sendPurchaseFailureAlert } from '../utils/email.js'
+import { detectStripeKeyMode } from '../utils/stripe-validation.js'
 
 // Helper functions
 async function loadOrders(kv) {
@@ -45,15 +46,56 @@ function generateOrderNumber(orders) {
 export async function onRequestPost(context) {
   const { request, env } = context
   
+  // Store body for potential error reporting (can only read once)
+  let requestBody = null
+  let line_items = null
+  let customer_email = null
+  let customer_name = null
+  let shipping_address = null
+  let shipping_name = null
+  let success_url = null
+  let cancel_url = null
+  let metadata = null
+  
   try {
+    // Validate Stripe key
+    if (!env.STRIPE_SECRET_KEY) {
+      console.error('[Stripe] STRIPE_SECRET_KEY not found in environment variables')
+      return new Response(JSON.stringify({
+        message: 'Stripe secret key not configured. Please set STRIPE_SECRET_KEY in Cloudflare Pages environment variables.'
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    // Validate and log key mode
+    const keyMode = detectStripeKeyMode(env.STRIPE_SECRET_KEY)
+    if (keyMode === 'unknown') {
+      console.warn('[Stripe] Warning: Unable to detect key mode. Key should start with sk_test_ or sk_live_')
+    } else {
+      console.log(`[Stripe] Using ${keyMode.toUpperCase()} mode secret key`)
+      
+      // Warn if using test key in production (Cloudflare Pages is typically production)
+      if (keyMode === 'test') {
+        console.warn('[Stripe] ⚠️  WARNING: Using TEST key in production environment!')
+        console.warn('[Stripe] For production, use a LIVE key (sk_live_...) from your Stripe Dashboard.')
+        console.warn('[Stripe] Update STRIPE_SECRET_KEY in Cloudflare Pages → Settings → Environment Variables.')
+      } else if (keyMode === 'live') {
+        console.log('[Stripe] ✓ Using LIVE key - ready for real payments')
+        console.log('[Stripe] Note: Test cards (e.g., 4242 4242 4242 4242) will be REJECTED with live keys.')
+        console.log('[Stripe] Use real credit cards for testing, or enable test mode in Stripe Dashboard.')
+      }
+    }
+
     // Initialize Stripe with Workers-compatible HTTP client
     const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
       httpClient: Stripe.createFetchHttpClient(),
       apiVersion: '2024-06-20'
     })
 
-    const body = await request.json()
-    const { 
+    requestBody = await request.json()
+    ({ 
       line_items, 
       customer_email, 
       customer_name,
@@ -62,7 +104,7 @@ export async function onRequestPost(context) {
       success_url, 
       cancel_url, 
       metadata 
-    } = body
+    } = requestBody)
 
     // Get origin from request headers
     const origin = request.headers.get('origin') || request.headers.get('referer') || ''
@@ -146,7 +188,7 @@ export async function onRequestPost(context) {
         total: subtotal
       },
       currency: line_items[0]?.price_data?.currency || 'usd',
-      notes: ''
+      notes: metadata?.order_notes || ''
     }
 
     // Save order to KV
@@ -161,6 +203,67 @@ export async function onRequestPost(context) {
     })
   } catch (error) {
     console.error('Stripe error:', error)
+    
+    // Send failure alert email (only in production/live mode)
+    try {
+      const keyMode = env.STRIPE_SECRET_KEY ? detectStripeKeyMode(env.STRIPE_SECRET_KEY) : 'unknown'
+      
+      // Only send alerts in production (live mode) to avoid spam during development
+      if (keyMode === 'live') {
+        // Extract order information from request body for error details
+        let errorDetails = {
+          errorType: 'Checkout Session Creation Failed',
+          errorMessage: error.message || 'Unknown error occurred',
+          currency: requestBody?.line_items?.[0]?.price_data?.currency || 'usd'
+        }
+
+        // Use stored request body data if available
+        if (requestBody) {
+          errorDetails.customerName = requestBody.customer_name || requestBody.metadata?.customer_name
+          errorDetails.customerEmail = requestBody.customer_email || requestBody.metadata?.customer_email
+          errorDetails.customerPhone = requestBody.metadata?.customer_phone
+          
+          if (requestBody.line_items) {
+            errorDetails.items = requestBody.line_items.map(item => ({
+              name: item.price_data?.product_data?.name || 'Unknown Item',
+              quantity: item.quantity || 1,
+              price: (item.price_data?.unit_amount || 0) / 100
+            }))
+            
+            errorDetails.subtotal = requestBody.line_items.reduce((sum, item) => {
+              return sum + (item.price_data?.unit_amount || 0) / 100 * (item.quantity || 1)
+            }, 0)
+          }
+          
+          if (requestBody.shipping_address) {
+            errorDetails.shippingAddress = requestBody.shipping_address
+          } else if (requestBody.metadata?.shipping_address) {
+            try {
+              errorDetails.shippingAddress = JSON.parse(requestBody.metadata.shipping_address)
+            } catch (e) {
+              // Ignore parse errors
+            }
+          }
+        }
+
+        // Send failure alert email (don't await - send async so it doesn't delay response)
+        sendPurchaseFailureAlert(errorDetails, env).then(result => {
+          if (result.success) {
+            console.log('Purchase failure alert sent successfully')
+          } else {
+            console.error('Failed to send purchase failure alert:', result.error)
+          }
+        }).catch(emailError => {
+          console.error('Error sending purchase failure alert:', emailError)
+        })
+      } else {
+        console.log(`Skipping failure alert email (key mode: ${keyMode}, not production)`)
+      }
+    } catch (alertError) {
+      console.error('Error setting up failure alert:', alertError)
+      // Don't fail the error response if alert setup fails
+    }
+    
     return new Response(JSON.stringify({
       message: error.message || 'Failed to create checkout session'
     }), {

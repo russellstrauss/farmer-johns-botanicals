@@ -283,7 +283,7 @@ form {
 						width: 100%;
 
 						&:before {
-							content: "Total:";
+							content: attr(data-label);
 							display: block;
 							font-weight: bold;
 							text-transform: uppercase;

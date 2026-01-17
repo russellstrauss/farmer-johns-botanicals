@@ -4,7 +4,10 @@
 			<div class="admin-header">
 				<div class="admin-header-top">
 					<h1>Content Management</h1>
-					<button @click="handleLogout" class="button logout">Logout</button>
+					<div class="admin-header-actions">
+						<router-link to="/orders" class="button orders-link">Orders</router-link>
+						<button @click="handleLogout" class="button logout">Logout</button>
+					</div>
 				</div>
 				<div class="admin-tabs">
 					<button v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id"
@@ -1038,10 +1041,24 @@ export default {
 		margin-bottom: 1rem;
 	}
 
+	.admin-header-actions {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+	}
+
 	.button.logout {
 		background: #dc3545;
 		color: white;
 		border-color: #dc3545;
+	}
+
+	.button.orders-link {
+		background: #333;
+		color: white;
+		border-color: #333;
+		text-decoration: none;
+		display: inline-block;
 	}
 
 	.admin-tabs {

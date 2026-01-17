@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import fs from 'fs/promises'
 import { generateOrderEmailHtml, generateCustomerConfirmationEmailHtml } from './functions/utils/email.js'
+import { detectStripeKeyMode, getKeyConfigurationGuide } from './functions/utils/stripe-validation.js'
 
 /**
  * Vite plugin to add API middleware for local development
@@ -81,6 +82,27 @@ export function apiMiddleware() {
               message: 'Stripe secret key not configured. Please create a .env file in the project root with STRIPE_SECRET_KEY or VITE_STRIPE_SECRET_KEY. See .env.example for a template.'
             }))
             return
+          }
+
+          // Validate and log key mode
+          const keyMode = detectStripeKeyMode(stripeSecretKey)
+          const envMode = server.config.mode || 'development'
+          const configGuide = getKeyConfigurationGuide(envMode === 'production' ? 'production' : 'development')
+          
+          if (keyMode === 'unknown') {
+            console.warn('[Stripe] Warning: Unable to detect key mode. Key should start with sk_test_ or sk_live_')
+          } else {
+            console.log(`[Stripe] Using ${keyMode.toUpperCase()} mode secret key`)
+            
+            // Warn if key mode doesn't match environment expectations
+            if (envMode === 'production' && keyMode === 'test') {
+              console.warn('[Stripe] ⚠️  WARNING: Production environment detected but using TEST key!')
+              console.warn('[Stripe] For production, use a LIVE key (sk_live_...) from your Stripe Dashboard.')
+            } else if (envMode !== 'production' && keyMode === 'live') {
+              console.warn('[Stripe] ⚠️  WARNING: Development environment detected but using LIVE key!')
+              console.warn('[Stripe] Using live keys in development can process real payments. Use TEST keys (sk_test_...) for development.')
+              console.warn('[Stripe] IMPORTANT: Test cards (e.g., 4242 4242 4242 4242) will be REJECTED with live keys.')
+            }
           }
 
           const stripe = new Stripe(stripeSecretKey, {
@@ -159,7 +181,7 @@ export function apiMiddleware() {
                   total: subtotal
                 },
                 currency: line_items[0]?.price_data?.currency || 'usd',
-                notes: ''
+                notes: metadata?.order_notes || ''
               }
 
               // Create Stripe Checkout session (before saving order, so we can get session ID)
@@ -864,6 +886,52 @@ export function apiMiddleware() {
 
       // Get Orders endpoint
       server.middlewares.use('/api/orders', async (req, res, next) => {
+        // Handle DELETE requests
+        if (req.method === 'DELETE') {
+          // Verify authentication
+          if (!verifyAdminAuth(req)) {
+            res.writeHead(401, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ message: 'Unauthorized' }))
+            return
+          }
+
+          try {
+            const url = new URL(req.url, `http://${req.headers.host}`)
+            const orderId = url.searchParams.get('id')
+
+            if (!orderId) {
+              res.writeHead(400, { 'Content-Type': 'application/json' })
+              res.end(JSON.stringify({ message: 'Invalid request: order ID required' }))
+              return
+            }
+
+            const orders = await loadOrders()
+            const filteredOrders = orders.filter(o => o.id !== orderId)
+
+            if (filteredOrders.length === orders.length) {
+              res.writeHead(404, { 'Content-Type': 'application/json' })
+              res.end(JSON.stringify({ message: 'Order not found' }))
+              return
+            }
+
+            await saveOrders(filteredOrders)
+
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({
+              success: true,
+              message: 'Order deleted successfully'
+            }))
+          } catch (error) {
+            console.error('Error deleting order:', error)
+            res.writeHead(500, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({
+              message: error.message || 'Failed to delete order'
+            }))
+          }
+          return
+        }
+
+        // Handle GET requests
         if (req.method !== 'GET') {
           res.writeHead(405, { 'Content-Type': 'application/json' })
           res.end(JSON.stringify({ message: 'Method not allowed' }))
