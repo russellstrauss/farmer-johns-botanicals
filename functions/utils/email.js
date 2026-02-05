@@ -737,4 +737,3 @@ export function generateFailureAlertEmailHtml(errorDetails) {
     </html>
   `
 }
-

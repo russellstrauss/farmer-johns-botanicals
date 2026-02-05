@@ -48,7 +48,6 @@ export async function onRequestPost(context) {
   
   // Store body for potential error reporting (can only read once)
   let requestBody = null
-  let line_items = null
   let customer_email = null
   let customer_name = null
   let shipping_address = null
@@ -95,16 +94,36 @@ export async function onRequestPost(context) {
     })
 
     requestBody = await request.json()
-    ({ 
-      line_items, 
-      customer_email, 
+
+    if (requestBody == null || typeof requestBody !== 'object') {
+      return new Response(JSON.stringify({
+        message: 'Invalid request: request body is missing or not valid JSON. Ensure the request sends a JSON body with line_items.'
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
+    const {
+      line_items: rawLineItems,
+      customer_email,
       customer_name,
       shipping_address,
       shipping_name,
-      success_url, 
-      cancel_url, 
-      metadata 
-    } = requestBody)
+      success_url,
+      cancel_url,
+      metadata
+    } = requestBody
+
+    const line_items = Array.isArray(rawLineItems) ? rawLineItems : null
+    if (!line_items || line_items.length === 0) {
+      return new Response(JSON.stringify({
+        message: 'Invalid request: line_items is required and must be a non-empty array.'
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
 
     // Get origin from request headers
     const origin = request.headers.get('origin') || request.headers.get('referer') || ''
