@@ -16,7 +16,9 @@
 		</nav>
 		<div class="site-branding">
 			<router-link to="/">
-				<svg class="site-logo" viewBox="0 0 876.982 757.463" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Farmer John's Botanicals Logo">
+				<img src="/assets/images/FJB-logo-forest-creek.png" alt="A Ctylistic organic inked cotton ball with a forest creek and swirling colors in the focal point of the logo.">
+				<!-- The B&W SVG Cotton Logo -->
+				<!-- <svg class="site-logo" viewBox="0 0 876.982 757.463" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Farmer John's Botanicals Logo">
 					<g>
 						<g id="XMLID_1_">
 							<g>
@@ -157,7 +159,7 @@
 							</g>
 						</g>
 					</g>
-				</svg>
+				</svg> -->
 			</router-link>
 		</div>
 		<router-link v-if="!isCartPage && cartCount > 0" to="/cart" class="basket-toggle">
