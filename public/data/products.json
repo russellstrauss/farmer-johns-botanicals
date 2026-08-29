@@ -244,5 +244,28 @@
     "currency": "USD",
     "type": "simple",
     "featured": false
+  },
+  {
+    "id": 999,
+    "name": "Custom Job",
+    "slug": "custom-job",
+    "sku": "custom-job",
+    "price": 0,
+    "regular_price": 0,
+    "sale_price": null,
+    "short_description": "Tell me what kind of work you need and set your own amount to pay for it.",
+    "images": [],
+    "stock_quantity": null,
+    "stock_status": "instock",
+    "in_stock": true,
+    "manage_stock": false,
+    "categories": [],
+    "tags": [],
+    "sizes": [],
+    "currency": "USD",
+    "type": "simple",
+    "featured": false,
+    "custom_amount": true,
+    "hidden_from_shop": true
   }
 ]

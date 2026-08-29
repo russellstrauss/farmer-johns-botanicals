@@ -11,7 +11,7 @@ export function useProducts() {
       const response = await fetch('/data/products.json')
       const loadedProducts = await response.json()
       
-      products.value = loadedProducts
+      products.value = loadedProducts.filter(product => !product.hidden_from_shop && !product.custom_amount)
       loaded = true
       return products.value
     } catch (error) {
@@ -30,19 +30,20 @@ export function useProducts() {
 
   const getProductsByCategory = (categorySlug) => {
     return products.value.filter(p => 
-      p.categories.some(cat => cat.slug === categorySlug)
+      p.categories && p.categories.some(cat => cat.slug === categorySlug)
     )
   }
 
   const getProductsByTag = (tagSlug) => {
     return products.value.filter(p => 
-      p.tags.some(tag => tag.slug === tagSlug)
+      p.tags && p.tags.some(tag => tag.slug === tagSlug)
     )
   }
 
   const getAllCategories = () => {
     const categoriesMap = new Map()
     products.value.forEach(product => {
+      if (!product.categories) return
       product.categories.forEach(cat => {
         if (!categoriesMap.has(cat.slug)) {
           categoriesMap.set(cat.slug, cat)
@@ -70,16 +71,13 @@ export function useProducts() {
       return []
     }
 
-    // Get category slugs from current product
     const categorySlugs = currentProduct.categories.map(cat => cat.slug)
 
-    // Find products in the same categories, excluding the current product
     const related = products.value.filter(product => {
       if (product.id === productId) return false
       return product.categories && product.categories.some(cat => categorySlugs.includes(cat.slug))
     })
 
-    // Limit the number of related products
     return related.slice(0, limit)
   }
 

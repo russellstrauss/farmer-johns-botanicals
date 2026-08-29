@@ -235,7 +235,20 @@ export default {
 			
 			await loadProducts()
 			const slug = props.slug || route.params.slug
-			product.value = getProductBySlug(slug)
+			const productMatch = getProductBySlug(slug)
+			if (!productMatch) {
+				if (slug === 'custom-job') {
+					router.replace('/custom-job')
+					return
+				}
+				product.value = null
+				return
+			}
+			if (productMatch.custom_amount || productMatch.hidden_from_shop) {
+				router.replace('/custom-job')
+				return
+			}
+			product.value = productMatch
 			selectedImageIndex.value = 0
 			await initializeGallery()
 		})

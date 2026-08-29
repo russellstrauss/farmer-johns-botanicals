@@ -39,13 +39,15 @@ export default {
       const tagFilter = route.query.tag
       const categoryFilter = route.query.category
 
+      const visibleProducts = products.value.filter(product => !product.hidden_from_shop && !product.custom_amount)
+
       if (tagFilter) {
-        return getProductsByTag(tagFilter)
+        return getProductsByTag(tagFilter).filter(product => !product.hidden_from_shop && !product.custom_amount)
       } else if (categoryFilter) {
-        return getProductsByCategory(categoryFilter)
+        return getProductsByCategory(categoryFilter).filter(product => !product.hidden_from_shop && !product.custom_amount)
       }
-      // Return all products (with $1 item already at the top from useProducts)
-      return products.value
+      // Return all visible products
+      return visibleProducts
     })
 
     onMounted(async () => {

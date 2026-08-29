@@ -1,6 +1,7 @@
 import Home from './pages/Home.vue'
 import Shop from './pages/Shop.vue'
 import Product from './pages/Product.vue'
+import CustomJob from './pages/CustomJob.vue'
 import Cart from './pages/Cart.vue'
 import Checkout from './pages/Checkout.vue'
 import About from './pages/About.vue'
@@ -25,6 +26,11 @@ const routes = [
     name: 'Product',
     component: Product,
     props: true
+  },
+  {
+    path: '/custom-job',
+    name: 'CustomJob',
+    component: CustomJob
   },
   {
     path: '/cart',
